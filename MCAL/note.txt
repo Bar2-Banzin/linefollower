@@ -1,0 +1,2 @@
+This layer of the achitecture is called the MicroController Abstraction Layer(MCAL)
+Contains the software drivers(functions and some parameters) of the internal peripherals of the MicroController (ex: ADC, Timers(PWM), Interrupt Controller)

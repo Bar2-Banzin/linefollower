@@ -1,0 +1,2 @@
+This layer of the achitecture is called the Hardware Abstraction Layer(HAL)
+Contains the software drivers(functions and some parameters) of the external hardware components (ex: DC motor, IR sensor)
