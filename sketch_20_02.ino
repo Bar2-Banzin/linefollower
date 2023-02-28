@@ -6,8 +6,7 @@
 #define speedR 5 
 
 #define max_speed 80
-
-car_dir reading = still, prev = still;
+#define max_drift 200
 
 enum motor_dir
 {
@@ -24,6 +23,8 @@ enum car_dir
   left,
   right
 };
+
+car_dir reading = still, prev = still;
 
 void move_motor(char pin1, char pin2, motor_dir dir);
 void move_car(car_dir dir);
@@ -84,6 +85,8 @@ void move_car(car_dir dir)
     case forward:
     move_motor(IN1, IN2, m_forward);
     move_motor(IN3, IN4, m_forward);
+    analogWrite(speedL,max_speed);
+    analogWrite(speedR,max_speed);
     break;
     case backward:
     move_motor(IN1, IN2, m_backward);
@@ -91,11 +94,15 @@ void move_car(car_dir dir)
     break;
     case left:
     move_motor(IN1, IN2, m_forward);
-    move_motor(IN3, IN4, m_still);
+    move_motor(IN3, IN4, m_backward);
+    analogWrite(speedL,max_drift);
+    analogWrite(speedR,max_drift);
     break;
     case right:
-    move_motor(IN1, IN2, m_still);
+    move_motor(IN1, IN2, m_backward);
     move_motor(IN3, IN4, m_forward);
+    analogWrite(speedL,max_drift);
+    analogWrite(speedR,max_drift);
     break;
   }
 }
@@ -105,13 +112,13 @@ car_dir read_line()
   char reading = PINC & 0x1F;      //Capture the sensor reading
 
   char middle = ~reading & 0x04;   //The reading has zero in the middle
-  if(middle == 4) return forward;
 
   char l = (reading >> 3);
   char r = reading & 0x03;
 
   if(l > r) return right;
   if(r > l) return left;
+  if(middle == 4) return forward;
 
   return still;
 }
