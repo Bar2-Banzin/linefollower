@@ -91,6 +91,8 @@ void move_car(car_dir dir)
     case backward:
     move_motor(IN1, IN2, m_backward);
     move_motor(IN3, IN4, m_backward);
+    analogWrite(speedL,max_speed);
+    analogWrite(speedR,max_speed);
     break;
     case left:
     move_motor(IN1, IN2, m_forward);
