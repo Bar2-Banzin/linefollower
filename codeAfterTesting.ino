@@ -6,7 +6,7 @@
 #define speedR 5 
 
 #define max_drift 200
-#define max_speed 150
+#define max_speed 80
 
 
 enum motor_dir
