@@ -11,7 +11,7 @@
 
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 80;
+int lfspeed = 60;
 
 float Kp = 0;
 float Kd = 0;
@@ -38,9 +38,9 @@ void setup()
 void loop()
 {
   int x = analogRead(16);
-  Kp = 20;
-  Ki = 1;
-  Kd = 400;
+  Kp = 0.07;
+  Ki = 0.07;
+  Kd = 0;
   //Kp = 0.0006 * (1000 - x);
   //Kd = 10 * Kp;
   //Ki = 10 * Kp;
@@ -54,7 +54,7 @@ void loop()
   // Serial.println(Ki);
   //Ki = 0.0001;
   linefollow();
-  delay(2000);
+  delay(50);
 }
 
 void linefollow()
