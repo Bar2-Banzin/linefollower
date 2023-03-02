@@ -5,8 +5,9 @@
 #define IN4 6
 #define speedR 5 
 
-#define max_speed 80
 #define max_drift 200
+#define max_speed 80
+
 
 enum motor_dir
 {
@@ -21,9 +22,8 @@ enum car_dir
   forward,
   backward,
   left,
-  right
+  right,
 };
-
 car_dir reading = still, prev = still;
 
 void move_motor(char pin1, char pin2, motor_dir dir);
@@ -32,6 +32,7 @@ car_dir read_line();
 
 void setup()
 {
+  Serial.begin(9600);
   pinMode(IN1,OUTPUT);
   pinMode(IN2,OUTPUT);
   pinMode(IN3,OUTPUT);
@@ -105,7 +106,7 @@ void move_car(car_dir dir)
     move_motor(IN3, IN4, m_forward);
     analogWrite(speedL,max_drift);
     analogWrite(speedR,max_drift);
-    break;
+    break; 
   }
 }
 
@@ -114,6 +115,7 @@ car_dir read_line()
   char reading = PINC & 0x1F;      //Capture the sensor reading
 
   char middle = ~reading & 0x04;   //The reading has zero in the middle
+  
 
   char l = (reading >> 3);
   char r = reading & 0x03;
@@ -121,6 +123,5 @@ car_dir read_line()
   if(l > r) return right;
   if(r > l) return left;
   if(middle == 4) return forward;
-
   return still;
 }
