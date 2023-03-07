@@ -11,7 +11,7 @@
 
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 60;
+int lfspeed = 50;
 
 float Kp = 0;
 float Kd = 0;
@@ -38,28 +38,18 @@ void setup()
 void loop()
 {
   int x = analogRead(16);
-  Kp = 0.07;
-  Ki = 0.07;
-  Kd = 0;
-  //Kp = 0.0006 * (1000 - x);
-  //Kd = 10 * Kp;
-  //Ki = 10 * Kp;
-  // Serial.print("Mid sensor = ");
+  // Serial.print("Mid sensor: ");
   // Serial.println(x);
-  // Serial.print("Kp = ");
-  // Serial.println(Kp);
-  // Serial.print("Kd = ");
-  // Serial.println(Kd);
-  // Serial.print("Ki = ");
-  // Serial.println(Ki);
-  //Ki = 0.0001;
+  Kp = 0.0428;
+  Ki = 0;
+  Kd = 0.0224;
   linefollow();
-  delay(50);
+  //delay(10);
 }
 
 void linefollow()
 {
-  int error = (analogRead(17) - analogRead(15));
+  int error = (analogRead(17)+analogRead(18) - analogRead(15) - analogRead(14));
   Serial.print("Error = ");
   Serial.println(error);
 
@@ -81,16 +71,16 @@ void linefollow()
   lsp = lfspeed - PIDvalue;
   rsp = lfspeed + PIDvalue;
 
-  if (lsp > 120) {
-    lsp = 120;
+  if (lsp > 100) {
+    lsp = 100;
   }
-  if (lsp < 0) {
+  if (lsp < 25) {
     lsp = 0;
   }
-  if (rsp > 120) {
-    rsp = 120;
+  if (rsp > 100) {
+    rsp = 100;
   }
-  if (rsp < 0) {
+  if (rsp < 25) {
     rsp = 0;
   }
   analogWrite(speedL, lsp);
