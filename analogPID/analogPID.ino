@@ -11,7 +11,7 @@
 
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 50;
+int lfspeed = 70;
 
 float Kp = 0;
 float Kd = 0;
@@ -42,7 +42,7 @@ void loop()
   // Serial.println(x);
   Kp = 0.0428;
   Ki = 0;
-  Kd = 0.0224;
+  Kd = 0.05564;
   linefollow();
   //delay(10);
 }
@@ -74,14 +74,14 @@ void linefollow()
   if (lsp > 100) {
     lsp = 100;
   }
-  if (lsp < 25) {
-    lsp = 0;
+  if (lsp < 55) {
+    lsp = 15;
   }
   if (rsp > 100) {
     rsp = 100;
   }
-  if (rsp < 25) {
-    rsp = 0;
+  if (rsp < 55) {
+    rsp = 15;
   }
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
