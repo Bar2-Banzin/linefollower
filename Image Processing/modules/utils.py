@@ -30,7 +30,7 @@ def show_images(images, titles=None, BGR=False, windowTitle=None):
         n += 1
     fig.set_size_inches(np.array(fig.get_size_inches()) * n_ims)
     plt.show()
-    
+
     return None
 
 
@@ -55,8 +55,7 @@ def reorderPoints(points):
     return newPoints
 
 
-
-def drawRectangle(img, vertices,color=(0, 255, 0), thickness=10):
+def drawRectangle(img, vertices, color=(0, 255, 0), thickness=10):
     '''
     Draw Rectangle between 4 points ordered clock-wise
         Arguments:
@@ -76,6 +75,7 @@ def drawRectangle(img, vertices,color=(0, 255, 0), thickness=10):
              (vertices[1][0][0], vertices[1][0][1]), color, thickness)
 
     return img
+
 
 def get_biggest_rectangular_contour(contours):
     '''
@@ -103,7 +103,7 @@ def get_biggest_rectangular_contour(contours):
 
 def draw_contour(img, contour, color=(0, 255, 0), thickness=10):
     '''
-    Draw a given Rectangular contour on copy of img
+    Draw a given Rectangular contour[given 4 points] on copy of img
     Arguments:
         img: image to draw on a copy of it
         contour: 4 point contour to be drawn
@@ -111,10 +111,104 @@ def draw_contour(img, contour, color=(0, 255, 0), thickness=10):
         thickness:
     Returns: copy of img with sent contour drawn on it
     '''
-    contour_img=np.copy(img)
-    contour= reorderPoints(contour)#reorder contour points
+    contour_img = np.copy(img)
+    contour = reorderPoints(contour)  # reorder contour points
 
-    cv2.drawContours(contour_img, contour, -1, color , thickness) # Will Draw only 4 points
-    contour_img = drawRectangle(contour_img,contour,color,thickness)
+    cv2.drawContours(contour_img, contour, -1, color,
+                     thickness)  # Will Draw only 4 points
+    contour_img = drawRectangle(contour_img, contour, color, thickness)
 
     return contour_img
+
+
+def min_rectangle(image,contour,color=[255,0,0],thickness=10):
+    ''''
+    Get center of min rectangle around given contour
+    Arguments:
+        image:RGB image to Draw on it Rectangle
+        contour: 4 point contour
+    Returns: center of rectangle
+    Can Return Dimensions of Rect and angle of Rotation
+    '''
+    rectangle_image=np.copy(image)
+
+    # Min Rectangle
+    rect = cv2.minAreaRect(contour)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    if(globals.test):
+        cv2.drawContours(rectangle_image,[box],0,color,thickness)
+
+
+    # Center and angle of rotation of Rectangle
+    ((x, y), (width, height), angle_of_rotation) = cv2.minAreaRect(box)
+    height = int(max(width, height))
+    width = int(min(width, height))
+
+    return int(x), int(y)
+
+
+def color_range(color):
+    ''''
+    Gets Upper & Lower HSV Range of the RGB color
+    Arguments:
+        color: RGB color i.e [0,255,0] list
+    Returns: lower and upper Range of color in HSV
+    Call: lower_range, upper_range=color_range([255,0,0])
+    '''
+    color_rgb = np.uint8([[color]])
+    HSV = cv2.cvtColor(color_rgb, cv2.COLOR_RGB2HSV)
+    Hue = HSV[0][0][0]
+
+    lower_range = np.array([Hue-10, 100, 100])
+    upper_range = np.array([Hue+10, 255, 255])
+
+    return lower_range, upper_range
+
+def color_mask(image,color):
+    ''''
+    Mask RGB image color in the specific range passed
+    Arguments:
+        image: RGB image
+        color: RGB color i.e [0,255,0] list
+    Returns: mask and image with mask applied on it
+    Call: mask,masked_img = color_mask(image,color=[255,0,0])
+    '''
+
+    # Get Upper and Lower Range of Color
+    lower_range,upper_range=color_range(color)
+   
+    # Convert RGB image to HSV
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+    # Check Range
+    mask = cv2.inRange(image_hsv, lower_range, upper_range)
+
+    # Apply mask on result
+    result=np.copy(image)
+    masked_img= cv2.bitwise_and(result, result, mask=mask)
+
+    return mask,masked_img
+
+def color_center(image,color):
+    ''''
+    Get Center and Draw Rectangle Around Largest Contour of a given Color
+    Arguments:
+        image: RGB image
+        color: RGB color i.e [0,255,0] list
+    Returns: center
+    Call: mask,masked_img = color_center(image,color=[255,0,0]),error flag if color not found
+    '''
+    # Get Mask
+    mask,masked_img=color_mask(image,color)    
+
+    # Mask Contours
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # Biggest Contour
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    
+    if(np.shape(contours)[0]<=0):
+        return -1,-1,False
+    x,y=min_rectangle(image,contours[0])
+    
+    return x,y,True
