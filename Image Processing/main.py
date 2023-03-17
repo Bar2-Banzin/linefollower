@@ -2,8 +2,8 @@ import sys
 import globals
 from tests import *
 
-from modules.ScanTrack import scan_track, extract_lines
-from modules.car import find_car
+from modules.ScanTrack import scan_track
+from modules.car import find_car,car_on_line
 
 # track = cv2.imread('./assets/track/0.png')
 # show_images([track],["Track 0"])
@@ -40,14 +40,23 @@ if(not wrapped):
     #    print("Failed to Find Car 😯")
     #    sys.exit(-1)
 
-# Find Car on Track
-# Read an Car on Track Image
-image = cv2.imread('./assets/ontrack/1.png')
-x_car,y_car,car_found=find_car(image,front_color=[185,68,74],back_color=[76,116,142])
-if(not car_found):
-    print("Failed to Find Car 😯")
-    sys.exit(-1)
+# # Find Car on Track
+# # Read an Car on Track Image
+# image = cv2.imread('./assets/ontrack/1.png')
+# x_car,y_car,car_found=find_car(image,front_color=[185,68,74],back_color=[76,116,142])
+# if(not car_found):
+#     print("Failed to Find Car 😯")
+#     sys.exit(-1)
 
+
+# Car on Line
+x_car=50
+y_car=50
+on_line=car_on_line(x_car,y_car,track,threshold=1)# Threshold of sum of & to consider car on line
+if(on_line):
+    print("Car is on a straight line")
+else:
+    print("Car is not on a straight line")
 
 ###############################################################################################
 ##################################################Tests#########################################

@@ -17,7 +17,6 @@ def scan_track(image,thickness=20):
     # 2.Detect Straight Lines in the Track
     paper_img=image # Temp till we have paper_img returned Correctly
     image_lines=extract_lines(paper_img,thickness=thickness)
-    image_lines=None
     return True,image_lines
 
 
@@ -70,7 +69,7 @@ def extract_lines(image,rho = 1,theta = 1*np.pi/180,threshold = 100,minLineLengt
 
     
     # Take one channel (Binary)
-    image_lines=image_lines[:,:,0]
+    image_lines=(image_lines[:,:,0]//255).astype(int)
     
     if(globals.debug):
         show_images([image,image_gray], ['Original',"Gray"],windowTitle="extract_lines",BGR=False)
