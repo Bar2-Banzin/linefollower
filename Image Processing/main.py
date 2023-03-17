@@ -1,11 +1,9 @@
+import sys
 import globals
 from tests import *
 
 from modules.ScanTrack import scan_track, extract_lines
 from modules.car import find_car
-
-
-from modules.utils import skeleton
 
 # track = cv2.imread('./assets/track/0.png')
 # show_images([track],["Track 0"])
@@ -20,15 +18,39 @@ globals.test_code(False)
 if (globals.test):
     test_color_mask()
 
-# # Read Track Image
-# track_img = cv2.imread('./assets/track/4.jpg')
 
-# # Scanning Track Initially
-# scan_track(track_img)
+# Scan Track()
+# Read Track Image
+track_img = cv2.imread('./assets/track/1.png')
 
-# if(not wrapped):
-#    print("Failed to Extract Paper 😢 ")
-#    sys.exit(-1)
+# Scanning Track Initially
+wrapped,track=scan_track(track_img,thickness=20)
+
+if(not wrapped):
+   print("Failed to Extract Paper 😢 ")
+   sys.exit(-1)
+
+
+# while(1):
+    # # Find Car on Track
+    # Read Image Car on Track
+
+    # x_car,y_car,car_found=find_car(image,front_color=[185,68,74],back_color=[76,116,142])
+    # if( not car_found):
+    #    print("Failed to Find Car 😯")
+    #    sys.exit(-1)
+
+# Find Car on Track
+# Read an Car on Track Image
+image = cv2.imread('./assets/ontrack/1.png')
+x_car,y_car,car_found=find_car(image,front_color=[185,68,74],back_color=[76,116,142])
+if(not car_found):
+    print("Failed to Find Car 😯")
+    sys.exit(-1)
+
+
+###############################################################################################
+##################################################Tests#########################################
 ###############################################################################################
 # test_car_color('./assets/colorgradient/3.jpeg', [0, 255, 0])
 # test_car_color('./assets/colorgradient/4.jpeg', [0, 0, 225])
@@ -178,11 +200,11 @@ if (globals.test):
 # print(np.shape(thinned))
 
 
+# # track = cv2.imread('./assets/track/1.png')
 # track = cv2.imread('./assets/track/1.png')
-track = cv2.imread('./assets/track/1.png')
 
 
-# BGR to RGB
-track_RGB = cv2.cvtColor(track, cv2.COLOR_BGR2RGB)
+# # BGR to RGB
+# track_RGB = cv2.cvtColor(track, cv2.COLOR_BGR2RGB)
 
-extract_lines(track_RGB)
+# extract_lines(track_RGB)

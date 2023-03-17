@@ -91,28 +91,6 @@ def test_car_color(path,color):
     show_images([image_rgb_1,mask_1,masked_img_1],['RGB','Mask',' Masked Image'],windowTitle="Test color_mask {color}")
     return
 
-########################################################################################################################
-def test_extract_lines_2straightlines():
-     '''
-     Customized to Track extract_lines() on 2 horizontal straight lines
-     '''
-    #  Dummy Image to take Dimensions from it only 😉 Can be replaced by any other image :D
-     image = cv2.imread('./assets/track/Straight_line.jpg')
-
-    # BGR to RGB
-     image_RGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-
-     image_RGB[:,:,:]=255
-     image_RGB=image_RGB[0:200,0:200,:]
-     image_RGB[100,:,:]=0
-     image_RGB[105,:,:]=0
-
-     show_images([image_RGB], ["2 Horizontal Straight lines "])
-     extract_lines(image_RGB)
-
-     return None
-
 def test_extract_lines(path,rho = 1,theta=1*np.pi/180,threshold = 100,minLineLength = 100,maxLineGap = 50,thickness=3):
     '''
     Test extract_lines
@@ -123,6 +101,4 @@ def test_extract_lines(path,rho = 1,theta=1*np.pi/180,threshold = 100,minLineLen
     image_RGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     extract_lines(image_RGB,rho ==rho,theta=theta,threshold = threshold,minLineLength = minLineLength,maxLineGap = maxLineGap,thickness=thickness)
-
-    
     return None
