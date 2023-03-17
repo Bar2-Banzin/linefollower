@@ -7,7 +7,7 @@ def ExtractPaper(img_BGR):
     Extract Paper out of the image 
     Arguments:
         img_BGR: BGR image
-    Returns:
+    Returns: RGB wrapped Page, Wrapped Flag
 
     """
     # Get image dimensions

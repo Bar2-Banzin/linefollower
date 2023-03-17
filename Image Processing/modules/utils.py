@@ -1,5 +1,6 @@
 import sys
 
+import math
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -212,3 +213,74 @@ def color_center(image,color):
     x,y=min_rectangle(image,contours[0])
     
     return x,y,True
+
+
+def skeleton(image,RGB=False):
+    """{To be Tested Later}
+    image: RGB or Gray Scale Image[According to RGB Flag]
+    RGB: Flag to show if passed image is RGB or Gray  (default = Gray)
+    """ 
+    image_gray=np.copy(image)
+
+    if(RGB):
+        image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    size = np.size(image)
+    skeleton = np.zeros(image_gray.shape,np.uint8)
+
+    # Threshold to Binary Image
+    ret,image_binary= cv2.threshold(image_gray,127,255,0)
+
+    # Structure Element
+    element = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    done = False
+
+    while( not done):
+        eroded = cv2.erode(image_binary,element)
+        temp = cv2.dilate(eroded,element)
+        temp = cv2.subtract(image_binary,temp)
+        skeleton = cv2.bitwise_or(skeleton,temp)
+        image_binary = eroded.copy()
+
+        zeros = size - cv2.countNonZero(image_binary)
+        if zeros==size:
+            done = True
+
+    # show_images([image,image_gray,image_binary],["Original","Gray","Binary"])
+    # show_images([skeleton],["Skeleton"])
+
+    return skeleton
+
+
+def thin(image):
+    """
+    image: Gray Image
+    Returns: thinned Binary Image
+    """
+    # Convert to Binary
+    ret,image_binary= cv2.threshold(image,127,255,0)
+
+    # line is white
+    image_binary=np.bitwise_not(image_binary)
+
+    # Structuring Element
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    # Create an empty output image to hold values
+    thin = np.zeros(np.shape(image_binary),dtype='uint8')
+
+    # Loop until erosion leads to an empty set
+    while (cv2.countNonZero(image_binary)!=0):
+        # Erosion
+        erode = cv2.erode(image_binary,kernel)
+        # Opening on eroded image
+        opening = cv2.morphologyEx(erode,cv2.MORPH_OPEN,kernel)
+        # Subtract these two
+        subset = erode - opening
+        # Union of all previous sets
+        thin = cv2.bitwise_or(subset,thin)
+        # Set the eroded image for next iteration
+        image_binary = erode.copy()
+
+
+    # show_images([image,image_binary,thin],["Original","Binary","Thin"])        
+    return thin
