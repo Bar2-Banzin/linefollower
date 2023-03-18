@@ -12,12 +12,12 @@ def scan_track(image,thickness=20):
     # paper_img,wrapped=ExtractPaper(track_image)
 
     # if(not wrapped):
-    #     return False,None
+    #     return False,None,None
     
     # 2.Detect Straight Lines in the Track
     paper_img=image # Temp till we have paper_img returned Correctly
-    image_lines=extract_lines(paper_img,thickness=thickness)
-    return True,image_lines
+    image_lines,start_end_points=extract_lines(paper_img,thickness=thickness)
+    return True,image_lines,start_end_points
 
 
 def extract_lines(image,rho = 1,theta = 1*np.pi/180,threshold = 100,minLineLength = 100,maxLineGap = 50,thickness=20):
@@ -57,9 +57,15 @@ def extract_lines(image,rho = 1,theta = 1*np.pi/180,threshold = 100,minLineLengt
     # Draw lines on the image
     image_lines=np.zeros(np.shape(image)) # Inverted image
 
-    for line in lines:
+    # Store start and end points of each line
+    # start_end_points=np.empty((1,np.shape(lines))[0])# 1d with size = no of lines detected
+    # FIXME: no of line,1*****,4 [Take care to tale [0] before taking point 😉](Solved this Problem by reshape)
+    start_end_points=np.copy(lines).reshape((np.shape(lines)[0],4))
+
+    for index, line in enumerate(lines):
+    # for line in lines:
         x1, y1, x2, y2 = line[0]
-        cv2.line(image_lines, (x1, y1), (x2, y2), (255, 255, 255), thickness)
+        cv2.line(image_lines, (x1, y1), (x2, y2), (255-index, 255, 255), thickness)
 
     # To See Each Line Detected Uncomment This
     # for i in range(0,np.shape(lines)[0]):
@@ -69,11 +75,13 @@ def extract_lines(image,rho = 1,theta = 1*np.pi/180,threshold = 100,minLineLengt
 
     
     # Take one channel (Binary)
-    image_lines=(image_lines[:,:,0]//255).astype(int)
+    # image_lines=(image_lines[:,:,0]//255).astype(int)
+    image_lines=(image_lines[:,:,0]).astype(int)
+
     
     if(globals.debug):
         show_images([image,image_gray], ['Original',"Gray"],windowTitle="extract_lines",BGR=False)
         show_images([thinned,edges,image_lines], ['Thinned','Edges','Lines Matrix'],windowTitle="extract_lines",BGR=False)
 
     # Return a Binary Image (1 Channel) for the lines
-    return image_lines
+    return image_lines,start_end_points

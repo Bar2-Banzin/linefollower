@@ -284,3 +284,24 @@ def thin(image):
 
     # show_images([image,image_binary,thin],["Original","Binary","Thin"])        
     return thin
+
+
+def direction(x1,y1,x2,y2):
+    """
+    x1,y1:point 1
+    x2,y2:point 2
+    return :vector x1y1-x2y2
+    """
+    return ((x2-x1,y2-y1))
+
+
+# print(direction(10,10,15,15))
+# print(direction(15,15,10,10))
+
+def calculateDistance(x1,y1,x2,y2):
+    """
+    Calculate the Euclidean distance between the two vectors x1,y1 and x2,y2.
+    return :Euclidean distance 
+    """
+    distance = math.sqrt((x2-x1)**2+(y2-y1)**2)
+    return distance

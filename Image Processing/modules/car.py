@@ -40,8 +40,9 @@ def car_on_line(x_car,y_car,lines_matrix,threshold=1):
     threshold : min sum to consider Car on line [With the uncommented part to make Region for the Car]
     """
     car_matrix=np.zeros(np.shape(lines_matrix),np.uint8)
+    # print(np.shape(car_matrix))
 
-    car_matrix[x_car,y_car]=1
+    car_matrix[y_car,x_car]=1
 
     # # Out of Range Error :(
     # if(x_car-10<0):
@@ -57,16 +58,26 @@ def car_on_line(x_car,y_car,lines_matrix,threshold=1):
     # car_matrix[x_car-10:x_car+10,y_car-10:y_car+10]=1
 
     # line_car=lines_matrix*car_matrix
+    # FIXME: Take Car that It is Assumed no of lines max 255
     line_car=np.bitwise_and(lines_matrix,car_matrix)
+    # Convert to Binary to Count no of Points where there is an intersection
+    line_car=line_car>0
     # print(np.max(line_car))
     # print(np.shape(line_car))
 
     if(globals.debug):
-        show_images([car_matrix,lines_matrix],["car_matrix","line_matrix"])
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(10,10))
+        print("line_car",1*line_car)
+        Dilate = cv2.dilate(np.copy(1*line_car).astype('uint8') ,kernel)
+        show_images([car_matrix,lines_matrix],["car_matrix","line_matrix"],windowTitle="car_on_line",BGR=False)
+        show_images([Dilate],["line_car"],windowTitle="car_on_line",BGR=False)
 
     if(np.sum(line_car)>=threshold):
         # On Line
-        return True
+        # Color of this Line
+        # print("Index",lines_matrix[line_car==1])
+        line_index=255-lines_matrix[line_car==1] # 255 means line 1
+        return True,line_index
     else:
         # Not on Line
-        return False
+        return False,-1

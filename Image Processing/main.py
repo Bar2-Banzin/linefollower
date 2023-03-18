@@ -24,7 +24,13 @@ if (globals.test):
 track_img = cv2.imread('./assets/track/1.png')
 
 # Scanning Track Initially
-wrapped,track=scan_track(track_img,thickness=20)
+wrapped,track,start_end_points=scan_track(track_img,thickness=20)
+
+# print("start_end_points",start_end_points)
+# print("Shape",np.shape(start_end_points))
+# print("Pt1",start_end_points[0])
+# print(track)
+# print(np.shape(track))
 
 if(not wrapped):
    print("Failed to Extract Paper 😢 ")
@@ -48,12 +54,15 @@ if(not wrapped):
 #     print("Failed to Find Car 😯")
 #     sys.exit(-1)
 
-
 # Car on Line
-x_car=50
-y_car=50
-on_line=car_on_line(x_car,y_car,track,threshold=1)# Threshold of sum of & to consider car on line
+x_car=20
+y_car=700
+draw_car(np.zeros((np.shape(track))),x_car,y_car)
+draw_car(track,x_car,y_car)
+
+on_line,line_index=car_on_line(x_car,y_car,track,threshold=1)# Threshold of sum of & to consider car on line
 if(on_line):
+    print("Car is on line ",line_index,start_end_points[line_index])
     print("Car is on a straight line")
 else:
     print("Car is not on a straight line")
