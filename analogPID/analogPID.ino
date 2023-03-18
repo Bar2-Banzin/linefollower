@@ -9,19 +9,17 @@
 #define IN4 8
 #define speedR 10
 
-int P, D, I, previousError, PIDvalue, error;
+int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 95;
+int lfspeed = 150;
 
 float Kp = 0;
 float Kd = 0;
-float Ki = 0;
 
 void setup()
 {
-  Kp = 0.055;
-  Ki = 0;
-  Kd = 0;
+  Kp = 0.110;
+  Kd = 0.060;
   DDRC &= ~(0x1F);
   previousError = 0;
   pinMode(speedL, OUTPUT);
@@ -51,10 +49,9 @@ void linefollow()
   int error = (analogRead(18)+analogRead(17)) - (analogRead(15) + analogRead(14));
 
   P = error;
-  I = I + error;
   D = error - previousError;
 
-  PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
+  PIDvalue = (Kp * P) + (Kd * D);
   // Serial.print("P = ");
   // Serial.println(P);
   // Serial.print("I = ");
