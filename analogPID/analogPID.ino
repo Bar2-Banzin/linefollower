@@ -2,12 +2,12 @@
  Sample Line Following Code for the Robojunkies LF-2 robot
 */
 
-#define speedL 10
-#define IN1 9
-#define IN2 8
-#define IN3 7
-#define IN4 6
-#define speedR 5 
+#define speedL 5
+#define IN1 7
+#define IN2 6
+#define IN3 9
+#define IN4 8
+#define speedR 10
 
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
@@ -19,7 +19,9 @@ float Ki = 0;
 
 void setup()
 {
-  Serial.begin(9600);
+  Kp = 0.03;
+  Ki = 0;
+  Kd = 0;
   DDRC &= ~(0x1F);
   pinMode(speedL, OUTPUT);
   pinMode(IN1, OUTPUT);
@@ -37,21 +39,15 @@ void setup()
 
 void loop()
 {
-  int x = analogRead(16);
+  //int x = analogRead(16);
   // Serial.print("Mid sensor: ");
   // Serial.println(x);
-  Kp = 0.0428;
-  Ki = 0;
-  Kd = 0.05564;
   linefollow();
-  //delay(10);
 }
 
 void linefollow()
 {
-  int error = (analogRead(17)+analogRead(18) - analogRead(15) - analogRead(14));
-  Serial.print("Error = ");
-  Serial.println(error);
+  int error = (analogRead(18)+analogRead(17)) - (analogRead(15) + analogRead(14));
 
   P = error;
   I = I + error;
@@ -68,20 +64,20 @@ void linefollow()
   // Serial.println(PIDvalue);
   previousError = error;
 
-  lsp = lfspeed - PIDvalue;
-  rsp = lfspeed + PIDvalue;
+  lsp = lfspeed + PIDvalue;
+  rsp = lfspeed - PIDvalue;
 
-  if (lsp > 100) {
-    lsp = 100;
+  if (lsp > 255) {
+    lsp = 255;
   }
-  if (lsp < 55) {
-    lsp = 15;
+  if (lsp < 0) {
+    lsp = 0;
   }
-  if (rsp > 100) {
-    rsp = 100;
+  if (rsp > 255) {
+    rsp = 255;
   }
-  if (rsp < 55) {
-    rsp = 15;
+  if (rsp < 0) {
+    rsp = 0;
   }
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
