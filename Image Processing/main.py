@@ -3,7 +3,7 @@ import globals
 from tests import *
 
 from modules.ScanTrack import scan_track
-from modules.car import find_car,car_on_line
+from modules.car import find_car, car_on_line
 
 # track = cv2.imread('./assets/track/0.png')
 # show_images([track],["Track 0"])
@@ -24,7 +24,7 @@ if (globals.test):
 track_img = cv2.imread('./assets/track/1.png')
 
 # Scanning Track Initially
-wrapped,track,start_end_points=scan_track(track_img,thickness=20)
+wrapped, track, start_end_points = scan_track(track_img, thickness=20)
 
 # print("start_end_points",start_end_points)
 # print("Shape",np.shape(start_end_points))
@@ -32,9 +32,9 @@ wrapped,track,start_end_points=scan_track(track_img,thickness=20)
 # print(track)
 # print(np.shape(track))
 
-if(not wrapped):
-   print("Failed to Extract Paper 😢 ")
-   sys.exit(-1)
+if (not wrapped):
+    print("Failed to Extract Paper 😢 ")
+    sys.exit(-1)
 
 
 # while(1):
@@ -46,29 +46,32 @@ if(not wrapped):
     #    print("Failed to Find Car 😯")
     #    sys.exit(-1)
 
-# # Find Car on Track
-# # Read an Car on Track Image
-# image = cv2.imread('./assets/ontrack/1.png')
-# x_car,y_car,car_found=find_car(image,front_color=[185,68,74],back_color=[76,116,142])
-# if(not car_found):
-#     print("Failed to Find Car 😯")
-#     sys.exit(-1)
+# Find Car on Track
+# Read an Car on Track Image
+image = cv2.imread('./assets/ontrack/1.png')
+x_car, y_car, car_found = find_car(
+    image, front_color=[185, 68, 74], back_color=[76, 116, 142])
+if (not car_found):
+    print("Failed to Find Car 😯")
+    sys.exit(-1)
+
 
 # Car on Line
-x_car=20
-y_car=700
-draw_car(np.zeros((np.shape(track))),x_car,y_car)
-draw_car(track,x_car,y_car)
+x_car = 20
+y_car = 700
+draw_car(np.zeros((np.shape(track))), x_car, y_car)
+draw_car(track, x_car, y_car)
 
-on_line,line_index=car_on_line(x_car,y_car,track,threshold=1)# Threshold of sum of & to consider car on line
-if(on_line):
-    print("Car is on line ",line_index,start_end_points[line_index])
+# Threshold of sum of & to consider car on line
+on_line, line_index = car_on_line(x_car, y_car, track, threshold=1)
+if (on_line):
+    print("Car is on line ", line_index, start_end_points[line_index])
     print("Car is on a straight line")
 else:
     print("Car is not on a straight line")
 
 ###############################################################################################
-##################################################Tests#########################################
+################################################## Tests#########################################
 ###############################################################################################
 # test_car_color('./assets/colorgradient/3.jpeg', [0, 255, 0])
 # test_car_color('./assets/colorgradient/4.jpeg', [0, 0, 225])
