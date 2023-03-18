@@ -11,7 +11,7 @@
 
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 70;
+int lfspeed = 95;
 
 float Kp = 0;
 float Kd = 0;
@@ -19,10 +19,11 @@ float Ki = 0;
 
 void setup()
 {
-  Kp = 0.03;
+  Kp = 0.055;
   Ki = 0;
   Kd = 0;
   DDRC &= ~(0x1F);
+  previousError = 0;
   pinMode(speedL, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
