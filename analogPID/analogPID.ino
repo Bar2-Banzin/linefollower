@@ -11,14 +11,14 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 170;
+int lfspeed = 200;
 
 float Kp = 0;
 float Kd = 0;
 
 void setup()
 {
-  Kp = 0.150;
+  Kp = 0.240;
   Kd = 0.040;
   DDRC &= ~(0x1F);
   previousError = 0;
