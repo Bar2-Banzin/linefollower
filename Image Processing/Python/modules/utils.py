@@ -122,7 +122,7 @@ def draw_contour(img, contour, color=(0, 255, 0), thickness=10):
     return contour_img
 
 
-def min_rectangle(image,contour,color=[255,0,0],thickness=10):
+def min_rectangle(image, contour, color=[255, 0, 0], thickness=10):
     ''''
     Get center of min rectangle around given contour
     Arguments:
@@ -131,15 +131,14 @@ def min_rectangle(image,contour,color=[255,0,0],thickness=10):
     Returns: center of rectangle
     Can Return Dimensions of Rect and angle of Rotation
     '''
-    rectangle_image=np.copy(image)
+    rectangle_image = np.copy(image)
 
     # Min Rectangle
     rect = cv2.minAreaRect(contour)
     box = cv2.boxPoints(rect)
     box = np.int0(box)
-    if(globals.test):
-        cv2.drawContours(rectangle_image,[box],0,color,thickness)
-
+    if (globals.test):
+        cv2.drawContours(rectangle_image, [box], 0, color, thickness)
 
     # Center and angle of rotation of Rectangle
     ((x, y), (width, height), angle_of_rotation) = cv2.minAreaRect(box)
@@ -166,7 +165,8 @@ def color_range(color):
 
     return lower_range, upper_range
 
-def color_mask(image,color):
+
+def color_mask(image, color):
     ''''
     Mask RGB image color in the specific range passed
     Arguments:
@@ -177,8 +177,8 @@ def color_mask(image,color):
     '''
 
     # Get Upper and Lower Range of Color
-    lower_range,upper_range=color_range(color)
-   
+    lower_range, upper_range = color_range(color)
+
     # Convert RGB image to HSV
     image_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
@@ -186,12 +186,13 @@ def color_mask(image,color):
     mask = cv2.inRange(image_hsv, lower_range, upper_range)
 
     # Apply mask on result
-    result=np.copy(image)
-    masked_img= cv2.bitwise_and(result, result, mask=mask)
+    result = np.copy(image)
+    masked_img = cv2.bitwise_and(result, result, mask=mask)
 
-    return mask,masked_img
+    return mask, masked_img
 
-def color_center(image,color):
+
+def color_center(image, color):
     ''''
     Get Center and Draw Rectangle Around Largest Contour of a given Color
     Arguments:
@@ -201,49 +202,50 @@ def color_center(image,color):
     Call: mask,masked_img = color_center(image,color=[255,0,0]),error flag if color not found
     '''
     # Get Mask
-    mask,masked_img=color_mask(image,color)    
+    mask, masked_img = color_mask(image, color)
 
     # Mask Contours
-    contours, hierarchy = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(
+        mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Biggest Contour
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
-    
-    if(np.shape(contours)[0]<=0):
-        return -1,-1,False
-    x,y=min_rectangle(image,contours[0])
-    
-    return x,y,True
+
+    if (np.shape(contours)[0] <= 0):
+        return -1, -1, False
+    x, y = min_rectangle(image, contours[0])
+
+    return x, y, True
 
 
-def skeleton(image,RGB=False):
+def skeleton(image, RGB=False):
     """{To be Tested Later}
     image: RGB or Gray Scale Image[According to RGB Flag]
     RGB: Flag to show if passed image is RGB or Gray  (default = Gray)
-    """ 
-    image_gray=np.copy(image)
+    """
+    image_gray = np.copy(image)
 
-    if(RGB):
+    if (RGB):
         image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
     size = np.size(image)
-    skeleton = np.zeros(image_gray.shape,np.uint8)
+    skeleton = np.zeros(image_gray.shape, np.uint8)
 
     # Threshold to Binary Image
-    ret,image_binary= cv2.threshold(image_gray,127,255,0)
+    ret, image_binary = cv2.threshold(image_gray, 127, 255, 0)
 
     # Structure Element
-    element = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    element = cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 3))
     done = False
 
-    while( not done):
-        eroded = cv2.erode(image_binary,element)
-        temp = cv2.dilate(eroded,element)
-        temp = cv2.subtract(image_binary,temp)
-        skeleton = cv2.bitwise_or(skeleton,temp)
+    while (not done):
+        eroded = cv2.erode(image_binary, element)
+        temp = cv2.dilate(eroded, element)
+        temp = cv2.subtract(image_binary, temp)
+        skeleton = cv2.bitwise_or(skeleton, temp)
         image_binary = eroded.copy()
 
         zeros = size - cv2.countNonZero(image_binary)
-        if zeros==size:
+        if zeros == size:
             done = True
 
     # show_images([image,image_gray,image_binary],["Original","Gray","Binary"])
@@ -258,47 +260,47 @@ def thin(image):
     Returns: thinned Binary Image
     """
     # Convert to Binary
-    ret,image_binary= cv2.threshold(image,127,255,0)
+    ret, image_binary = cv2.threshold(image, 127, 255, 0)
 
     # line is white
-    image_binary=np.bitwise_not(image_binary)
+    image_binary = np.bitwise_not(image_binary)
 
     # Structuring Element
-    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 3))
+    print(kernel)
     # Create an empty output image to hold values
-    thin = np.zeros(np.shape(image_binary),dtype='uint8')
+    thin = np.zeros(np.shape(image_binary), dtype='uint8')
 
     # Loop until erosion leads to an empty set
-    while (cv2.countNonZero(image_binary)!=0):
+    while (cv2.countNonZero(image_binary) != 0):
         # Erosion
-        erode = cv2.erode(image_binary,kernel)
+        erode = cv2.erode(image_binary, kernel)
         # Opening on eroded image
-        opening = cv2.morphologyEx(erode,cv2.MORPH_OPEN,kernel)
+        opening = cv2.morphologyEx(erode, cv2.MORPH_OPEN, kernel)
         # Subtract these two
         subset = erode - opening
         # Union of all previous sets
-        thin = cv2.bitwise_or(subset,thin)
+        thin = cv2.bitwise_or(subset, thin)
         # Set the eroded image for next iteration
         image_binary = erode.copy()
 
-
-    # show_images([image,image_binary,thin],["Original","Binary","Thin"])        
+    # show_images([image,image_binary,thin],["Original","Binary","Thin"])
     return thin
 
 
-def direction(x1,y1,x2,y2):
+def direction(x1, y1, x2, y2):
     """
     x1,y1:point 1
     x2,y2:point 2
     return :vector x1y1-x2y2
     """
-    return ((x2-x1,y2-y1))
+    return ((x2-x1, y2-y1))
 
 
 # print(direction(10,10,15,15))
 # print(direction(15,15,10,10))
 
-def calculateDistance(x1,y1,x2,y2):
+def calculateDistance(x1, y1, x2, y2):
     """
     Calculate the Euclidean distance between the two vectors x1,y1 and x2,y2.
     return :Euclidean distance 

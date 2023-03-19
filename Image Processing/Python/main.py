@@ -2,6 +2,8 @@ import sys
 import globals
 from tests import *
 
+from modules.utils import *
+
 from modules.ScanTrack import scan_track
 from modules.car import find_car, car_on_line
 
@@ -15,14 +17,14 @@ globals.debug_code(True)
 globals.test_code(False)
 
 
-if (globals.test):
-    test_color_mask()
+# if (globals.test):
+#     test_color_mask()
 
 
 # Scan Track()
 # Read Track Image
 track_img = cv2.imread('./assets/track/1.png')
-
+show_images([track_img])
 # Scanning Track Initially
 wrapped, track, start_end_points = scan_track(track_img, thickness=20)
 
@@ -32,9 +34,9 @@ wrapped, track, start_end_points = scan_track(track_img, thickness=20)
 # print(track)
 # print(np.shape(track))
 
-if (not wrapped):
-    print("Failed to Extract Paper 😢 ")
-    sys.exit(-1)
+# if (not wrapped):
+#     print("Failed to Extract Paper 😢 ")
+#     sys.exit(-1)
 
 
 # while(1):
@@ -49,7 +51,7 @@ if (not wrapped):
 # Find Car on Track
 # Read an Car on Track Image
 image = cv2.imread('./assets/ontrack/1.png')
-x_car, y_car, car_found = find_car(
+x_car, y_car,x_front,y_front,x_back,y_back, car_found = find_car(
     image, front_color=[185, 68, 74], back_color=[76, 116, 142])
 if (not car_found):
     print("Failed to Find Car 😯")

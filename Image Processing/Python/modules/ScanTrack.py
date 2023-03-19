@@ -2,20 +2,22 @@ import globals
 
 from modules.utils import *
 from modules.PaperExtractor import ExtractPaper
-def scan_track(image,thickness=20):
+def scan_track(track_image,thickness=20):
     '''
     track_image: BGR Track Image
     thickness:Thickness of the wite line Drawn :)
     return: Matrix of size = Image size and lines Detected are 1's
     '''
-    # # 1.Extract Track Paper From the Image
+    # 1.Extract Track Paper From the Image
     # paper_img,wrapped=ExtractPaper(track_image)
 
     # if(not wrapped):
     #     return False,None,None
     
     # 2.Detect Straight Lines in the Track
-    paper_img=image # Temp till we have paper_img returned Correctly
+    # Temp :( till extract Paper is done
+    # Convert to RGB Scale
+    paper_img = cv2.cvtColor(track_image, cv2.COLOR_BGR2RGB)
     image_lines,start_end_points=extract_lines(paper_img,thickness=thickness)
     return True,image_lines,start_end_points
 
@@ -53,6 +55,7 @@ def extract_lines(image,rho = 1,theta = 1*np.pi/180,threshold = 100,minLineLengt
     # 0<=rho<Rmax
     lines = cv2.HoughLinesP(edges,rho =rho,theta = theta,threshold = threshold,minLineLength = minLineLength,maxLineGap = maxLineGap)
     print("Hough Lines Detected",np.shape(lines))
+    print(lines)
 
     # Draw lines on the image
     image_lines=np.zeros(np.shape(image)) # Inverted image
