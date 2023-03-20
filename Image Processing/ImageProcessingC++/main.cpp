@@ -53,15 +53,17 @@ int main(int argc, char** argv)
 	//}
 
 	/************************************************************************************************/
-	////Step(3) Is Car on a straight line
-	//bool on_line;
-	//int line_index;
-	//car_on_line(on_line, line_index, x_center, y_center, image_lines);
-	//if (!on_line) {
-	//	cout << "Car isn't on a straight line" << endl;
-	//	return 0;
-	//}
-	//cout << "Car is on a straight line" << endl;
+	//Step(3) Is Car on a straight line
+	int x_center = 20;
+	int y_center = 700;
+	bool on_line;
+	int line_index;
+	car_on_line(on_line, line_index, x_center, y_center, image_lines);
+	if (!on_line) {
+		cout << "Car isn't on a straight line" << endl;
+		return 0;
+	}
+	cout << "Car is on a straight line" << endl;
 
 	/************************************************************************************************/
 	//Step(4) Inc or Dec Speed

@@ -21,12 +21,12 @@ globals.test_code(False)
 #     test_color_mask()
 
 
-# Scan Track()
-# Read Track Image
-track_img = cv2.imread('./assets/track/1.png')
-show_images([track_img])
-# Scanning Track Initially
-wrapped, track, start_end_points = scan_track(track_img, thickness=20)
+# # Scan Track()
+# # Read Track Image
+# track_img = cv2.imread('./assets/track/1.png')
+# show_images([track_img])
+# # Scanning Track Initially
+# wrapped, track, start_end_points = scan_track(track_img, thickness=20)
 
 # print("start_end_points",start_end_points)
 # print("Shape",np.shape(start_end_points))
@@ -52,7 +52,7 @@ wrapped, track, start_end_points = scan_track(track_img, thickness=20)
 # Read an Car on Track Image
 image = cv2.imread('./assets/ontrack/1.png')
 x_car, y_car,x_front,y_front,x_back,y_back, car_found = find_car(
-    image, front_color=[185, 68, 74], back_color=[76, 116, 142])
+    image, front_color=[255, 0, 0], back_color=[0, 255, 0])
 if (not car_found):
     print("Failed to Find Car 😯")
     sys.exit(-1)
