@@ -1,8 +1,8 @@
-# include"utils.h"
+﻿# include"utils.h"
 # include "ScanTrack.h";
 
 //Basma :Not sure of Data Type of front_color- back_color check
-void find_car(bool & car_found,int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Mat image, Vec3b front_color, Vec3b back_color){
+bool find_car(int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Mat image, Scalar front_color, Scalar back_color){
 	/**
 	* This function is used to find car in the picture
 	* 
@@ -15,6 +15,28 @@ void find_car(bool & car_found,int &x_center,int &y_center,int &x_f,int &y_f,int
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
 	*/
+
+	//Detect front of the car
+	//image isn't modified here 😊
+	bool found;
+	found = color_center(x_f, y_f, image, front_color);
+	if (!found) {
+		cout << "find_car():Couldn't find front of the car" << endl;
+		return false;
+	}
+
+	//Detect back of the car
+	//image isn't modified here 😊
+	found = color_center(x_b, y_b, image, back_color);
+	if (!found) {
+		cout << "find_car():Couldn't find back of the car" << endl;
+		return false;
+	}
+
+	//Car Center
+	x_center = (x_f+x_b) / 2;
+	x_center = (y_f+y_b) / 2;
+	return true;
 }
 
 void car_on_line(bool& on_line, int& line_index ,int x_car, int y_car, Mat lines_matrix, int threshold) {

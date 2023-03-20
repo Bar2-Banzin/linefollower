@@ -58,19 +58,19 @@ if (not car_found):
     sys.exit(-1)
 
 
-# Car on Line
-x_car = 20
-y_car = 700
-draw_car(np.zeros((np.shape(track))), x_car, y_car)
-draw_car(track, x_car, y_car)
+# # Car on Line
+# x_car = 20
+# y_car = 700
+# draw_car(np.zeros((np.shape(track))), x_car, y_car)
+# draw_car(track, x_car, y_car)
 
-# Threshold of sum of & to consider car on line
-on_line, line_index = car_on_line(x_car, y_car, track, threshold=1)
-if (on_line):
-    print("Car is on line ", line_index, start_end_points[line_index])
-    print("Car is on a straight line")
-else:
-    print("Car is not on a straight line")
+# # Threshold of sum of & to consider car on line
+# on_line, line_index = car_on_line(x_car, y_car, track, threshold=1)
+# if (on_line):
+#     print("Car is on line ", line_index, start_end_points[line_index])
+#     print("Car is on a straight line")
+# else:
+#     print("Car is not on a straight line")
 
 ###############################################################################################
 ################################################## Tests#########################################

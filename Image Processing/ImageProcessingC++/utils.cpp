@@ -50,7 +50,7 @@ Mat thin_image(Mat image) {
 
 
 //Basma: not sure about type if color 
-void color_center(bool&found ,int& x,int &y,Mat image, Vec3b color) {
+bool color_center(int& x,int &y,Mat image, Scalar color) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
 	* 
@@ -61,7 +61,146 @@ void color_center(bool&found ,int& x,int &y,Mat image, Vec3b color) {
 	* @param color : RGB color i.e[0, 255, 0]
 	*/
 
+	//Get Color Mask
+	Mat mask,masked_image;
+	bool accepted = color_mask(mask,masked_image,image,color);
+	if (!accepted)
+		return false;
+
+	//Find Mask Contours
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+	findContours(mask, contours, hierarchy, RETR_LIST,CHAIN_APPROX_SIMPLE);
+
+	if (contours.size() <= 0) {
+		cout << "color_center(): Couldn't find contours of color_range passed" << endl;
+		x = -1;
+		y = -1;
+		return false;
+	}
+
+	//Sort contours
+	std::sort(contours.begin(), contours.end(), compareContourAreas);
+
+	//Grab contours [Biggest and Smallest]
+	vector<Point> biggestContour = contours[contours.size() - 1];
+	//std::vector<cv::Point> smallestContour = contours[0];
+
+
+	//Caution:This Modifies on image  It Draws on it :D
+	min_rectangle(image,x,y, biggestContour,color,10,true);
+
+	//Show image is Here (image)
+	return true;
 }
+
+
+bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
+	/**
+	* Get Center and Draw Rectangle Around Largest Contour of a given Color
+	*
+	* @param mask Binary Image with 1's are is are with color passed
+	* @param masked_img RGB Image with mask applied on it (image passed)
+	*
+	* @param image: RGB image
+	* @param color : RGB color i.e[0, 255, 0] to be masked
+	* 
+	* @return bool if Error in Geeting Range of Color
+	*/
+
+	//Get Color Mask
+	Scalar lower_range, upper_range;
+	bool accepted =color_range(lower_range, upper_range, color);
+	if (!accepted) {
+		return false;
+	}
+
+	//Convert RGB image to HSV
+	Mat image_hsv;
+	cvtColor(image, image_hsv, COLOR_RGB2HSV);
+
+	inRange(image_hsv, lower_range, upper_range, mask);
+
+	//Check If This is Required
+	image.copyTo(masked_image, mask);
+
+	return true;
+}
+
+
+bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
+	/**
+	* Gets Upper & Lower HSV Range of the RGB color
+	*
+	* @param lower_range Hue lower range for color
+	* @param upper_range Hue upper range for color
+	*
+	* @param color : RGB color i.e[0, 255, 0] to be masked
+	* 
+	* @return bool if Error in getting Hue Value
+	*/
+
+	Mat hsv(1, 1, CV_8UC3, color);
+	cvtColor(hsv, hsv, COLOR_RGB2HSV);
+
+	int Hue = hsv.at<Vec3b>(0, 0)[0];
+
+	if (Hue < 10 || Hue >255 - 10) {
+		cout << "Error in Getting Range of Color" << endl;
+		return false;
+	}
+	lower_range = Scalar(Hue - 10, 100, 100);
+	upper_range = Scalar(Hue + 10, 255, 255);
+
+	return true;
+}
+
+void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color, int thickness,bool draw) {
+	/**
+	* Get center of min rectangle around given contour
+	*
+	* @param center of rectangle
+	* @param Can Return Dimensions of Rect and angle of Rotation [Need TO be Passed only :D]
+	*
+	* @param image : RGB image to Draw on it Rectangle
+	* @param contour :  4 point contour
+	* @param color color of Rectangle to be Drawn
+	* @param thickness thickness of Rectangle to be Drawn
+	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
+	*/
+
+	//Min area of Rectangle 
+	RotatedRect rect = minAreaRect(contour);
+
+	//Get Points forming this Rectangle
+	vector<Point2f> boxPts;
+	boxPoints(rect, boxPts);
+
+
+	//draw the Recatngle
+	if (draw) {
+		//Convert from float to int
+		vector<Point2i> points;
+		Mat(boxPts).convertTo(points, Mat(points).type());
+		drawContours(image, points, 0, color, thickness);
+	}
+
+	//Center and angle of rotation of Rectangle
+	Point2f center = rect.center;
+	x = center.x;
+	y = center.y;
+
+	//Dimensions of the Rectangle 
+	//int width = (int)(rect.size.width);
+	//int height = (int)(rect.size.height);
+
+	//Angle of Rotation
+	//float angle_of_rotation = rect.angle;
+	return;
+}
+
+
+
 
 Vec2i direction(int x1, int y1, int x2, int y2) {
 	/**
@@ -87,4 +226,12 @@ float calculateDistance(int x1, int y1, int x2, int y2) {
 	* @return vector x1y1 - x2y2
 	*/
 	return ((x2 - x1, y2 - y1));
+}
+
+
+//Comparison function object
+bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
+	double i = fabs(contourArea(Mat(contour1)));
+	double j = fabs(contourArea(Mat(contour2)));
+	return (i < j);
 }

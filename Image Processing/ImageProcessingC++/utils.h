@@ -10,9 +10,18 @@ using namespace cv;
 using namespace std;
 
 Mat thin_image(Mat image);
-void color_center(bool& found, int& x, int& y, Mat image, Vec3b color);
+
+bool color_center(int& x, int& y, Mat image, Scalar color);
+bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color);
+bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
+
+//Distance and Direction
+void  min_rectangle(Mat& image, int& x, int& y, vector<Point> contour, Scalar color = Scalar(255, 0, 0), int thickness = 10, bool draw = false);
 Vec2i direction(int x1, int y1, int x2, int y2);
 float calculateDistance(int x1, int y1, int x2, int y2);
+
+//Contour
+bool compareContourAreas(vector<Point> contour1, vector<Point> contour2);
 
 #endif
 

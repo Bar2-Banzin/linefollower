@@ -13,39 +13,40 @@ int main(int argc, char** argv)
 {
 
 	/*************************************************************************************************/
-	//Step(1) Scan Track 
-	//1.Read Track Image
-	std::string path = "./assets/track/1.png";
-	Mat image = imread(path, 1); //Reading from a path
+	////Step(1) Scan Track 
+	////1.Read Track Image
+	//std::string path = "./assets/track/1.png";
+	//Mat image = imread(path, 1); //Reading from a path
 
-	//cout << "Size" << typeid(image.size()).name() << endl;
-	//imshow("Original Track main.cpp", image);
-	//waitKey(0);
+	////cout << "Size" << typeid(image.size()).name() << endl;
+	////imshow("Original Track main.cpp", image);
+	////waitKey(0);
 
-	//2.Scanning Track Initially
-	bool wrapped;
-	Mat image_lines;
-	vector<Vec4i>start_end_points;
-	scan_track(wrapped, image_lines, start_end_points, image);
+	////2.Scanning Track Initially
+	//bool wrapped;
+	//Mat image_lines;
+	//vector<Vec4i>start_end_points;
+	//scan_track(wrapped, image_lines, start_end_points, image);
 
-	if (!wrapped) {
-		cout << "Failed To Scan Track" << endl;
-		return -1;
-	}
+	//if (!wrapped) {
+	//	cout << "Failed To Scan Track" << endl;
+	//	return -1;
+	//}
 	/************************************************************************************************/
 	////Step(2) Find Car on Track
 	////1.Read an Car on Track Image
 	//std::string path = "./assets/ontrack/1.png";
 	//Mat car_image = imread(path, 1); //Reading from a path
 
-	////cout << "Size" << typeid(image.size()).name() << endl;
-	////imshow("Original Track main.cpp", image);
+	////cout << "size" << typeid(image.size()).name() << endl;
+	////imshow("Original Car main.cpp", image);
 	////waitKey(0);
+	// 
 	//bool car_found;
 	//int x_center, y_center, x_f, y_f, x_b, y_b;
-	//Vec3b front_color;//Basma init this
-	//Vec3b back_color;//Basma: init this
-	//find_car(car_found, x_center,y_center,x_f,y_f, x_b, y_b, car_image, front_color,back_color);
+	//Scalar front_color(255,0,0);//Red
+	//Scalar back_color(0, 255, 0);//Green
+	//car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	//if (!car_found) {
 	//	cout << "Failed to Find Car 😟" << endl;
@@ -53,17 +54,17 @@ int main(int argc, char** argv)
 	//}
 
 	/************************************************************************************************/
-	//Step(3) Is Car on a straight line
-	int x_center = 20;
-	int y_center = 700;
-	bool on_line;
-	int line_index;
-	car_on_line(on_line, line_index, x_center, y_center, image_lines);
-	if (!on_line) {
-		cout << "Car isn't on a straight line" << endl;
-		return 0;
-	}
-	cout << "Car is on a straight line" << endl;
+	////Step(3) Is Car on a straight line
+	//int x_center = 20;
+	//int y_center = 700;
+	//bool on_line;
+	//int line_index;
+	//car_on_line(on_line, line_index, x_center, y_center, image_lines);
+	//if (!on_line) {
+	//	cout << "Car isn't on a straight line" << endl;
+	//	return 0;
+	//}
+	//cout << "Car is on a straight line" << endl;
 
 	/************************************************************************************************/
 	//Step(4) Inc or Dec Speed
