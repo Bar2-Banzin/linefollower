@@ -15,23 +15,38 @@ int main(int argc, char** argv)
 	/*************************************************************************************************/
 	////Step(1) Scan Track 
 	////1.Read Track Image
-	//std::string path = "./assets/track/1.png";
-	//Mat image = imread(path, 1); //Reading from a path
+	std::string path = "./assets/track/1.png";
+	Mat image = imread(path, 1); //Reading from a path
 
-	////cout << "Size" << typeid(image.size()).name() << endl;
-	////imshow("Original Track main.cpp", image);
-	////waitKey(0);
+	//cout << "Size" << typeid(image.size()).name() << endl;
+	//imshow("Original Track main.cpp", image);
+	//waitKey(0);
 
-	////2.Scanning Track Initially
-	//bool wrapped;
-	//Mat image_lines;
-	//vector<Vec4i>start_end_points;
-	//scan_track(wrapped, image_lines, start_end_points, image);
+	//2.Scanning Track Initially
+	bool wrapped;
+	Mat image_lines;
+	vector<Vec4i>start_end_points;
+	scan_track(wrapped, image_lines, start_end_points, image);
 
-	//if (!wrapped) {
-	//	cout << "Failed To Scan Track" << endl;
-	//	return -1;
-	//}
+	if (!wrapped) {
+		cout << "Failed To Scan Track" << endl;
+		return -1;
+	}
+	//Test Only
+	bool inc_speed = false;
+	int dist_threshold =400;
+	int x_f=50, y_f=200, x_b=50, y_b=250;
+	Vec4i lineto = start_end_points[1];
+	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	imshow("Original Track main.cpp", image);
+	waitKey(0);
+	inc_speed =increase_decrease_speed( x_f, y_f, x_b, y_b, lineto, dist_threshold);
+
+	if (!inc_speed) {
+		cout << "Don't Inc Speed of the Car" << endl;
+		return 0;
+	}
+	cout << "Inc Speed of the Car" << endl;
 	/************************************************************************************************/
 	////Step(2) Find Car on Track
 	////1.Read an Car on Track Image
