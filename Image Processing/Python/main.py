@@ -16,6 +16,8 @@ from modules.car import find_car, car_on_line
 globals.debug_code(True)
 globals.test_code(False)
 
+print(reorderPoints(np.array((5,5),(0,5),(5,0),(0,0))))
+
 
 # if (globals.test):
 #     test_color_mask()

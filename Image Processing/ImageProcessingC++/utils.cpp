@@ -49,7 +49,6 @@ Mat thin_image(Mat image) {
 }
 
 
-//Basma: not sure about type if color 
 bool color_center(int& x,int &y,Mat image, Scalar color) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
@@ -64,6 +63,13 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 	//Get Color Mask
 	Mat mask,masked_image;
 	bool accepted = color_mask(mask,masked_image,image,color);
+
+	//Apply Dialtion then Errosion on Mask to solve unconnected parts
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
+	morphologyEx(mask, mask, MORPH_CLOSE, kernel);
+
+	imshow("mask Color color_center()", mask);
+
 	if (!accepted)
 		return false;
 
@@ -79,12 +85,13 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 		return false;
 	}
 
-	//Sort contours
-	std::sort(contours.begin(), contours.end(), compareContourAreas);
+	drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
+	imshow("Contours for Mask color_center()", image);
 
-	//Grab contours [Biggest and Smallest]
-	vector<Point> biggestContour = contours[contours.size() - 1];
-	//std::vector<cv::Point> smallestContour = contours[0];
+	//Grab contours [Biggest]
+	vector<Point>biggestContour;
+	double max_area;
+	get_biggest_rectangular_contour(biggestContour, max_area, contours);
 
 
 	//Caution:This Modifies on image  It Draws on it :D
@@ -145,10 +152,10 @@ bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 
 	int Hue = hsv.at<Vec3b>(0, 0)[0];
 
-	if (Hue < 10 || Hue >255 - 10) {
-		cout << "Error in Getting Range of Color" << endl;
-		return false;
-	}
+	//if (Hue < 10 || Hue >255 - 10) {
+	//	cout << "Error in Getting Range of Color" << endl;
+	//	return false;
+	//}
 	lower_range = Scalar(Hue - 10, 100, 100);
 	upper_range = Scalar(Hue + 10, 255, 255);
 
@@ -172,16 +179,16 @@ void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color
 	//Min area of Rectangle 
 	RotatedRect rect = minAreaRect(contour);
 
-	//Get Points forming this Rectangle
-	vector<Point2f> boxPts;
-	boxPoints(rect, boxPts);
-
 
 	//draw the Recatngle
 	if (draw) {
+		//Get Points forming this Rectangle
+		Mat boxPts;
+		boxPoints(rect, boxPts);//Here Expection is Thrown don't know :(
+
 		//Convert from float to int
 		vector<Point2i> points;
-		Mat(boxPts).convertTo(points, Mat(points).type());
+		/*Mat(boxPts).convertTo(points, Mat(points).type());*/
 		drawContours(image, points, 0, color, thickness);
 	}
 
@@ -198,9 +205,6 @@ void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color
 	//float angle_of_rotation = rect.angle;
 	return;
 }
-
-
-
 
 Vec2i direction(int x1, int y1, int x2, int y2) {
 	/**
@@ -234,4 +238,75 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	double i = fabs(contourArea(Mat(contour1)));
 	double j = fabs(contourArea(Mat(contour2)));
 	return (i < j);
+}
+
+void get_biggest_rectangular_contour(vector<Point>& biggest_contour,double& max_area,vector<vector<Point>> contours) {
+	/**
+	* Get Biggest Rectangular Contour from the given contours
+	*
+	* @param biggest_contour: Biggest Rectangular Contour
+	* @param max_area: area of biggest_contour
+	*
+	* @param contour: contours to be sorted
+	*/
+
+	//Get Biggest Contour 
+	for (int i = 0;i < contours.size();i++) {
+		double area=contourArea(contours[i]);
+
+		//Approximate The Contour to the nearest Poly
+		double perimeter =arcLength(contours[i], true);
+		const double ratio = 0.02;
+		vector<Point>approx;
+		approxPolyDP(contours[i], approx, ratio * perimeter, true);
+
+		//If Greater than Max Aeaand it is a rectangle
+		if (area > max_area) {
+			max_area = area;
+			biggest_contour = approx;
+		}
+	}
+}
+
+vector<Point2f> reorderPoints(vector<Point>points) {
+	/**
+	* Reorder 4 Points in clockwise order, starting from top left
+	*
+	* @param points: vector of 4 points
+	*
+	* @return newPoints: ordered 4 points
+	*/
+
+	vector<int>sum(4);
+	vector<int>diff(4);
+	vector<Point2f>newPoints(4);
+
+	sum[0] = points[0].x + points[0].y;
+	sum[1] = points[1].x + points[1].y;
+	sum[2] = points[2].x + points[2].y;
+	sum[3] = points[3].x + points[3].y;
+
+	double min = *std::min_element(sum.begin(), sum.end());
+	double max = *std::max_element(sum.begin(), sum.end());
+
+	int argMin = std::distance(sum.begin(), std::min_element(sum.begin(), sum.end()));
+	int argMax = std::distance(sum.begin(), std::max_element(sum.begin(), sum.end()));
+
+	newPoints[0] = points[argMin];
+	newPoints[3] = points[argMax];
+
+	diff[0] = points[0].x - points[0].y;
+	diff[1] = points[1].x - points[1].y;
+	diff[2] = points[2].x - points[2].y;
+	diff[3] = points[3].x - points[3].y;
+
+	min = *std::min_element(diff.begin(), diff.end());
+	max = *std::max_element(diff.begin(), diff.end());
+	argMin = std::distance(diff.begin(), std::min_element(diff.begin(), diff.end()));
+	argMax = std::distance(diff.begin(), std::max_element(diff.begin(), diff.end()));
+
+	newPoints[2] = points[argMin];
+	newPoints[1] = points[argMax];
+
+	return newPoints;
 }

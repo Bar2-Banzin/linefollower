@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp> //Include OpenCV header file
+#include <algorithm>
 
 using namespace cv;
 using namespace std;
@@ -22,6 +23,7 @@ float calculateDistance(int x1, int y1, int x2, int y2);
 
 //Contour
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2);
-
+void get_biggest_rectangular_contour(vector<Point>& biggest_contour, double& max_area, vector<vector<Point>> contours);
+vector<Point2f> reorderPoints(vector<Point>points);
 #endif
 

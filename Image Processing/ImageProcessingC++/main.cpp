@@ -11,47 +11,42 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+	//Step(1) Scan Track 
+	//1.Read Track Image
+	std::string path = "./assets/track/1.png";
+	Mat image = imread(path, 1); //Reading from a path
 
-	/*************************************************************************************************/
-	////Step(1) Scan Track 
-	////1.Read Track Image
-	//std::string path = "./assets/track/1.png";
-	//Mat image = imread(path, 1); //Reading from a path
+	cout << "Size" << typeid(image.size()).name() << endl;
+	/*imshow("Original Track main.cpp", image);*/
 
-	////cout << "Size" << typeid(image.size()).name() << endl;
-	////imshow("Original Track main.cpp", image);
-	////waitKey(0);
+	//2.Scanning Track Initially
+	Mat image_lines;
+	vector<Vec4i>start_end_points;
+	bool wrapped=scan_track(image_lines, start_end_points, image);
 
-	////2.Scanning Track Initially
-	//bool wrapped;
-	//Mat image_lines;
-	//vector<Vec4i>start_end_points;
-	//scan_track(wrapped, image_lines, start_end_points, image);
-
-	//if (!wrapped) {
-	//	cout << "Failed To Scan Track" << endl;
-	//	return -1;
-	//}
+	if (!wrapped) {
+		cout << "Failed To Scan Track" << endl;
+		return -1;
+	}
 	/************************************************************************************************/
-	////Step(2) Find Car on Track
-	////1.Read an Car on Track Image
-	//std::string path = "./assets/ontrack/1.png";
-	//Mat car_image = imread(path, 1); //Reading from a path
+	//Step(2) Find Car on Track
+	//1.Read an Car on Track Image
+	std::string path2 = "./assets/ontrack/0.jpeg";
+	Mat car_image = imread(path2, 1); //Reading from a path
 
-	////cout << "size" << typeid(image.size()).name() << endl;
-	////imshow("Original Car main.cpp", image);
-	////waitKey(0);
-	// 
-	//bool car_found;
-	//int x_center, y_center, x_f, y_f, x_b, y_b;
-	//Scalar front_color(255,0,0);//Red
-	//Scalar back_color(0, 255, 0);//Green
-	//car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
+	//cout << "size" << typeid(image.size()).name() << endl;
+	//imshow("Original Car main.cpp", image);
+	 
+	bool car_found;
+	int x_center, y_center, x_f, y_f, x_b, y_b;
+	Scalar front_color(255,0,0);//Red
+	Scalar back_color(0, 255, 0);//Green
+	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
-	//if (!car_found) {
-	//	cout << "Failed to Find Car 😟" << endl;
-	//	return -1;
-	//}
+	if (!car_found) {
+		cout << "Failed to Find Car 😟" << endl;
+		return -1;
+	}
 
 	/************************************************************************************************/
 	////Step(3) Is Car on a straight line
@@ -71,13 +66,21 @@ int main(int argc, char** argv)
 	/*bool inc_speed;
 	int dist_threshold = 10;
 	Vec4b line = start_end_points[line_index];
-	increase_decrease_speed(inc_speed, x_f, y_f, x_b, y_b, line, dist_threshold);
+	//
+	*/
+	////Test Only
+	//bool inc_speed = false;
+	//int dist_threshold = 10;
+	//int x_f, y_f, x_b, y_b;
+	//Vec4b lineto = start_end_points[1];
+	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//increase_decrease_speed(inc_speed, x_f, y_f, x_b, y_b, lineto, dist_threshold);
 
-	if (!inc_speed) {
-		cout << "Don't Inc Speed of the Car" << endl;
-		return 0;
-	}
-	cout << "Inc Speed of the Car" << endl;*/
+	//if (!inc_speed) {
+	//	cout << "Don't Inc Speed of the Car" << endl;
+	//	return 0;
+	//}
+	//cout << "Inc Speed of the Car" << endl;
 
 	/**********************************************************************************************/
 	////--------- MATRIX DEFINITION
@@ -97,9 +100,9 @@ int main(int argc, char** argv)
 	//imshow("Display mat2", mat2);
 	//imshow("Display mat3", mat3);
 	//imshow("Display mat4", mat4);
-	//waitKey(0); //Wait for any key press = pause
+	waitKey(0); //Wait for any key press = pause
 
-	//destroyAllWindows(); //Close all windows
+	destroyAllWindows(); //Close all windows
 
 	return 0;
 }

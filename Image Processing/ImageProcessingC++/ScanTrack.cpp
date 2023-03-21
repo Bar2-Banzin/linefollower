@@ -2,7 +2,7 @@
 # include "ScanTrack.h";
 
 
-void scan_track(bool& wrapped, Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image) {
+bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
@@ -17,33 +17,124 @@ void scan_track(bool& wrapped, Mat& image_lines, vector<Vec4i>& start_end_points
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	extract_paper(wrapped, paper_img, track_image);
+	bool wrapped=extract_paper( paper_img, track_image,false);
 
-	//if (! wrapped) {
-	//	wrapped = false;	
-	//	return;
-	// }
+	if (! wrapped) {
+		return false;
+	 }
+
+	imshow("Wrapped Paper  scan_track()", paper_img);
+
+	//Temp Till Tomorrow
+	paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
 	extract_lines(image_lines, start_end_points, paper_img);
 
-	wrapped = true;
-	return;
+	imshow("image_lines scan_track()", image_lines);
+
+	return true;
 }
 
+struct str {
+	bool operator() (Point a, Point b) {
+		if (a.y != b.y)
+			return a.y < b.y;
+		return a.x <= b.x;
+	}
+} comp;
 
-void extract_paper(bool &wrapped, Mat &WarpedColoredImage, Mat img_BGR) {
+bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	/**
-	* Extract Paper out of the image
-
-	* @param Wrapped: Flag if True = Extraction is Done Sucessfully
-	* @param WarpedColoredImage: RGB wrapped Page
-
-	* @param img_BGR: BGR image
+	* extract paper out of the image
+	*
+	* @param img_bgr: bgr image
+	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
+	*
+	* @return boolean to determine wether paper is extracted sucessfully
 	*/
 
-	//Convert to RGB Scale
-	 cvtColor(img_BGR, WarpedColoredImage, COLOR_BGR2RGB);
+	//get image dimensions
+	int imgHeight = img_bgr.rows;
+	int imgWidth = img_bgr.cols;
+
+	//convert to rgb scale
+	Mat image_rgb;
+	cvtColor(img_bgr, image_rgb, COLOR_BGR2RGB);
+
+	//convert to gray scale
+	Mat image_gray;
+	cvtColor(img_bgr, image_gray, COLOR_BGR2GRAY);
+
+	//gaussian filter on the image to remove noise
+	//syntax: gray scale image, kernel size(positive and odd), sigma
+	Mat blurred_image_gaussian;
+	GaussianBlur(image_gray, blurred_image_gaussian, Size(5, 5), 1);
+
+	/*median filter to remove salt and pepper
+	syntax: image-kernel size
+	blurred_image_median = cv2.medianblur(img_gray, 5)*/
+
+	//===========================================================edge detection=========================================================
+	//canny edge detection (optimal edge detector)
+	Mat edged_image;
+	Canny(blurred_image_gaussian, edged_image, 180, 255);
+
+	//===========================================================erosion & dilation=======================================================
+	//mat dilated_img = edged_image;
+	//mat errored_img = edged_image;
+
+
+	//============================================================getting contours=========================================================
+	//findcontour() works best on binary images
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
+
+	if (contours.size() <= 0) {
+		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
+		return false;
+	}
+
+	/*drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
+	imshow("Largest Contour paperextractor.cpp", image_rgb);
+	std::string path = "./test.jpeg";
+	imwrite(path, image_rgb);
+	waitKey(0);*/
+
+
+	//getting biggest rectangular contour
+	vector<Point>biggest_contour;
+	double max_area;
+	get_biggest_rectangular_contour(biggest_contour, max_area, contours);
+
+
+	//Solving problem of False Contours The max area must be Greater than 10 % of the Image area
+	if (max_area < 0.10 * imgHeight * imgWidth)
+	{
+		cout << "extractpaper():Largest Contour is Very small :(" << endl;
+		return false;
+	}
+
+
+	if (draw) {
+		//draw paper contour
+		drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
+		//show it
+		imshow("Largest Contour paperextractor.cpp", image_rgb);
+		waitKey(0);
+	}
+
+	//Sort 4 Corner for Prespective
+	vector<Point2f>biggest_contour_ordered = reorderPoints(biggest_contour);
+
+	//Prespective
+	vector<Point2f>image_corner {Point(0,0),Point(imgWidth -1, 0),Point(0,imgHeight-1),Point(imgWidth-1, imgHeight-1) };
+	Mat M=getPerspectiveTransform(biggest_contour_ordered, image_corner);
+
+	warpPerspective(img_bgr, warped_image, M, Size(imgWidth, imgHeight));
+
+	return true;
 }
 
 void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
@@ -123,9 +214,8 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 	//	int x2 = lines[i][2];
 	//	int y2 = lines[i][3];
-	//	line(image_line, Point(x1, y1), Point(x2, y2), Scalar(255 - i, 255, 255), 1);
+	//	line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255 - i, 255, 255), 1);
 	//	imshow("track_lines_loop", image_lines);
-	//	imwrite("./img.png", image_line);
 	//	waitKey(0);
 	//}
 
@@ -133,8 +223,5 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	//if (globals.debug) :
 	//	show_images([image, image_gray], ['original', "gray"], windowtitle = "extract_lines", bgr = false)
 	//	show_images([thinned, edges, image_lines], ['thinned', 'edges', 'lines matrix'], windowtitle = "extract_lines", bgr = false)
-
-	imshow("image_lines", image_lines);
-	waitKey(0);
 	return;
 }

@@ -11,15 +11,19 @@ bool find_car(int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Ma
 	* @param x_f,y_f
 	* @param x_b,y_b
 	*
-	* @param image: RGB img with car
+	* @param image: BGR img with car
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
 	*/
 
+	//Convert BGR to RGB
+	Mat image_rgb;
+	cvtColor(image, image_rgb, COLOR_BGR2RGB);
+
 	//Detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image, front_color);
+	found = color_center(x_f, y_f, image_rgb, front_color);
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -27,11 +31,14 @@ bool find_car(int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Ma
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image, back_color);
+	found = color_center(x_b, y_b, image_rgb, back_color);
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
 	}
+
+	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	imshow("find_car", image);
 
 	//Car Center
 	x_center = (x_f+x_b) / 2;

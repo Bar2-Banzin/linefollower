@@ -8,11 +8,8 @@
 using namespace cv;
 using namespace std;
 
-
-void scan_track(bool& wrapped, Mat& image_lines, vector<Vec4i>& start_end_points,Mat track_image);
-void extract_paper(bool& wrapped, Mat& WarpedColoredImage, Mat img_BGR);
+bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image);
+bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw = false);
 void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points,Mat image, double rho = 1, double  theta = 1 * CV_PI / 180, int threshold = 100, double minLineLength = 100, double  maxLineGap = 50, int thickness = 20);
-
-
 #endif
 
