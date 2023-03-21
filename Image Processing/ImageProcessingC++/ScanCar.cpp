@@ -59,15 +59,48 @@ void car_on_line(bool& on_line, int& line_index ,int x_car, int y_car, Mat lines
 	*/
 }
 
-void increase_decrease_speed(bool& inc_speed, int x_car_front, int y_car_front, int x_car_back, int y_car_back, Vec4i line, int dist_threshold) {
-	/**
-	* This function detrmines whether ti inc or dee speed according to the dsitance between center and end of the line
-	*
-	* @param inc_speed boolean to detect wether car inc speed or not
+bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+	//"""
+	//    x_car_front, y_car_front : front Center of the Car
+	//    x_car_back, y_car_back : back Center of the Car
+	//    line : [x1, y1, x2, y2] : start and end point of the line
+	//    return : Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
+	//    """
 
-	* @param x_car_front, y_car_front : Front of the Car
-	* @param x_car_back, y_car_back : Back of the Car
-	* @param line Vector 4 x1,y1,x2,y2 start-end of the line
-	* @param dist_threshold: min distance so that we can inc speed
-	*/
+	  //  # 1. Get Car Direction[always from back to front]
+	Vec2i car = direction(x_car_back, y_car_back, x_car_front, y_car_front);
+	cout << "car Vector" << car << endl;
+
+	double line_point[] = { 0, 0 };
+
+	//    # 2. Direction P1P2
+	Vec2i P1P2 = direction(line[0], line[1], line[2], line[3]);
+	cout << "P1P2" << P1P2 << endl;
+	if (sign(P1P2[0]) == sign(car[0]) && sign(P1P2[1]) == sign(car[1])) {
+		cout << "Car is Moving towards P2" << endl;
+		line_point[0] = line[2];
+		line_point[1] = line[3];
+	}
+	// # 3. Direction P2P1
+	Vec2i P2P1 = direction(line[0], line[1], line[2], line[3]);
+	cout << "P2P1" << P2P1 << endl;
+
+	if (sign(P2P1[0]) == sign(car[0]) and sign(P2P1[1]) == sign(car[1])) {
+		cout << "Car is Moving towards P1" << endl;
+		line_point[0] = line[0];
+		line_point[1] = line[1];
+	}
+	//  # 4. Take Action Depending on Distance between Car and the endpoint
+	if (calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]) > dist_threshold)
+	{// # Increase Speed
+
+		cout << "Increase Speed" << endl;
+		return true;
+	}
+	else
+	{
+		// # Don't Increase Speed you are toward the line En
+		cout << "Decrease Speed" << endl;
+		return false;
+	}
 }

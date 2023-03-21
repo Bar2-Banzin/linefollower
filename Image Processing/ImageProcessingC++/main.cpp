@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 		cout << "Failed To Scan Track" << endl;
 		return -1;
 	}
+
 	/************************************************************************************************/
 	//Step(2) Find Car on Track
 	//1.Read an Car on Track Image

@@ -1,4 +1,4 @@
-# include "utils.h";
+#include "utils.h";
 
 Mat thin_image(Mat image) {
 	/**
@@ -206,31 +206,34 @@ void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color
 	return;
 }
 
-Vec2i direction(int x1, int y1, int x2, int y2) {
-	/**
-	* Get vector x1y1 - x2y2
-	*
-	* @param x1, y1 : point 1
-	* @param x2, y2 : point 2
-	* 
-	* @return vector x1y1 - x2y2
-	*/
-	return ((x2 - x1, y2 - y1));
+
+double calculateDistance(double x1, double y1, double x2, double y2) {
+	/*"""
+	Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
+	return : Euclidean distance
+	"""*/
+	double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+	return distance;
+}
+Vec2i direction(double x1, double y1, double x2, double y2) {
+	/*"""
+	Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
+	return : Euclidean distance
+	"""*/
+	Vec2i arr( x2 - x1, y2 - y1 );
+	return arr;
 }
 
-float calculateDistance(int x1, int y1, int x2, int y2) {
-	/**
-	* Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
-	*
-	* @param x1, y1 : point 1
-	* @param x2, y2 : point 2
-	* 
-	* @return Euclidean distance
-	*
-	* @return vector x1y1 - x2y2
-	*/
-	return ((x2 - x1, y2 - y1));
+int sign(double x)
+{
+	if (x > 0)
+		return 1;
+	if (x < 0)
+		return -1;
+
+	return 0;
 }
+
 
 
 //Comparison function object

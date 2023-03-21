@@ -18,8 +18,9 @@ bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
 
 //Distance and Direction
 void  min_rectangle(Mat& image, int& x, int& y, vector<Point> contour, Scalar color = Scalar(255, 0, 0), int thickness = 10, bool draw = false);
-Vec2i direction(int x1, int y1, int x2, int y2);
-float calculateDistance(int x1, int y1, int x2, int y2);
+double calculateDistance(double x1, double y1, double x2, double y2);
+Vec2i direction(double x1, double y1, double x2, double y2);
+int sign(double x);
 
 //Contour
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2);
