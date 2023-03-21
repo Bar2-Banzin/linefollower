@@ -2,10 +2,10 @@
 # include "ScanTrack.h";
 
 //Basma :Not sure of Data Type of front_color- back_color check
-bool find_car(int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Mat image, Scalar front_color, Scalar back_color){
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
-	* 
+	*
 	* @param boolean to detect wether car is found or not
 	* @param x_center,y_center
 	* @param x_f,y_f
@@ -41,12 +41,12 @@ bool find_car(int &x_center,int &y_center,int &x_f,int &y_f,int &x_b,int &y_b,Ma
 	imshow("find_car", image);
 
 	//Car Center
-	x_center = (x_f+x_b) / 2;
-	x_center = (y_f+y_b) / 2;
+	x_center = (x_f + x_b) / 2;
+	x_center = (y_f + y_b) / 2;
 	return true;
 }
 
-void car_on_line(bool& on_line, int& line_index ,int x_car, int y_car, Mat lines_matrix, int threshold) {
+void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -60,20 +60,25 @@ void car_on_line(bool& on_line, int& line_index ,int x_car, int y_car, Mat lines
 }
 
 bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
-	//"""
-	//    x_car_front, y_car_front : front Center of the Car
-	//    x_car_back, y_car_back : back Center of the Car
-	//    line : [x1, y1, x2, y2] : start and end point of the line
-	//    return : Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
-	//    """
+	/**
+	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
+	*
+	* @param x_car_front, y_car_front : front Center of the Car
+	* @param x_car_back, y_car_back : back Center of the Car
+	* @param line : [x1, y1, x2, y2] : start and end point of the line
+	* @param dist_threshold:thershold to depend on to take action of speed :D
+	*
+	* @return Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
+	*
+	*/
 
-	  //  # 1. Get Car Direction[always from back to front]
+	//1. Get Car Direction[always from back to front]
 	Vec2i car = direction(x_car_back, y_car_back, x_car_front, y_car_front);
 	cout << "car Vector" << car << endl;
 
 	double line_point[] = { 0, 0 };
 
-	//    # 2. Direction P1P2
+	//2. Direction P1P2
 	Vec2i P1P2 = direction(line[0], line[1], line[2], line[3]);
 	cout << "P1P2" << P1P2 << endl;
 	if (sign(P1P2[0]) == sign(car[0]) && sign(P1P2[1]) == sign(car[1])) {
@@ -81,7 +86,7 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 		line_point[0] = line[2];
 		line_point[1] = line[3];
 	}
-	// # 3. Direction P2P1
+	//3. Direction P2P1
 	Vec2i P2P1 = direction(line[0], line[1], line[2], line[3]);
 	cout << "P2P1" << P2P1 << endl;
 
@@ -91,15 +96,13 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
-	if (calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]) > dist_threshold)
-	{// # Increase Speed
-
+	if (calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]) > dist_threshold){
+		//Increase Speed
 		cout << "Increase Speed" << endl;
 		return true;
 	}
-	else
-	{
-		// # Don't Increase Speed you are toward the line En
+	else{
+		//Don't Increase Speed you are toward the line En
 		cout << "Decrease Speed" << endl;
 		return false;
 	}

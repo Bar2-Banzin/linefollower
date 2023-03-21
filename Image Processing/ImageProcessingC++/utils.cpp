@@ -206,20 +206,28 @@ void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color
 	return;
 }
 
-
 double calculateDistance(double x1, double y1, double x2, double y2) {
-	/*"""
-	Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
-	return : Euclidean distance
-	"""*/
+	/**
+	* Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
+	* 
+	* @param x1, y1:point 1
+	* @param x2, y2:point 2
+	*
+	* @return : Euclidean distance
+	*/
 	double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
 	return distance;
 }
+
 Vec2i direction(double x1, double y1, double x2, double y2) {
-	/*"""
-	Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
-	return : Euclidean distance
-	"""*/
+	/**
+	* Gets Direction between 2 Points
+	* 
+	* @param x1, y1:point 1
+	* @param x2, y2:point 2
+	* 
+	* @return : vector x1y1 - x2y2
+	*/
 	Vec2i arr( x2 - x1, y2 - y1 );
 	return arr;
 }
@@ -233,7 +241,6 @@ int sign(double x)
 
 	return 0;
 }
-
 
 
 //Comparison function object
