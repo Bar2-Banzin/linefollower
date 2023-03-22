@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 {
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/track/1.png";
+	std::string path = "./assets/track/5.jpeg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;

@@ -17,16 +17,17 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped=extract_paper( paper_img, track_image,false);
+	bool wrapped=extract_paper( paper_img, track_image,true);
 
 	if (! wrapped) {
 		return false;
 	 }
 
 	imshow("Wrapped Paper  scan_track()", paper_img);
+	waitKey(0);
 
 	//Temp Till Tomorrow
-	paper_img = track_image;
+	//paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
 	extract_lines(image_lines, start_end_points, paper_img);
@@ -90,13 +91,29 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	//findcontour() works best on binary images
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
-	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
+	findContours(edged_image, contours, hierarchy, RETR_LIST ,CHAIN_APPROX_SIMPLE);
+
+	//drawContours(img_bgr, vector<vector<Point> >(1, contours[1]), -1, Scalar(255, 255, 0), 10);
+	Mat img_bgr_temp = img_bgr;
+	drawContours(img_bgr_temp, contours, -1, Scalar(255, 255, 0), 10);
+
+	imshow("ALL Contours paperextractor.cpp", img_bgr_temp);
+	std::string path = "./test.jpeg";
+	imwrite(path, img_bgr_temp);
+	waitKey(0);
 
 	if (contours.size() <= 0) {
 		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
 		return false;
 	}
 
+	for (int i = 0;i < contours.size();i++) {
+		Mat img= image_rgb.clone();
+		drawContours(img, vector<vector<Point> >(1, contours[i]), -1, Scalar(255, 0, 0), 1);
+		std::string path = to_string(i) +".jpeg";
+		imwrite(path, img);
+		waitKey(0);
+	}
 	/*drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
 	imshow("Largest Contour paperextractor.cpp", image_rgb);
 	std::string path = "./test.jpeg";
@@ -109,13 +126,12 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	double max_area;
 	get_biggest_rectangular_contour(biggest_contour, max_area, contours);
 
-
 	//Solving problem of False Contours The max area must be Greater than 10 % of the Image area
-	if (max_area < 0.10 * imgHeight * imgWidth)
+	/*if (max_area < 0.10 * imgHeight * imgWidth)
 	{
 		cout << "extractpaper():Largest Contour is Very small :(" << endl;
 		return false;
-	}
+	}*/
 
 
 	if (draw) {
@@ -123,6 +139,8 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 		drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
 		//show it
 		imshow("Largest Contour paperextractor.cpp", image_rgb);
+		std::string path = "./test2.jpeg";
+		imwrite(path, image_rgb);
 		waitKey(0);
 	}
 

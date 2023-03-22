@@ -250,7 +250,7 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2) {
 	return (i < j);
 }
 
-void get_biggest_rectangular_contour(vector<Point>& biggest_contour,double& max_area,vector<vector<Point>> contours) {
+void get_biggest_rectangular_contour(Mat image,vector<Point>& biggest_contour,double& max_area,vector<vector<Point>> contours) {
 	/**
 	* Get Biggest Rectangular Contour from the given contours
 	*
@@ -269,6 +269,15 @@ void get_biggest_rectangular_contour(vector<Point>& biggest_contour,double& max_
 		const double ratio = 0.02;
 		vector<Point>approx;
 		approxPolyDP(contours[i], approx, ratio * perimeter, true);
+		Mat img_1 = image.clone();
+		drawContours(img_1, vector<vector<Point> >(1, approx), -1, Scalar(0, 0, 255), 1);
+		std::string path = to_string(i) + "Poly.jpeg";
+		imwrite(path, img_1);
+		waitKey(0);
+
+		if (i == 12) {
+			cout << "HAAAAAAAH eSALM" << endl;
+		}
 
 		//If Greater than Max Aeaand it is a rectangle
 		if (area > max_area) {
