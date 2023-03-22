@@ -123,7 +123,7 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 		drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
 		//show it
 		imshow("Largest Contour paperextractor.cpp", image_rgb);
-		waitKey(0);
+		//waitKey(0);
 	}
 
 	//Sort 4 Corner for Prespective

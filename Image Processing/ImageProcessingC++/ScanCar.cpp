@@ -53,8 +53,8 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 		return false;
 	}
 
-	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
-	imshow("find_car", image);
+	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//imshow("find_car", image);
 
 	//Car Center
 	x_center = (x_f + x_b) / 2;
@@ -65,13 +65,13 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
 	
 	
-	/*set<int>s;
+	set<int>s;
 	for (int i = 0; i < lines_matrix.rows; i++) {
 		for (int j = 0; j < lines_matrix.cols; j++) {
 			s.insert((int)lines_matrix.at<uchar>(i, j));
 		}
 	}
-	for (auto m : s)cout << m << " ";*/
+	for (auto m : s)cout << m << " ";
 
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
@@ -86,7 +86,7 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 		}
 	}
 	on_line = (count >= threshold);
-	line_index = (on_line)?(int)lines_matrix.at<uchar>(y_car, x_car):-1;
+	line_index = (on_line)?255-(int)lines_matrix.at<uchar>(y_car, x_car):-1;
 	
 	/**
 	* This function detrmines whether car is on a straight line or not
@@ -100,7 +100,8 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 	*/
 }
 
-bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+bool increase_decrease_speed(Mat draw,double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+	/**
 	/**
 	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
 	*
@@ -112,6 +113,14 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 	* @return Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
 	*
 	*/
+
+	//Drawing For Debug
+	cv::line(draw, Point(line[0], line[1]), Point(line[2], line[3]), Scalar(255, 0, 0), 5);
+	cv::line(draw, Point(x_car_front, y_car_front), Point(x_car_back, y_car_back), Scalar(0, 0, 255), 5);
+
+	imshow("increase_decrease_speed()", draw);
+	waitKey(0);
+
 
 	//1. Get Car Direction[always from back to front]
 	Vec2i car = direction(x_car_back, y_car_back, x_car_front, y_car_front);

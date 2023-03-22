@@ -133,8 +133,6 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 
 	return true;
 }
-
-
 bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 	/**
 	* Gets Upper & Lower HSV Range of the RGB color
@@ -216,6 +214,8 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
 	* @return : Euclidean distance
 	*/
 	double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+	cout << "Distance" << distance << endl;
+
 	return distance;
 }
 

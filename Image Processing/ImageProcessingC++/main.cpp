@@ -40,8 +40,8 @@ int main(int argc, char** argv)
 	 
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
-	Scalar front_color(255,0, 0);//red
-	Scalar back_color(0, 255, 0);//green
+	Scalar front_color(0,255, 0);//red
+	Scalar back_color(255, 0, 0);//green
 	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {
@@ -72,14 +72,19 @@ int main(int argc, char** argv)
 
 	//Test Only Till Madbouly Finishes
 	bool inc_speed = false;
-	int dist_threshold = 500;
+	int dist_threshold = 150;
 	//int x_f = 50, y_f = 200, x_b = 50, y_b = 250;
-	Vec4i lineto = start_end_points[1];
+	Vec4i lineto = start_end_points[line_index];
 	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
 
-	imshow("Original Track main.cpp", image);
-	
-	inc_speed = increase_decrease_speed(x_f, y_f, x_b, y_b, lineto, dist_threshold);
+	imshow("Step 4 main.cpp", image);
+	//waitKey(0);
+
+
+	//imshow("Original Track main.cpp", image);
+	Mat draw_temp = car_image.clone();
+	inc_speed = increase_decrease_speed(draw_temp,x_f, y_f, x_b, y_b, lineto, dist_threshold);
 
 	if (!inc_speed) {
 		cout << "Don't Inc Speed of the Car" << endl;
