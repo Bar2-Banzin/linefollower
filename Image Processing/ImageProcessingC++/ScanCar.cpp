@@ -1,5 +1,7 @@
 ﻿# include"utils.h"
 # include "ScanTrack.h";
+#include <opencv2/core/mat.hpp>
+#include <set>
 
 //Basma :Not sure of Data Type of front_color- back_color check
 bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image, Scalar front_color, Scalar back_color) {
@@ -47,6 +49,30 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 }
 
 void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
+	
+	
+	/*set<int>s;
+	for (int i = 0; i < lines_matrix.rows; i++) {
+		for (int j = 0; j < lines_matrix.cols; j++) {
+			s.insert((int)lines_matrix.at<uchar>(i, j));
+		}
+	}
+	for (auto m : s)cout << m << " ";*/
+
+	int size_i = lines_matrix.rows;
+	int size_j = lines_matrix.cols;
+	int windo_size = threshold;
+	int count = 0;
+	for (int i = y_car - windo_size; i <= y_car + windo_size; i++) {
+		if (i < 0 || i >= size_i)continue;
+		for (int j = x_car - windo_size; j <= x_car + windo_size; j++) {
+			if (j < 0 || j >= size_j)continue;
+			count += ((int)lines_matrix.at<uchar>(i, j) != 0);
+		}
+	}
+	on_line = (count >= threshold);
+	line_index = (on_line)?(int)lines_matrix.at<uchar>(y_car, x_car):-1;
+	
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*

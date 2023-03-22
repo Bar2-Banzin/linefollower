@@ -204,6 +204,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 		int x2 = line_inst[2];
 		int y2 = line_inst[3];
 		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
+		index++;
 	}
 
 	//// to see each line detected uncomment this
