@@ -4,7 +4,7 @@
 #include <set>
 
 //Basma :Not sure of Data Type of front_color- back_color check
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image_input, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -17,6 +17,20 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
 	*/
+
+	//1.Extract Track Paper From the Image
+	Mat image;
+	bool wrapped = extract_paper(image_input, image, false);
+
+	if (!wrapped) {
+		return false;
+	}
+
+	imshow("Wrapped Paper  find_car()", image);
+
+	//Temp Till Tomorrow
+	image = image_input;
+
 
 	//Convert BGR to RGB
 	Mat image_rgb;

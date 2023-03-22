@@ -47,6 +47,7 @@ struct str {
 bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	/**
 	* extract paper out of the image
+	* @param warped_image bgr warpPerspective
 	*
 	* @param img_bgr: bgr image
 	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
