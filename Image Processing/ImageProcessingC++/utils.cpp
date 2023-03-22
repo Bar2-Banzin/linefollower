@@ -68,8 +68,8 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
 	morphologyEx(mask, mask, MORPH_CLOSE, kernel);
 
-	imshow("mask Color color_center()", mask);
-
+	/*imshow("mask Color color_center()", mask);
+	waitKey(0);*/
 	if (!accepted)
 		return false;
 
@@ -85,9 +85,9 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 		return false;
 	}
 
-	drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
-	imshow("Contours for Mask color_center()", image);
-
+	//drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
+	//imshow("Contours for Mask color_center()", image);
+	//waitKey(0);
 	//Grab contours [Biggest]
 	vector<Point>biggestContour;
 	double max_area;

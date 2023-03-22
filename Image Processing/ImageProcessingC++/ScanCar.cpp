@@ -4,7 +4,7 @@
 #include <set>
 
 //Basma :Not sure of Data Type of front_color- back_color check
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image_input, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -19,17 +19,17 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	*/
 
 	//1.Extract Track Paper From the Image
-	Mat image;
-	bool wrapped = extract_paper(image_input, image, false);
+	//Mat image;
+	////bool wrapped = extract_paper(image_input, image, false);
 
-	if (!wrapped) {
-		return false;
-	}
+	//if (!wrapped) {
+	//	return false;
+	//}
 
-	imshow("Wrapped Paper  find_car()", image);
+	//imshow("Wrapped Paper  find_car()", image);
 
 	//Temp Till Tomorrow
-	image = image_input;
+	//image = image_input;
 
 
 	//Convert BGR to RGB
@@ -58,7 +58,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Car Center
 	x_center = (x_f + x_b) / 2;
-	x_center = (y_f + y_b) / 2;
+	y_center = (y_f + y_b) / 2;
 	return true;
 }
 
@@ -81,7 +81,8 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 		if (i < 0 || i >= size_i)continue;
 		for (int j = x_car - windo_size; j <= x_car + windo_size; j++) {
 			if (j < 0 || j >= size_j)continue;
-			count += ((int)lines_matrix.at<uchar>(i, j) != 0);
+			auto scaler = (int )lines_matrix.at<uchar>(i, j);
+			count += ((int)scaler != 0);
 		}
 	}
 	on_line = (count >= threshold);
