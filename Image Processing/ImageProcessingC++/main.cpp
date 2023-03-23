@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	//2.Scanning Track Initially
 	Mat image_lines;
 	vector<Vec4i>start_end_points;
-	bool wrapped=scan_track(image_lines, start_end_points, image);
+	bool wrapped = scan_track(image_lines, start_end_points, image);
 
 	if (!wrapped) {
 		cout << "Failed To Scan Track" << endl;
@@ -32,22 +32,28 @@ int main(int argc, char** argv)
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/ontrack/02.jpeg";
+	std::string path2 = "./assets/ontrack/01.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
 	//cout << "size" << typeid(image.size()).name() << endl;
 	//imshow("original car main.cpp", image);
-	 
+
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
-	Scalar front_color(0,255, 0);//red
-	Scalar back_color(255, 0, 0);//green
+	Scalar front_color(255,0, 0);//red
+	Scalar back_color(0, 255, 0);//green
 	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
 		return -1;
 	}
+
+	//Debug
+	cv::line(image_lines, Point(x_center, y_center), Point(0, 0), Scalar(255, 255, 255), 2);
+	imshow("Center vs lines", image_lines);
+	waitKey(0);
+
 
 	///************************************************************************************************/
 	//Step(3) Is Car on a straight line
@@ -67,7 +73,7 @@ int main(int argc, char** argv)
 	/*bool inc_speed=false;
 	int dist_threshold = 10;
 	Vec4i line = start_end_points[line_index];
-	
+
 	*/
 
 	//Test Only Till Madbouly Finishes
@@ -78,13 +84,16 @@ int main(int argc, char** argv)
 	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
 	cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
 
+	imshow("Original Track main.cpp", image);
+	
+	inc_speed = increase_decrease_speed(x_f, y_f, x_b, y_b, lineto, dist_threshold);
 	imshow("Step 4 main.cpp", image);
 	//waitKey(0);
 
 
 	//imshow("Original Track main.cpp", image);
 	Mat draw_temp = car_image.clone();
-	inc_speed = increase_decrease_speed(draw_temp,x_f, y_f, x_b, y_b, lineto, dist_threshold);
+	inc_speed = increase_decrease_speed(draw_temp, x_f, y_f, x_b, y_b, lineto, dist_threshold);
 
 	if (!inc_speed) {
 		cout << "Don't Inc Speed of the Car" << endl;
@@ -109,7 +118,7 @@ int main(int argc, char** argv)
 	//imshow("Display mat2", mat2);
 	//imshow("Display mat3", mat3);
 	//imshow("Display mat4", mat4);
-	waitKey(0); //Wait for any key press = pause
+	//waitKey(0); //Wait for any key press = pause
 
 	destroyAllWindows(); //Close all windows
 
