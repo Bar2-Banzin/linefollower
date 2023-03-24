@@ -63,36 +63,41 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 }
 
 void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
-	
-	
-<<<<<<< Updated upstream
-	/*set<int>s;
-	for (int i = 0; i < lines_matrix.rows; i++) {
-=======
+
+
 	set<int>s;
-	/*for (int i = 0; i < lines_matrix.rows; i++) {
->>>>>>> Stashed changes
+	map<int, int>m, m2;
+	for (int i = 0; i < lines_matrix.rows; i++) {
 		for (int j = 0; j < lines_matrix.cols; j++) {
 			s.insert((int)lines_matrix.at<uchar>(i, j));
+			m2[(int)lines_matrix.at<uchar>(i, j)]++;
 		}
 	}
-	for (auto m : s)cout << m << " ";*/
+	//for (auto m : s)cout << m << " ";
 
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
-	int windo_size = 50;
+	int windo_size = 100;
 	int count = 0;
-	for (int i = y_car - windo_size; i <= y_car + windo_size; i++) {
+	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
 		if (i < 0 || i >= size_i)continue;
-		for (int j = x_car - windo_size; j <= x_car + windo_size; j++) {
+		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
 			if (j < 0 || j >= size_j)continue;
-			auto scaler = (int )lines_matrix.at<uchar>(i, j);
+			auto scaler = (int)lines_matrix.at<uchar>(i, j);
 			count += ((int)scaler != 0);
+			m[scaler]++;
+		}
+	}
+	int maxi = -1, maxi_indx = -1;
+	for (auto x : m) {
+		if (x.first && x.second > maxi) {
+			maxi = x.second;
+			maxi_indx = 255 - x.first;
 		}
 	}
 	on_line = (count >= threshold);
-	line_index = (on_line)?(int)lines_matrix.at<uchar>(y_car, x_car):-1;
-	
+	line_index = (on_line) ? maxi_indx : -1;
+
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -105,7 +110,7 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 	*/
 }
 
-bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**
 	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
 	*
@@ -118,18 +123,15 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 	*
 	*/
 
-<<<<<<< Updated upstream
-=======
 	//Drawing For Debug
-	cv::line(draw, Point(line[0], line[1]), Point(line[2], line[3]), Scalar(255, 0, 0), 5);
-	cv::line(draw, Point(x_car_front, y_car_front), Point(0, 0), Scalar(0, 255, 255), 5);
-	cv::line(draw, Point(0, 0), Point(x_car_back, y_car_back), Scalar(0, 255,0 ), 5);
+	//cv::line(draw, Point(line[0], line[1]), Point(line[2], line[3]), Scalar(0, 255, 255), 5);
+	/*cv::line(draw, Point(x_car_front, y_car_front), Point(0, 0), Scalar(0, 255, 255), 5);
+	cv::line(draw, Point(0, 0), Point(x_car_back, y_car_back), Scalar(0, 255,0 ), 5);*/
 
 	imshow("increase_decrease_speed()", draw);
 	//waitKey(0);
 
 
->>>>>>> Stashed changes
 	//1. Get Car Direction[always from back to front]
 	Vec2i car = direction(x_car_back, y_car_back, x_car_front, y_car_front);
 	cout << "car Vector" << car << endl;
@@ -139,7 +141,7 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 	//2. Direction P1P2
 	Vec2i P1P2 = direction(line[0], line[1], line[2], line[3]);
 	cout << "P1P2" << P1P2 << endl;
-	if (sign(P1P2[0]) == sign(car[0]) && sign(P1P2[1]) == sign(car[1])) {
+	if ((sign(P1P2[0]) == sign(car[0]) || abs(car[0] - P1P2[0]) < 10) && (sign(P1P2[1]) == sign(car[1]) || abs(car[1] - P1P2[1]) < 10)) {
 		cout << "Car is Moving towards P2" << endl;
 		line_point[0] = line[2];
 		line_point[1] = line[3];
@@ -148,19 +150,19 @@ bool increase_decrease_speed(double x_car_front, double  y_car_front, double  x_
 	Vec2i P2P1 = direction(line[2], line[3], line[0], line[1]);
 	cout << "P2P1" << P2P1 << endl;
 
-	if (sign(P2P1[0]) == sign(car[0]) and sign(P2P1[1]) == sign(car[1])) {
+	if ((sign(P2P1[0]) == sign(car[0]) || abs(car[0] - P2P1[0]) < 10) && (sign(P2P1[1]) == sign(car[1]) || abs(car[1] - P2P1[1]) < 10)) {
 		cout << "Car is Moving towards P1" << endl;
 		line_point[0] = line[0];
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
 	int distanse = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
-	if (distanse > dist_threshold){
+	if (distanse > dist_threshold) {
 		//Increase Speed
 		cout << "Increase Speed" << endl;
 		return true;
 	}
-	else{
+	else {
 		//Don't Increase Speed you are toward the line En
 		cout << "Decrease Speed" << endl;
 		return false;
