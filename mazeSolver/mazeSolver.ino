@@ -25,6 +25,41 @@ enum car_dir
   right
 };
 
+void rotate_90(car_dir dir)
+{
+  uint8_t firstPin, secondPin;
+  uint8_t first = 0, second = 0, prevF = 0, prevS = 0;
+  switch(car_dir)
+  {
+    case left:
+    firstPin = 17;
+    secondPin = 16;
+    break;
+    case right:
+    firstPin = 16;
+    secondPin = 17;
+    break;
+    default:
+    move_car(still);
+    return;
+  }
+
+  move_car(dir);
+  while(!(first == 0 && prevF == 1))
+  {
+    prevF = first;
+    first = digitalRead(firstPin);
+  }
+  
+  while(!(second == 0 && prevS == 1))
+  {
+    prevS = second;
+    second = digitalRead(secondPin);
+  }
+
+  move_car(still);
+}
+
 void move_motor(char pin1, char pin2, motor_dir dir)
 {
   // delay(10);
