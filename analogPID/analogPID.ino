@@ -10,6 +10,8 @@
 #define speedR 11
 
 int c = 1, h = 1, s = 1;
+int rpm_speeds[2] = {0, 0};
+int actual_speeds[2] = {0, 0};
 
 void setup()
 {
@@ -32,6 +34,8 @@ void setup()
 void loop()
 {
   linefollow(0.04, 0.06);
+  motor_ctrl(speedL, rpm_speeds[0], actual_speeds[0], 0.8, 0);
+  motor_ctrl(speedR, rpm_speeds[1], actual_speeds[1], 0.6, 0);
 }
 
 void linefollow(float Kp, float Kd)
@@ -79,8 +83,8 @@ void linefollow(float Kp, float Kd)
   // }
   // count++;
 
-  motor_ctrl(speedL, lsp, , 0.8, 0);
-  motor_ctrl(speedR, rsp, , 0.6, 0);
+  rpm_speeds[0] = lsp;
+  rpm_speeds[1] = rsp;
 }
 
 
