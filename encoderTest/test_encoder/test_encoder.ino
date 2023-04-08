@@ -13,9 +13,7 @@
 
 #define speedy 100
 
-long printing_count = 0;
-//int count = 0;
-
+//long printing_count = 0;
 
 int right_pulses = 0;
 int left_pulses = 0;
@@ -84,26 +82,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   current_time = millis();
-//  dt = current_time - start_time;
-//  rpm_left = left_pulses/(float)dt * encoder_resolution;
-//  rpm_right = right_pulses/(float)dt * encoder_resolution;
+  dt = current_time - start_time_r;
 
-rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
-rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
-//  if(right_pulses != right_pulses_prev){
-//    rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
-//    right_pulses_prev = right_pulses;
-//    start_time_r = millis();
-//  }
-//
-// if(left_pulses != left_pulses_prev){
-//
-//    rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
-//     left_pulses_prev = left_pulses;
-//    start_time_l = millis();
-//  }
-
-
+  rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)dt;
+  rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)dt;
 
   if((left_pulses - left_pulses_prev) >= count){
     left_pulses_prev = left_pulses;
@@ -114,37 +96,15 @@ rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(curr
     right_pulses_prev = right_pulses;
     start_time_r = millis();
   }
-
-  //  if(left_pulses >= INT_MAX || right_pulses >= INT_MAX){
-  //   right_pulses = 0;
-  //   left_pulses = 0;
-  //   start_time = millis();
-  //  }
   
-  
-  //  print(INT_MAX);
-    
-
-  
-  if(printing_count == 10000)
-  {
-
+//  if(printing_count == 10000)
+//  {
+//    Serial.print("l: ");
 //    Serial.println(rpm_left);
-//    Serial.println(left_pulses);
-//    Serial.println(dt);
-//    Serial.println(encoder_resolution);
-//    Serial.println("-----hi1-------");
-    Serial.print("l: ");
-    Serial.println(rpm_left);
-//    Serial.println(left_pulses - left_pulses_prev);
-//    Serial.println((float)(current_time - start_time_r));
-//    Serial.println((int)(current_time - start_time_l));
-//    Serial.println(left_pulses);
-    
-    Serial.print("r: ");
-    Serial.println(rpm_right);
-    printing_count = 0;
-  }
-  
-  printing_count++;
+//    Serial.print("r: ");
+//    Serial.println(rpm_right);
+//    printing_count = 0;
+//  }
+//  
+//  printing_count++;
 }
