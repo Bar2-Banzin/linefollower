@@ -1,0 +1,132 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define encoder 2
+#define encoder 3
+
+#define speedL 10
+#define IN1 7
+#define IN2 6
+#define IN3 9
+#define IN4 8
+#define speedR 11
+
+#define SET_BIT(reg,pin) (reg|=(1<<pin))
+#define CLEAR_BIT(reg,pin) (reg&=~(1<<pin))
+#define TOGGLE_BIT(reg,pin) (reg^=(1<<pin))
+
+long printing_count = 0;
+int count = 0;
+
+int timer_iterations = 0;
+int seconds = 0;
+
+
+int right_pulses = 0;
+int left_pulses = 0;
+
+long int start_time = 0;
+long int current_time = 0;
+int dt = 0;
+
+float rpm_left = 0;
+float rpm_right = 0;
+
+int encoder_resolution = pow(10,3) * (60/40);
+uint16_t left_revolutions;
+uint16_t right_revolutions;
+
+
+ISR(TIMER2_OVF_vect){
+  timer_iterations++;
+}
+
+ISR(INT0_vect) {
+  left_pulses++;
+}
+
+ISR(INT1_vect) {
+  right_pulses++;
+}
+
+void timer2_init(){
+  // TIMER 2 NORMAL MODE
+  CLEAR_BIT(SREG,7);
+  CLEAR_BIT(TCCR2B,6);
+  CLEAR_BIT(TCCR2B,3);
+  TCCR2B |= 0x07;     // prescaler
+  CLEAR_BIT(TCCR2B,4);
+  CLEAR_BIT(TCCR2B,5);
+  // initialize counter
+  TIMSK2 |= (1<<TOIE2);
+  TCNT2 = 132;
+  SET_BIT(SREG,7);
+}
+
+void INT0_Init (void) {
+  SREG &= ~(1<<7);
+  DDRD &= (~(1<<PD2));
+  EIMSK |= (1<<INT0);
+  EICRA |= (1<<ISC00) | (1<<ISC01);
+  SREG |= (1<<7);
+}
+
+void INT1_Init (void) {
+ SREG &= ~(1<<7);
+ DDRD &= (~(1<<PD3));
+ EIMSK |= (1<<INT1);
+ EICRA |= (1<<ISC10) | (1<<ISC11);
+ SREG |= (1<<7);
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(speedL, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(speedR, OUTPUT);
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+  digitalWrite(IN3,HIGH);
+  digitalWrite(IN4,LOW);
+  analogWrite(speedL, 100);
+  analogWrite(speedR, 100);
+  start_time = millis();
+  DDRD &= ~(1<<PD2);
+  DDRD &= ~(1<<PD3);
+  INT0_Init();
+  INT1_Init(); 
+  timer2_init(); 
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if(left_pulses >= 20)
+  {
+    left_revolutions++;
+    left_pulses = 0;
+  }
+  if(right_pulses >= 20)
+  {
+    right_revolutions++;
+    right_pulses = 0;
+  }
+  if(timer_iterations >= 60)
+  {
+    timer_iterations = 0;
+    TCNT2 = 132;
+    seconds++;    
+  }
+  
+  rpm_left = left_revolutions / (float)seconds;
+  rpm_right = right_revolutions / (float)seconds;
+
+  //For printing
+    Serial.print(rpm_left);
+    Serial.print(" - ");
+    Serial.println(rpm_right);
+
+}
