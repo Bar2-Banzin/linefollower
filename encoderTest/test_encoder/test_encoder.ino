@@ -11,28 +11,37 @@
 #define IN4 8
 #define speedR 11
 
+#define speedy 100
+
 long printing_count = 0;
-int count = 0;
+//int count = 0;
 
 
 int right_pulses = 0;
 int left_pulses = 0;
 
-long int start_time = 0;
-long int current_time = 0;
-int dt = 0;
+int right_pulses_prev = 0;
+int left_pulses_prev = 0;
 
-int rpm_left = 0;
-int rpm_right = 0;
+long long start_time_l = 0;
+long long start_time_r = 0;
 
-int encoder_resolution = pow(10,3) * (60/40);
+int count = 1000;
+
+long long current_time = 0;
+long long dt = 0;
+
+long rpm_left = 0;
+long rpm_right = 0;
+
+long long encoder_resolution = pow(10,3) * (60/20);
 
 ISR(INT0_vect) {
-  right_pulses += 1;
+  left_pulses += 1;
 }
 
 ISR(INT1_vect) {
-  left_pulses += 1;
+  right_pulses += 1;
 }
 
 void INT0_Init (void) {
@@ -44,11 +53,11 @@ void INT0_Init (void) {
 }
 
 void INT1_Init (void) {
-//  SREG &= ~(1<<7);
-//  DDRD &= (~(1<<PD3));
-//  EIMSK |= (1<<INT1);
-//  EICRA |= (1<<ISC10) | (1<<ISC11);
-//  SREG |= (1<<7);
+  SREG &= ~(1<<7);
+  DDRD &= (~(1<<PD3));
+  EIMSK |= (1<<INT1);
+  EICRA |= (1<<ISC10) | (1<<ISC11);
+  SREG |= (1<<7);
 }
 
 void setup() {
@@ -64,11 +73,10 @@ void setup() {
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-  analogWrite(speedL, 100);
-  analogWrite(speedR, 100);
-  start_time = millis();
-  DDRD &= ~(1<<PD2);
-  DDRD &= ~(1<<PD3);
+  analogWrite(speedL, speedy);
+  analogWrite(speedR, speedy);
+  start_time_l = millis();
+  start_time_r = millis();
   INT0_Init();
   INT1_Init();  
 }
@@ -76,14 +84,63 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   current_time = millis();
-  dt = current_time - start_time;
-  rpm_left = left_pulses/dt * encoder_resolution;
-  rpm_right = right_pulses/dt * encoder_resolution;
+//  dt = current_time - start_time;
+//  rpm_left = left_pulses/(float)dt * encoder_resolution;
+//  rpm_right = right_pulses/(float)dt * encoder_resolution;
 
-  if(printing_count == 20000)
+rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
+rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
+//  if(right_pulses != right_pulses_prev){
+//    rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
+//    right_pulses_prev = right_pulses;
+//    start_time_r = millis();
+//  }
+//
+// if(left_pulses != left_pulses_prev){
+//
+//    rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
+//     left_pulses_prev = left_pulses;
+//    start_time_l = millis();
+//  }
+
+
+
+  if((left_pulses - left_pulses_prev) >= count){
+    left_pulses_prev = left_pulses;
+    start_time_l = millis();
+  }
+
+  if((right_pulses - right_pulses_prev) >= count){
+    right_pulses_prev = right_pulses;
+    start_time_r = millis();
+  }
+
+  //  if(left_pulses >= INT_MAX || right_pulses >= INT_MAX){
+  //   right_pulses = 0;
+  //   left_pulses = 0;
+  //   start_time = millis();
+  //  }
+  
+  
+  //  print(INT_MAX);
+    
+
+  
+  if(printing_count == 10000)
   {
+
+//    Serial.println(rpm_left);
+//    Serial.println(left_pulses);
+//    Serial.println(dt);
+//    Serial.println(encoder_resolution);
+//    Serial.println("-----hi1-------");
     Serial.print("l: ");
     Serial.println(rpm_left);
+//    Serial.println(left_pulses - left_pulses_prev);
+//    Serial.println((float)(current_time - start_time_r));
+//    Serial.println((int)(current_time - start_time_l));
+//    Serial.println(left_pulses);
+    
     Serial.print("r: ");
     Serial.println(rpm_right);
     printing_count = 0;
