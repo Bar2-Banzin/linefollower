@@ -34,6 +34,7 @@ dependencies:
     path: ../native_opencv
   flutter_bluetooth_serial: ^0.4.0
   responsive_sizer: ^3.1.1
+  gallery_saver: ^2.3.2
   
 
 
@@ -61,7 +62,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/drawable/
+    - assets/car.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

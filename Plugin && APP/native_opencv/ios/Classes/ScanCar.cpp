@@ -53,7 +53,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 		return false;
 	}
 
-	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
 	//imshow("find_car", image);
 	//imshow("find_car", image);
 

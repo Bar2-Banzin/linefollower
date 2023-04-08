@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import './led.dart';
 import './device.dart';
 
 class SelectBondedDevicePage extends StatefulWidget {
   final bool checkAvailability;
-
-  const SelectBondedDevicePage({Key? key, this.checkAvailability = true})
-      : super(key: key);
+  static const routeName = '/connection';
+  const SelectBondedDevicePage({Key? key, this.checkAvailability = true}) : super(key: key);
 
   @override
   _SelectBondedDevicePage createState() => _SelectBondedDevicePage();
@@ -113,8 +113,11 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
           ),
         )
         .toList();
-    return ListView(
-      children: list,
+    return Scaffold(
+      appBar: AppBar(title: const Text("Devices")),
+      body: ListView(
+        children: list,
+      ),
     );
   }
 }

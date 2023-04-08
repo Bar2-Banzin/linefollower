@@ -17,7 +17,11 @@ typedef _c_initDetector = Void Function(
     Pointer<Uint8> markerPngBytes, Int32 inSize, Int32 bits);
 typedef _c_destroyDetector = Void Function();
 typedef _c_detect = Pointer<Uint8> Function(
-    Pointer<Uint8> markerPngBytes, Int32 inSize, Int32 bits);
+  Int32 width,
+  Int32 height,
+  Pointer<Uint8> bytes,
+  Bool isYUV,
+);
 
 // Dart functions signatures
 typedef _dart_version = Pointer<Utf8> Function();
@@ -25,7 +29,11 @@ typedef _dart_initDetector = void Function(
     Pointer<Uint8> markerPngBytes, int inSize, int bits);
 typedef _dart_destroyDetector = void Function();
 typedef _dart_detect = Pointer<Uint8> Function(
-    Pointer<Uint8> markerPngBytes, int inSize, int bits);
+  int width,
+  int height,
+  Pointer<Uint8> bytes,
+  bool isYUV,
+);
 
 // Create dart functions that invoke the C funcion
 final _version = nativeLib.lookupFunction<_c_version, _dart_version>('version');
@@ -55,10 +63,9 @@ class NativeOpencv {
     Uint8List bytes = imgBuffer.asTypedList(totalSize);
     bytes.setAll(0, markerPngBytes);
 
-  _initDetector(imgBuffer, totalSize, bits);
+    _initDetector(imgBuffer, totalSize, bits);
 
     malloc.free(imgBuffer);
-
   }
 
   void destroy() {
@@ -68,15 +75,26 @@ class NativeOpencv {
     }
   }
 
-  Pointer<Uint8> detect(Uint8List markerPngBytes, int bits) {
-     var totalSize = markerPngBytes.lengthInBytes;
-    var imgBuffer = malloc.allocate<Uint8>(totalSize);
-    Uint8List bytes = imgBuffer.asTypedList(totalSize);
-    bytes.setAll(0, markerPngBytes);
+  Pointer<Uint8> detect(int width, int height, Uint8List yBuffer,
+      Uint8List? uBuffer, Uint8List? vBuffers) {
+    var ySize = yBuffer.lengthInBytes;
+    var uSize = uBuffer?.lengthInBytes ?? 0;
+    var vSize = vBuffers?.lengthInBytes ?? 0;
+    var totalSize = ySize + uSize + vSize;
 
-    Pointer<Uint8> flag = _detect(imgBuffer, totalSize, bits);
+    _imageBuffer ??= malloc.allocate<Uint8>(totalSize);
+    // We always have at least 1 plane, on Android it si the yPlane on iOS its the rgba plane
+    Uint8List bytes = _imageBuffer!.asTypedList(totalSize);
+    bytes.setAll(0, yBuffer);
 
-    malloc.free(imgBuffer);
+    if (Platform.isAndroid) {
+      // Swap u&v buffer for opencv
+      bytes.setAll(ySize, vBuffers!);
+      bytes.setAll(ySize + vSize, uBuffer!);
+    }
+    Pointer<Uint8> flag = _detect(
+        width, height, _imageBuffer!, Platform.isAndroid ? true : false);
+
     return flag;
   }
 }

@@ -24,7 +24,7 @@ class BluetoothDeviceListEntry extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return CameraPage();
+                return CameraPage(device: device,);
               },
             ),
           )

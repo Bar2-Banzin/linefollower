@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'main_screens/start_page.dart';
+import './bluetooth_arduino/connection.dart';
 import './main_screens/camera_page.dart';
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -20,10 +23,10 @@ class MyApp extends StatelessWidget {
         future: FlutterBluetoothSerial.instance.requestEnable(),
         builder: (context, future) {
           if (future.connectionState == ConnectionState.waiting) {
-            return Scaffold(
-              body: Container(
+            return const Scaffold(
+              body: SizedBox(
                 height: double.infinity,
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.bluetooth_disabled,
                     size: 200.0,
@@ -34,27 +37,33 @@ class MyApp extends StatelessWidget {
             );
           } else if (future.connectionState == ConnectionState.done) {
             // return MyHomePage(title: 'Flutter Demo Home Page');
-            return Home();
+            return const Home();
           } else {
-            return Home();
+            return const Home();
           }
         },
         // child: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
+      routes: {
+        SelectBondedDevicePage.routeName: (context) => const SelectBondedDevicePage(),
+      },
     );
   }
 }
 
 class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        title: Text('Connection'),
-      ),
-      body:CameraPage()
-    ));
+            appBar: AppBar(
+              title: const Text('Lightning McQueen'),
+            ),
+            body:
+            const StartPage()
+            ));
   }
 }
 

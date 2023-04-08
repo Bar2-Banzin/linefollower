@@ -7,15 +7,30 @@ import 'package:native_opencv/native_opencv.dart';
 
 class ImageProcessing {
   NativeOpencv? _nativeOpencv;
-  Future<int> detect(XFile image) async {
-    Uint8List _output = await image.readAsBytes();
-    var decodedImage = await decodeImageFromList(_output);
-    int imgWidth = decodedImage.width;
-    int imgHeight = decodedImage.height;
+  Future<int> detect(CameraImage image) async {
+    // Uint8List _output = await image.readAsBytes();
+    // var decodedImage = await decodeImageFromList(_output);
+    // int imgWidth = decodedImage.width;
+    // int imgHeight = decodedImage.height;
     _nativeOpencv = NativeOpencv();
-    final res = _nativeOpencv!.detect(_output, 36);
+    var planes = image.planes;
+    var yBuffer = planes[0].bytes;
+
+    Uint8List? uBuffer;
+    Uint8List? vBuffer;
+
+      uBuffer = planes[1].bytes;
+      vBuffer = planes[2].bytes;
+var start = DateTime.now();
+    print(
+        "=================Start Time==============${start.hour}hr ${start.minute} min ${start.second} sec ${start.millisecond} msec ");
+    var res = _nativeOpencv!.detect(image.width, image.height,yBuffer, uBuffer, vBuffer);
+    var end = DateTime.now();
+    print(
+        "=================End Time==============${end.hour}hr ${end.minute} min ${end.second} sec ${end.millisecond} msec ");
+  
     print("=================image processing result${res.value}");
-    return Future.value(1);
+    return res.value;
   }
 
   Future<int> first_detect(XFile image) async {
@@ -27,5 +42,5 @@ class ImageProcessing {
     _nativeOpencv = NativeOpencv();
     _nativeOpencv!.initDetector(_output, 36);
     return Future.value(1);
-  }  
+  }
 }
