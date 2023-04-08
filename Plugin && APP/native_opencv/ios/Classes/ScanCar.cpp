@@ -68,12 +68,12 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 
 	set<int>s;
 	map<int, int>m, m2;
-	for (int i = 0; i < lines_matrix.rows; i++) {
+	/*for (int i = 0; i < lines_matrix.rows; i++) {
 		for (int j = 0; j < lines_matrix.cols; j++) {
 			s.insert((int)lines_matrix.at<char>(i, j));
 			m2[(int)lines_matrix.at<char>(i, j)]++;
 		}
-	}
+	}*/
 	//for (auto m : s)cout << m << " ";
 
 	int size_i = lines_matrix.rows;
