@@ -35,6 +35,22 @@ ISR(INT1_vect) {
   left_pulses += 1;
 }
 
+void INT0_Init (void) {
+  SREG &= ~(1<<7);
+  DDRD &= (~(1<<PD2));
+  EIMSK |= (1<<INT0);
+  EICRA |= (1<<ISC00) | (1<<ISC01);
+  SREG |= (1<<7);
+}
+
+void INT1_Init (void) {
+//  SREG &= ~(1<<7);
+//  DDRD &= (~(1<<PD3));
+//  EIMSK |= (1<<INT1);
+//  EICRA |= (1<<ISC10) | (1<<ISC11);
+//  SREG |= (1<<7);
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -48,19 +64,13 @@ void setup() {
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-  analogWrite(speedL, 255);
-  analogWrite(speedR, 255);
+  analogWrite(speedL, 100);
+  analogWrite(speedR, 100);
   start_time = millis();
-  SREG &= ~(1<<7);
   DDRD &= ~(1<<PD2);
   DDRD &= ~(1<<PD3);
-  EIMSK |= (1<<INT0) | (1<<INT1);
-  EICRA |= (1<<ISC00) | (1<<ISC10);
-  EICRA &= ~(1<<ISC01);
-  EICRA &= ~(1<<ISC11);
-
-  sei();
-  
+  INT0_Init();
+  INT1_Init();  
 }
 
 void loop() {
