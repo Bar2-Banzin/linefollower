@@ -205,7 +205,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	//}
 
 	//Draw Lines on Image
-	int index = 0;
+	//int index = 0;
 	int sliding = 50;
 	for (auto line_inst : lines) {
 		double x1 = line_inst[0];
@@ -247,7 +247,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 		//line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
 		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255, 255, 255), thickness);
 		//cout << "1:" << x1 << "," << y1 << "=>" << "2:" << x2 << "," << y2 << endl;
-		index++;
+		//index++;
 	}
 
 	////// to see each line detected uncomment this
