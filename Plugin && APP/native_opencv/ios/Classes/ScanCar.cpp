@@ -63,51 +63,54 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
+void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat lines_matrix, int threshold) {
 	/**
-	* This function determines whether car is on a straight line or not
-	*
-	* @param on_line boolean to detect wether car is on a st line or not
-	* @param line_index line index on which car is on
+    	* This function detrmines whether car is on a straight line or not
+    	*
+    	* @param on_line boolean to detect wether car is on a st line or not
+    	* @param line_index line index on which car is on
 
-	* @param x_car, y_car : Center of the Car
-	* @lines_matrix : Binary Matrix with 1's = lines
-	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
-	*/
+    	* @param x_car, y_car : Center of the Car
+    	* @lines_matrix : Binary Matrix with 1's = lines
+    	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
+    	*/
+    	set<int>s;
+    	map<int, int>m, m2;
+    	/*for (int i = 0; i < lines_matrix.rows; i++) {
+    		for (int j = 0; j < lines_matrix.cols; j++) {
+    			s.insert((int)lines_matrix.at<char>(i, j));
+    			m2[(int)lines_matrix.at<char>(i, j)]++;
+    		}
+    	}*/
+    	//for (auto m : s)cout << m << " ";
 
-	set<int>s;
-	map<int, int>m, m2;
-	/*for (int i = 0; i < lines_matrix.rows; i++) {
-		for (int j = 0; j < lines_matrix.cols; j++) {
-			s.insert((int)lines_matrix.at<char>(i, j));
-			m2[(int)lines_matrix.at<char>(i, j)]++;
-		}
-	}*/
-	//for (auto m : s)cout << m << " ";
-
-	int size_i = lines_matrix.rows;
-	int size_j = lines_matrix.cols;
-	int windo_size = 100;
-	int count = 0;
-	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
-		if (i < 0 || i >= size_i)continue;
-		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
-			if (j < 0 || j >= size_j)continue;
-			auto scaler = (int)lines_matrix.at<uchar>(i, j);
-			count += ((int)scaler != 0);
-			m[scaler]++;
-		}
-	}
-	int maxi = -1, maxi_indx = -1;
-	for (auto x : m) {
-		if (x.first && x.second > maxi) {
-			maxi = x.second;
-			maxi_indx = 255 - x.first;
-		}
-	}
-	////threshold
-	on_line = (count >=threshold);
-	line_index = (on_line) ? maxi_indx : -1;
+    	int size_i = lines_matrix.rows;
+    	int size_j = lines_matrix.cols;
+    	int x_car = (x_car_front + x_car_back) / 2;
+    	int y_car = (y_car_front + y_car_back) / 2;
+    	int windo_size = calculateDistance(x_car_front , y_car_front , x_car_back, y_car_back)*1.5;
+    	int count = 0;
+    	on_line = false;
+    	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
+    		if (i < 0 || i >= size_i)continue;
+    		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
+    			if (j < 0 || j >= size_j)continue;
+    			auto scaler = (int)lines_matrix.at<uchar>(i, j);
+    			count += ((int)scaler != 0);
+    			//m[scaler]++;
+    			on_line=on_line|| ((int)scaler != 0);
+    		}
+    	}
+    	/*int maxi = -1, maxi_indx = -1;
+    	for (auto x : m) {
+    		if (x.first && x.second > maxi) {
+    			maxi = x.second;
+    			maxi_indx = 255 - x.first;
+    		}
+    	}*/
+    	////threshold
+    	/*on_line = (count >= threshold);
+    	line_index = (on_line) ? maxi_indx : -1;*/
 }
 
 bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
@@ -156,7 +159,8 @@ bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, 
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
-	int distance = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
+	//int distance = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
+	int distance = calculateDistance((x_car_front+x_car_back)/2,( y_car_front+y_car_back)/2, line_point[0], line_point[1]);
 	if (distance > dist_threshold) {
 		//Increase Speed
 		//cout << "Increase Speed" << endl;

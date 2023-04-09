@@ -182,7 +182,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	//cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image
-	image_lines = Mat::zeros(image.size(), CV_8UC1);//Inverted image
+	image_lines = Mat::zeros(image.size(), CV_8UC3);//Inverted image
 
 	/*	
 	Store start and end points of each line
@@ -191,14 +191,42 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	*/
 	//Mat start_end_points = lines.reshape((np.shape(lines)[0], 4);
 	start_end_points = lines;
-	
 	//cout << "Lines" << endl;
-	//for (auto it : lines) {
-	//	cout<< it << endl;
-	//}
+    	//for (auto it : lines) {
+    	//	cout<< it << endl;
+    	//}
+	//Draw Lines on Image
+    	//int index = 0;
+    int sliding = 50;
+    	for (auto line_inst : lines) {
+    		double x1 = line_inst[0];
+    		double y1 = line_inst[1];
+
+    		double x2 = line_inst[2];
+    		double y2 = line_inst[3];
+
+    		double change_x = x2 - x1, change_y = y2 - y1;
+    		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));
+    		change_x /= length;change_y /= length;
+    		change_x *= sliding;
+    		change_y *= sliding;
+    		x1 += change_x;
+    		y1 += change_y;
+
+    		x2 -= change_x;
+    		y2 -= change_y;
+    		//int m = (x1 - x2) / (y1 - y2);
+    		//int c = x2 - m*y2;
+
+    		//line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
+    		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255, 255, 255), thickness);
+    		//cout << "1:" << x1 << "," << y1 << "=>" << "2:" << x2 << "," << y2 << endl;
+    		//index++;
+    	}
+
 
 	//Draw Lines on Image
-	int index = 0;
+	/*int index = 0;
 	for (auto line_inst : lines) {
 		int x1 = line_inst[0];
 		int y1 = line_inst[1];
@@ -207,7 +235,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 		int y2 = line_inst[3];
 		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255-index, 255-index), thickness);
 		index++;
-	}
+	}*/
 
 	//// to see each line detected uncomment this
 	//for (int i=0; i < lines.size(); i++) {
