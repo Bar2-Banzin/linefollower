@@ -50,9 +50,9 @@ int main(int argc, char** argv)
 	}
 
 	//Debug
-	cv::line(image_lines, Point(x_center, y_center), Point(0, 0), Scalar(255, 255, 255), 2);
-	imshow("Center vs lines", image_lines);
-	waitKey(0);
+	//cv::line(image_lines, Point(x_center, y_center), Point(0, 0), Scalar(255, 0, 0), 2);
+	//imshow("Center vs lines", image_lines);
+	//waitKey(0);
 
 
 	///************************************************************************************************/
