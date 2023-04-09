@@ -28,12 +28,13 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	imshow("lines", image_lines);
+	imwrite("./1.jpeg",image_lines);
 	waitKey(0);
 
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/TestCases/TestCase2/04.jpeg";
+	std::string path2 = "./assets/TestCases/TestCase2/car.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
 	//cout << "size" << typeid(image.size()).name() << endl;
@@ -76,6 +77,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	cout << "Car is on a straight line" << endl;
+	return 0;
 
 	/************************************************************************************************/
 	//Step(4) Inc or Dec Speed

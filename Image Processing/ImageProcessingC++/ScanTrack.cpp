@@ -1,6 +1,6 @@
 ﻿# include"utils.h"
 # include "ScanTrack.h";
-
+#include <math.h>
 
 bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image) {
 	/**
@@ -130,8 +130,8 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	vector<Point2f>biggest_contour_ordered = reorderPoints(biggest_contour);
 
 	//Prespective
-	vector<Point2f>image_corner {Point(0,0),Point(imgWidth -1, 0),Point(0,imgHeight-1),Point(imgWidth-1, imgHeight-1) };
-	Mat M=getPerspectiveTransform(biggest_contour_ordered, image_corner);
+	vector<Point2f>image_corner{ Point(0,0),Point(imgWidth - 1, 0),Point(0,imgHeight - 1),Point(imgWidth - 1, imgHeight - 1) };
+	Mat M = getPerspectiveTransform(biggest_contour_ordered, image_corner);
 
 	warpPerspective(img_bgr, warped_image, M, Size(imgWidth, imgHeight));
 
@@ -141,10 +141,10 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	//maxLineGap gets its value from the default value in the .h file or from scan track function
 	// donst change it here 
-	maxLineGap = 10;
+	//maxLineGap = 10;
 	/**
 	* Extract Line out of the RGB image
-	
+
 	* @param image_lines: Matrix of size = Image size with St lines Drawn with color Depedning on its order
 	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2
 
@@ -165,11 +165,11 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
 	imshow("thinned", thinned);
-	waitKey(0);
+	//waitKey(0);
 
 	// Dilate
 	Mat kernel, Dilate;
-	kernel = getStructuringElement(MORPH_CROSS, Size(3,3));
+	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
 	dilate(thinned, Dilate, kernel);
 
 	// Find the edges in the image using canny detector
@@ -183,21 +183,22 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	vector<Vec4i>lines;
 	//HoughLinesP(edges, lines, rho, theta, 100, minLineLength, maxLineGap);
 	imshow("	Diatled image", edges);
-	waitKey(0);
+	//waitKey(0);
+
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image
 	image_lines = Mat::zeros(image.size(), CV_8UC3);//Inverted image
 
-	/*	
+	/*
 	Store start and end points of each line
 	start_end_points = np.empty((1, np.shape(lines))[0])# 1d with size = no of lines detected
-    FIXME: no of line, 1 * **, 4[Take care to tale[0] before taking point 😉](Solved this Problem by reshape)
+	FIXME: no of line, 1 * **, 4[Take care to tale[0] before taking point 😉](Solved this Problem by reshape)
 	*/
 	//Mat start_end_points = lines.reshape((np.shape(lines)[0], 4);
 	start_end_points = lines;
-	
+
 	//cout << "Lines" << endl;
 	//for (auto it : lines) {
 	//	cout<< it << endl;
@@ -205,13 +206,47 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 	//Draw Lines on Image
 	int index = 0;
+	int sliding = 50;
 	for (auto line_inst : lines) {
-		int x1 = line_inst[0];
-		int y1 = line_inst[1];
+		double x1 = line_inst[0];
+		double y1 = line_inst[1];
 
-		int x2 = line_inst[2];
-		int y2 = line_inst[3];
-		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
+		double x2 = line_inst[2];
+		double y2 = line_inst[3];
+
+		double change_x = x2 - x1, change_y = y2 - y1;
+		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));
+		change_x /= length;change_y /= length;
+		change_x *= sliding;
+		change_y *= sliding;
+		x1 += change_x;
+		y1 += change_y;
+
+		x2 -= change_x;
+		y2 -= change_y;
+		//int m = (x1 - x2) / (y1 - y2);
+		//int c = x2 - m*y2;
+		double a = y1 - y2, b = x2 - x1, c = x1 * y2 - x2 * y1;
+		int threshold_cut = 50;
+		/*if (x1 > x2) {
+			x1 = x1 - threshold_cut;
+			y1 = (a * x1 + c) / -b;
+
+			x2 = x2 + threshold_cut;
+			y2 = (a * x2 + c) / -b;
+
+		}
+		else {
+			x1 = x1 + threshold_cut;
+			y1 = (a * x1 + c) / -b;
+
+			x2 = x2 - threshold_cut;
+			y2 = (a * x2 + c) / -b;;
+
+		}*/
+		//line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
+		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255, 255, 255), thickness);
+		//cout << "1:" << x1 << "," << y1 << "=>" << "2:" << x2 << "," << y2 << endl;
 		index++;
 	}
 

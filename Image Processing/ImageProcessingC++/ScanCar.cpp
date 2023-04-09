@@ -89,26 +89,27 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 	int y_car = (y_car_front + y_car_back) / 2;
 	int windo_size = calculateDistance(x_car_front , y_car_front , x_car_back, y_car_back)*1.5;
 	int count = 0;
-	
+	on_line = false;
 	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
 		if (i < 0 || i >= size_i)continue;
 		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
 			if (j < 0 || j >= size_j)continue;
 			auto scaler = (int)lines_matrix.at<uchar>(i, j);
 			count += ((int)scaler != 0);
-			m[scaler]++;
+			//m[scaler]++;
+			on_line=on_line|| ((int)scaler != 0);
 		}
 	}
-	int maxi = -1, maxi_indx = -1;
+	/*int maxi = -1, maxi_indx = -1;
 	for (auto x : m) {
 		if (x.first && x.second > maxi) {
 			maxi = x.second;
 			maxi_indx = 255 - x.first;
 		}
-	}
+	}*/
 	////threshold
-	on_line = (count >= threshold);
-	line_index = (on_line) ? maxi_indx : -1;
+	/*on_line = (count >= threshold);
+	line_index = (on_line) ? maxi_indx : -1;*/
 }
 
 bool increase_decrease_speed(Mat draw,double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
