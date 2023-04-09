@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 {
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/track/00.jpeg";
+	std::string path = "./assets/track/track.jpeg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/ontrack/01.jpeg";
+	std::string path2 = "./assets/ontrack/car.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
 	//cout << "size" << typeid(image.size()).name() << endl;
@@ -75,19 +75,17 @@ int main(int argc, char** argv)
 	Vec4i line = start_end_points[line_index];
 
 	*/
-
-	//Test Only Till Madbouly Finishes
 	bool inc_speed = false;
 	int dist_threshold = 150;
 	//int x_f = 50, y_f = 200, x_b = 50, y_b = 250;
 	Vec4i lineto = start_end_points[line_index];
-	line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
-	cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
+	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
 
-	imshow("Original Track main.cpp", image);
+	//imshow("Original Track main.cpp", image);
 	
-	inc_speed = increase_decrease_speed(x_f, y_f, x_b, y_b, lineto, dist_threshold);
-	imshow("Step 4 main.cpp", image);
+	//inc_speed = increase_decrease_speed(x_f, y_f, x_b, y_b, lineto, dist_threshold);
+	//imshow("Step 4 main.cpp", image);
 	//waitKey(0);
 
 

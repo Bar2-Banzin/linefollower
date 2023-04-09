@@ -2,7 +2,7 @@
 
 Mat thin_image(Mat image) {
 	/**
-	* Thinning Gray Scal Image
+	* Thinning Gray Scale Image
 
 	* @param image: Gray Image
 
@@ -95,10 +95,11 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 	get_biggest_rectangular_contour(biggestContour, max_area, contours);
 
 
-	//Caution:This Modifies on image  It Draws on it :D
     Moments M=moments(biggestContour);
     x = int(M.m10 / M.m00);
     y = int(M.m01/ M.m00);
+	
+	//Caution:This Modifies on image  It Draws on it :D
 	//min_rectangle(image,x,y, biggestContour,color,10,true);
 
 	//Show image is Here (image)
@@ -116,7 +117,7 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 	* @param image: RGB image
 	* @param color : RGB color i.e[0, 255, 0] to be masked
 	* 
-	* @return bool if Error in Geeting Range of Color
+	* @return bool if Error in Getting Range of Color
 	*/
 
 	//Get Color Mask
@@ -166,57 +167,57 @@ bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 	return true;
 }
 
-void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color, int thickness,bool draw) {
-	/**
-	* Get center of min rectangle around given contour
-	*
-	* @param center of rectangle
-	* @param Can Return Dimensions of Rect and angle of Rotation [Need TO be Passed only :D]
-	*
-	* @param image : RGB image to Draw on it Rectangle
-	* @param contour :  4 point contour
-	* @param color color of Rectangle to be Drawn
-	* @param thickness thickness of Rectangle to be Drawn
-	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
-	*/
+// void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color, int thickness,bool draw) {
+// 	/**
+// 	* Get center of min rectangle around given contour
+// 	*
+// 	* @param center of rectangle
+// 	* @param Can Return Dimensions of Rect and angle of Rotation [Need TO be Passed only :D]
+// 	*
+// 	* @param image : RGB image to Draw on it Rectangle
+// 	* @param contour :  4 point contour
+// 	* @param color color of Rectangle to be Drawn
+// 	* @param thickness thickness of Rectangle to be Drawn
+// 	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
+// 	*/
 
-	//Min area of Rectangle
+// 	//Min area of Rectangle
 
-    vector<Point2f> pts_f;
-    vector<Point> pts;
-    Mat(contour).convertTo(pts_f, CV_32F);
-
-
-    //Caution:This Modifies on image  It Draws on it :D
-
-	RotatedRect rect = minAreaRect(pts_f);
+//     vector<Point2f> pts_f;
+//     vector<Point> pts;
+//     Mat(contour).convertTo(pts_f, CV_32F);
 
 
-	//draw the Recatngle
-	if (draw) {
-		//Get Points forming this Rectangle
-		Mat boxPts;
-		boxPoints(rect, boxPts);//Here Expection is Thrown don't know :(
+//     //Caution:This Modifies on image  It Draws on it :D
 
-		//Convert from float to int
-		vector<Point2f> points;
-		/*Mat(boxPts).convertTo(points, Mat(points).type());*/
-		drawContours(image, points, 0, color, thickness);
-    }
+// 	RotatedRect rect = minAreaRect(pts_f);
 
-	//Center and angle of rotation of Rectangle
-	Point2f center = rect.center;
-	x = center.x;
-	y = center.y;
 
-	//Dimensions of the Rectangle 
-	//int width = (int)(rect.size.width);
-	//int height = (int)(rect.size.height);
+// 	//draw the Recatngle
+// 	if (draw) {
+// 		//Get Points forming this Rectangle
+// 		Mat boxPts;
+// 		boxPoints(rect, boxPts);//Here Expection is Thrown don't know :(
 
-	//Angle of Rotation
-	//float angle_of_rotation = rect.angle;
+// 		//Convert from float to int
+// 		vector<Point2f> points;
+// 		/*Mat(boxPts).convertTo(points, Mat(points).type());*/
+// 		drawContours(image, points, 0, color, thickness);
+//     }
 
-}
+// 	//Center and angle of rotation of Rectangle
+// 	Point2f center = rect.center;
+// 	x = center.x;
+// 	y = center.y;
+
+// 	//Dimensions of the Rectangle 
+// 	//int width = (int)(rect.size.width);
+// 	//int height = (int)(rect.size.height);
+
+// 	//Angle of Rotation
+// 	//float angle_of_rotation = rect.angle;
+
+// }
 
 double calculateDistance(double x1, double y1, double x2, double y2) {
 	/**

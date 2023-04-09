@@ -74,7 +74,7 @@ extern "C" {
             car_on_line(on_line, line_index, x_center, y_center, image_lines);
             if (!on_line) {
                 //cout << "Car isn't on a straight line" << endl;
-             //continue;
+                //continue;
 
                 *inc_speed=4;
                 return inc_speed;
@@ -83,14 +83,11 @@ extern "C" {
 
         	/************************************************************************************************/
         	//Step(4) Inc or Dec Speed
-
-
-
             int dist_threshold = 150;
 
             Vec4i lineto = start_end_points[line_index];
-            line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
-
+            //line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+            //cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
 
             Mat draw_temp = car_image.clone();
             *inc_speed = increase_decrease_speed(draw_temp, x_f, y_f, x_b, y_b, lineto, dist_threshold);

@@ -64,7 +64,16 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 }
 
 void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
+	/**
+	* This function determines whether car is on a straight line or not
+	*
+	* @param on_line boolean to detect wether car is on a st line or not
+	* @param line_index line index on which car is on
 
+	* @param x_car, y_car : Center of the Car
+	* @lines_matrix : Binary Matrix with 1's = lines
+	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
+	*/
 
 	set<int>s;
 	map<int, int>m, m2;
@@ -99,27 +108,16 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 	////threshold
 	on_line = (count >=threshold);
 	line_index = (on_line) ? maxi_indx : -1;
-
-	/**
-	* This function detrmines whether car is on a straight line or not
-	*
-	* @param on_line boolean to detect wether car is on a st line or not
-	* @param line_index line index on which car is on
-
-	* @param x_car, y_car : Center of the Car
-	* @lines_matrix : Binary Matrix with 1's = lines
-	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
-	*/
 }
 
 bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**
-	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
+	* Control wether Inc or Dec Car Speed Depending on distance form car and end of the St line
 	*
 	* @param x_car_front, y_car_front : front Center of the Car
 	* @param x_car_back, y_car_back : back Center of the Car
 	* @param line : [x1, y1, x2, y2] : start and end point of the line
-	* @param dist_threshold:thershold to depend on to take action of speed :D
+	* @param dist_threshold:threshold to depend on to take action of speed :D
 	*
 	* @return Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
 	*
@@ -153,13 +151,13 @@ bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, 
 	//cout << "P2P1" << P2P1 << endl;
 
 	if ((sign(P2P1[0]) == sign(car[0]) || abs(car[0] - P2P1[0]) < 10) && (sign(P2P1[1]) == sign(car[1]) || abs(car[1] - P2P1[1]) < 10)) {
-		cout << "Car is Moving towards P1" << endl;
+		//cout << "Car is Moving towards P1" << endl;
 		line_point[0] = line[0];
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
-	int distanse = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
-	if (distanse > dist_threshold) {
+	int distance = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
+	if (distance > dist_threshold) {
 		//Increase Speed
 		//cout << "Increase Speed" << endl;
 		return true;

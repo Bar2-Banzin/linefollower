@@ -17,13 +17,13 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped=extract_paper( paper_img, track_image,false);
+	//bool wrapped=extract_paper( paper_img, track_image,false);
 
-	if (! wrapped) {
-		return false;
-	 }
+	//if (! wrapped) {
+	//	return false;
+	// }
 
-	imshow("Wrapped Paper  scan_track()", paper_img);
+	//imshow("Wrapped Paper  scan_track()", paper_img);
 
 	//Temp Till Tomorrow
 	paper_img = track_image;
@@ -204,7 +204,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 		int x2 = line_inst[2];
 		int y2 = line_inst[3];
-		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
+		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255 - index, 255 - index), thickness);
 		index++;
 	}
 

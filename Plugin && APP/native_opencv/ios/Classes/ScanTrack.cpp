@@ -6,24 +6,25 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
-	* @param wrapped: Flag if True = Scanning is Done Sucessfully
+	* @param wrapped: Flag if True = Scanning is Done Successfully
 	* @param image_lines: Matrix of size = Image size with St lines Drawn with color Depedning on its order
-	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2
+	* @param start_end_points: Vector of 4 for every line x1,y1  x2,y2
 
 	* @param track_image: BGR Track Image
 	* @param thickness : Thickness of the wite line Drawn : )
 	* @return  Matrix of size = Image size and lines Detected are 1's
 	*/
 
+
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped=extract_paper( paper_img, track_image,false);
+	// bool wrapped=extract_paper( paper_img, track_image,false);
 
-	if (! wrapped) {
-		return false;
-	 }
+	// if (! wrapped) {
+	// 	return false;
+	// }
 
-//	imshow("Wrapped Paper  scan_track()", paper_img);
+	//imshow("Wrapped Paper  scan_track()", paper_img);
 
 	//Temp Till Tomorrow
 	paper_img = track_image;
@@ -143,7 +144,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	* Extract Line out of the RGB image
 	
 	* @param image_lines: Matrix of size = Image size with St lines Drawn with color Depedning on its order
-	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2
+	* @param start_end_points: Vector of 4 for every line x1,y1  x2,y2
 
 	* @param image: RGB Track image
 	* @param rho: rho Resolution
