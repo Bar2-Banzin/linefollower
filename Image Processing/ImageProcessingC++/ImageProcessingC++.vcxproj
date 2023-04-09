@@ -132,12 +132,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScanCar.cpp" />
     <ClCompile Include="ScanTrack.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="ScanCar.h" />
     <ClInclude Include="ScanTrack.h" />
     <ClInclude Include="utils.h" />
