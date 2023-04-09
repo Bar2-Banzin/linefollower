@@ -62,7 +62,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines_matrix, int threshold) {
+void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -85,8 +85,11 @@ void car_on_line(bool& on_line, int& line_index, int x_car, int y_car, Mat lines
 
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
-	int windo_size = 100;
+	int x_car = (x_car_front + x_car_back) / 2;
+	int y_car = (y_car_front + y_car_back) / 2;
+	int windo_size = calculateDistance(x_car_front , y_car_front , x_car_back, y_car_back)*1.5;
 	int count = 0;
+	
 	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
 		if (i < 0 || i >= size_i)continue;
 		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
@@ -157,7 +160,7 @@ bool increase_decrease_speed(Mat draw,double x_car_front, double  y_car_front, d
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
-	int distanse = calculateDistance(x_car_front, y_car_front, line_point[0], line_point[1]);
+	int distanse = calculateDistance((x_car_front+x_car_back)/2,( y_car_front+y_car_back)/2, line_point[0], line_point[1]);
 	if (distanse > dist_threshold){
 		//Increase Speed
 		cout << "Increase Speed" << endl;

@@ -13,12 +13,11 @@ int main(int argc, char** argv)
 {
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/track/track.jpeg";
+	std::string path = "./assets/TestCases/TestCase2/track.jpeg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;
-	/*imshow("Original Track main.cpp", image);*/
-
+	
 	//2.Scanning Track Initially
 	Mat image_lines;
 	vector<Vec4i>start_end_points;
@@ -28,11 +27,13 @@ int main(int argc, char** argv)
 		cout << "Failed To Scan Track" << endl;
 		return -1;
 	}
+	imshow("lines", image_lines);
+	waitKey(0);
 
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/ontrack/car.jpeg";
+	std::string path2 = "./assets/TestCases/TestCase2/04.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
 	//cout << "size" << typeid(image.size()).name() << endl;
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
 	int x_center, y_center, x_f, y_f, x_b, y_b;
 	Scalar front_color(255,0, 0);//red
 	Scalar back_color(0, 255, 0);//green
+	
 	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {
@@ -50,9 +52,10 @@ int main(int argc, char** argv)
 	}
 
 	//Debug
-	//cv::line(image_lines, Point(x_center, y_center), Point(0, 0), Scalar(255, 0, 0), 2);
-	//imshow("Center vs lines", image_lines);
-	//waitKey(0);
+	Mat draw_temp2 = image_lines.clone();
+	cv::line(draw_temp2, Point(x_center, y_center), Point(0, 0), Scalar(255, 255, 255), 2);
+	imshow("Center vs lines", image_lines);
+	waitKey(0);
 
 
 	///************************************************************************************************/
@@ -61,7 +64,13 @@ int main(int argc, char** argv)
 	//int y_center = 700;
 	bool on_line;
 	int line_index;
-	car_on_line(on_line, line_index, x_center, y_center, image_lines);
+	/*Mat draw_temp2 = image_lines.clone();
+	cv::line(draw_temp2, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
+	cv::line(draw_temp2, Point(0, 0), Point(x_b, y_b), Scalar(0, 255, 255), 5);
+
+	imshow("front and back of the car", draw_temp2);*/
+	//waitKey(0);
+	car_on_line(on_line, line_index, x_f, y_f, x_b, y_b, image_lines,100);
 	if (!on_line) {
 		cout << "Car isn't on a straight line" << endl;
 		return 0;
@@ -76,7 +85,7 @@ int main(int argc, char** argv)
 
 	*/
 	bool inc_speed = false;
-	int dist_threshold = 150;
+	int dist_threshold = calculateDistance(x_f, y_f, x_b, y_b)*2;
 	//int x_f = 50, y_f = 200, x_b = 50, y_b = 250;
 	Vec4i lineto = start_end_points[line_index];
 	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);

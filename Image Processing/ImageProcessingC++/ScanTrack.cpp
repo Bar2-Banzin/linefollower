@@ -139,6 +139,9 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 }
 
 void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+	//maxLineGap gets its value from the default value in the .h file or from scan track function
+	// donst change it here 
+	maxLineGap = 10;
 	/**
 	* Extract Line out of the RGB image
 	
@@ -161,6 +164,8 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
+	imshow("thinned", thinned);
+	waitKey(0);
 
 	// Dilate
 	Mat kernel, Dilate;
@@ -177,11 +182,13 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	//	0 <= rho < Rmax
 	vector<Vec4i>lines;
 	//HoughLinesP(edges, lines, rho, theta, 100, minLineLength, maxLineGap);
+	imshow("	Diatled image", edges);
+	waitKey(0);
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image
-	image_lines = Mat::zeros(image.size(), CV_8UC1);//Inverted image
+	image_lines = Mat::zeros(image.size(), CV_8UC3);//Inverted image
 
 	/*	
 	Store start and end points of each line
@@ -204,11 +211,11 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 		int x2 = line_inst[2];
 		int y2 = line_inst[3];
-		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255- index, 255- index), thickness);
+		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
 		index++;
 	}
 
-	//// to see each line detected uncomment this
+	////// to see each line detected uncomment this
 	//for (int i=0; i < lines.size(); i++) {
 	//	Mat image_line = Mat::zeros(image.size(), CV_8UC1);//Inverted image
 	//	int x1 = lines[i][0];
@@ -216,7 +223,13 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 	//	int x2 = lines[i][2];
 	//	int y2 = lines[i][3];
-	//	line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255 - i, 255, 255), 1);
+	//	Mat temo= image_lines.clone();
+	//	if(i==0)
+	//		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255  ,0,0), 3);
+	//	if(i==1)
+	//		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(0, 255, 0), 3);
+	//	if (i == 2)
+	//		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(0, 0,255 ), 3);
 	//	imshow("track_lines_loop", image_lines);
 	//	waitKey(0);
 	//}
