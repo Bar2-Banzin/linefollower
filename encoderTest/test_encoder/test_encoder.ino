@@ -11,9 +11,9 @@
 #define IN4 8
 #define speedR 11
 
-#define speedy 100
+#define speedy 255
 
-//long printing_count = 0;
+long printing_count = 0;
 
 int right_pulses = 0;
 int left_pulses = 0;
@@ -82,10 +82,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   current_time = millis();
-  dt = current_time - start_time_r;
 
-  rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)dt;
-  rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)dt;
+  rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
+  rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
 
   if((left_pulses - left_pulses_prev) >= count){
     left_pulses_prev = left_pulses;
@@ -97,14 +96,18 @@ void loop() {
     start_time_r = millis();
   }
   
-//  if(printing_count == 10000)
-//  {
-//    Serial.print("l: ");
-//    Serial.println(rpm_left);
-//    Serial.print("r: ");
-//    Serial.println(rpm_right);
-//    printing_count = 0;
-//  }
-//  
-//  printing_count++;
+  if(printing_count == 5000)
+  {
+//    Serial.println(left_pulses);
+//    Serial.println(left_pulses_prev);
+//    
+    
+    Serial.print("l: ");
+    Serial.println(rpm_left);
+    Serial.print("r: ");
+    Serial.println(rpm_right);
+    printing_count = 0;
+  }
+  
+  printing_count++;
 }
