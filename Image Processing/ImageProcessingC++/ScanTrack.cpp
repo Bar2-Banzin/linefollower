@@ -17,14 +17,14 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	//bool wrapped=extract_paper( paper_img, track_image,false);
+	bool wrapped = extract_paper(paper_img, track_image, false);
 
 	//if (! wrapped) {
 	//	return false;
 	// }
 
-	//imshow("Wrapped Paper  scan_track()", paper_img);
-
+	imshow("Wrapped Paper  scan_track()", paper_img);
+	waitKey(0);
 	//Temp Till Tomorrow
 	paper_img = track_image;
 
@@ -47,9 +47,9 @@ struct str {
 bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	/**
 	* extract paper out of the image
-	* @param warped_image bgr warpPerspective
+	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
 	*
-	* @param img_bgr: bgr image
+	* @param img_bgr: bgr image INPUT IMAGE
 	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
 	*
 	* @return boolean to determine wether paper is extracted sucessfully
@@ -62,25 +62,47 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	//convert to rgb scale
 	Mat image_rgb;
 	cvtColor(img_bgr, image_rgb, COLOR_BGR2RGB);
-
+	/*imshow("image_rgb", image_rgb);
+	waitKey(0);*/
 	//convert to gray scale
 	Mat image_gray;
 	cvtColor(img_bgr, image_gray, COLOR_BGR2GRAY);
 
+	/*imshow("image_gray", image_gray);
+	waitKey(0);*/
 	//gaussian filter on the image to remove noise
 	//syntax: gray scale image, kernel size(positive and odd), sigma
 	Mat blurred_image_gaussian;
 	GaussianBlur(image_gray, blurred_image_gaussian, Size(5, 5), 1);
-
+	/*imshow("blurred_image_gaussian", blurred_image_gaussian);
+	waitKey(0);*/
 	/*median filter to remove salt and pepper
 	syntax: image-kernel size
 	blurred_image_median = cv2.medianblur(img_gray, 5)*/
 
+
+	Mat binary_image;
+	threshold(image_gray, binary_image, 160, 255, THRESH_BINARY);//converting grayscale image stored in converted matrix into binary image//
+	/*imshow("binary_image", binary_image);
+	waitKey(0);*/
+
+	Mat erosion_image;
+	erode(binary_image, erosion_image, Mat(), Point(-1, -1), 7, 1, 1);
+	/*imshow("erosion_image", erosion_image);
+	waitKey(0);*/
+
+
+	Mat dilated_image;
+	dilate(erosion_image, dilated_image, Mat(), Point(-1, -1), 7, 1, 1);
+	/*imshow("dilated_image", dilated_image);
+	waitKey(0);*/
+
 	//===========================================================edge detection=========================================================
 	//canny edge detection (optimal edge detector)
 	Mat edged_image;
-	Canny(blurred_image_gaussian, edged_image, 180, 255);
-
+	Canny(dilated_image, edged_image, 150, 350);
+	/*imshow("edged_image", edged_image);
+	waitKey(0);*/
 	//===========================================================erosion & dilation=======================================================
 	//mat dilated_img = edged_image;
 	//mat errored_img = edged_image;
@@ -90,8 +112,9 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	//findcontour() works best on binary images
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
-	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
+	//findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
 
+	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_NONE);
 	if (contours.size() <= 0) {
 		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
 		return false;
@@ -216,7 +239,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 		double change_x = x2 - x1, change_y = y2 - y1;
 		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));
-		change_x /= length;change_y /= length;
+		change_x /= length; change_y /= length;
 		change_x *= sliding;
 		change_y *= sliding;
 		x1 += change_x;
