@@ -1,5 +1,118 @@
 #include "utils.h";
 
+//bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
+bool extract_paper(Mat& warped_image,Mat& img_bgr) {
+	/**
+	* extract paper out of the image
+	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
+	*
+	* @param img_bgr: bgr image INPUT IMAGE
+	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
+	*
+	* @return boolean to determine wether paper is extracted sucessfully
+	*/
+
+	//get image dimensions
+	int imgHeight = img_bgr.rows;
+	int imgWidth = img_bgr.cols;
+
+	//convert to rgb scale
+	Mat image_rgb;
+	cvtColor(img_bgr, image_rgb, COLOR_BGR2RGB);
+	/*imshow("image_rgb", image_rgb);
+	waitKey(0);*/
+
+	//convert to gray scale
+	Mat image_gray;
+	cvtColor(img_bgr, image_gray, COLOR_BGR2GRAY);
+	/*imshow("image_gray", image_gray);
+	waitKey(0);*/
+
+	//gaussian filter on the image to remove noise
+	//syntax: gray scale image, kernel size(positive and odd), sigma
+	Mat blurred_image_gaussian;
+	GaussianBlur(image_gray, blurred_image_gaussian, Size(5, 5), 1);
+	/*imshow("blurred_image_gaussian", blurred_image_gaussian);
+	waitKey(0);*/
+
+	/*median filter to remove salt and pepper
+	syntax: image-kernel size
+	blurred_image_median = cv2.medianblur(img_gray, 5)*/
+
+	//converting grayscale image stored in converted matrix into binary image//
+	Mat binary_image;
+	threshold(image_gray, binary_image, 160, 255, THRESH_BINARY);
+	/*imshow("binary_image", binary_image);
+	waitKey(0);*/
+
+	//===========================================================erosion & dilation=======================================================
+	Mat erosion_image;
+	erode(binary_image, erosion_image, Mat(), Point(-1, -1), 7, 1, 1);
+	/*imshow("erosion_image", erosion_image);
+	waitKey(0);*/
+
+
+	Mat dilated_image;
+	dilate(erosion_image, dilated_image, Mat(), Point(-1, -1), 7, 1, 1);
+	/*imshow("dilated_image", dilated_image);
+	waitKey(0);*/
+
+	//===========================================================edge detection=========================================================
+	//canny edge detection (optimal edge detector)
+	Mat edged_image;
+	Canny(dilated_image, edged_image, 150, 350);
+	/*imshow("edged_image", edged_image);
+	waitKey(0);*/
+
+	//============================================================getting contours=========================================================
+	//findcontour() works best on binary images
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+	//findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
+	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_NONE);
+	if (contours.size() <= 0) {
+		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
+		return false;
+	}
+
+	//drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
+	//imshow("Contours extract_paper()", image_rgb);
+	//std::string path = "./test.jpeg";
+	//imwrite(path, image_rgb);
+	//waitKey(0);
+
+
+	//getting biggest rectangular contour
+	vector<Point>biggest_contour;
+	double max_area;
+	get_biggest_rectangular_contour(biggest_contour, max_area, contours);
+
+
+	//Solving problem of False Contours The max area must be Greater than 10 % of the Image area
+	if (max_area < 0.10 * imgHeight * imgWidth)
+	{
+		cout << "extractpaper():Largest Contour is Very small :(" << endl;
+		return false;
+	}
+
+	//draw paper contour
+	//drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
+	//imshow("Biggest Contour extract_paper()", image_rgb);
+	//waitKey(0);
+
+
+	//Sort 4 Corner for Prespective
+	vector<Point2f>biggest_contour_ordered = reorderPoints(biggest_contour);
+
+	//Prespective
+	vector<Point2f>image_corner{ Point(0,0),Point(imgWidth - 1, 0),Point(0,imgHeight - 1),Point(imgWidth - 1, imgHeight - 1) };
+	Mat M = getPerspectiveTransform(biggest_contour_ordered, image_corner);
+	//transformation_matrix = M;
+	warpPerspective(img_bgr, warped_image, M, Size(imgWidth, imgHeight));
+
+	return true;
+}
+
 Mat thin_image(Mat image) {
 	/**
 	* Thinning Gray Scale Image

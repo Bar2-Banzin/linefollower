@@ -1,37 +1,43 @@
-﻿# include"utils.h"
-# include "ScanTrack.h";
-#include <math.h>
+﻿#include <math.h>
 
-bool scan_track(Mat& image_lines,Mat& transformation_matrix, vector<Vec4i>& start_end_points, Mat& track_image) {
+# include"utils.h"
+#include"common.h"
+# include "ScanTrack.h";
+
+//bool scan_track(Mat& image_lines,Mat& transformation_matrix, vector<Vec4i>& start_end_points, Mat& track_image) {
+bool scan_track(Mat & image_lines, Mat & track_image) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
-	* @param wrapped: Flag if True = Scanning is Done Sucessfully
-	* @param image_lines: Matrix of size = Image size with St lines Drawn with color Depedning on its order
-	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2
+	* @param image_lines: Matrix of size = Image size with St lines Drawn in white
+	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2 *****************
 
 	* @param track_image: BGR Track Image
 	* @param thickness : Thickness of the wite line Drawn : )
-	* @return  Matrix of size = Image size and lines Detected are 1's
+	* @return boolean if True = Scanning is Done Sucessfully
 	*/
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, transformation_matrix, track_image, false);
-
-	//if (! wrapped) {
-	//	return false;
-	// }
-
+	bool wrapped = extract_paper(paper_img, track_image);
+	namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	imshow("Wrapped Paper  scan_track()", paper_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/track_paper.jpeg", paper_img);
 	//waitKey(0);
-	//Temp Till Tomorrow
+
+	if (! wrapped) {
+		return false;
+	 }
+
+	//Uncomment to Disable extract_paper
 	//paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
-	extract_lines(image_lines, start_end_points, paper_img);
-
+	//extract_lines(image_lines, start_end_points, paper_img);
+	extract_lines(image_lines, paper_img);
+	//namedWindow("image_lines scan_track()", WINDOW_NORMAL);
 	//imshow("image_lines scan_track()", image_lines);
+	//waitKey(0);
 
 	return true;
 }
@@ -44,124 +50,8 @@ struct str {
 	}
 } comp;
 
-bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
-	/**
-	* extract paper out of the image
-	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
-	*
-	* @param img_bgr: bgr image INPUT IMAGE
-	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
-	*
-	* @return boolean to determine wether paper is extracted sucessfully
-	*/
-
-	//get image dimensions
-	int imgHeight = img_bgr.rows;
-	int imgWidth = img_bgr.cols;
-
-	//convert to rgb scale
-	Mat image_rgb;
-	cvtColor(img_bgr, image_rgb, COLOR_BGR2RGB);
-	/*imshow("image_rgb", image_rgb);
-	waitKey(0);*/
-	//convert to gray scale
-	Mat image_gray;
-	cvtColor(img_bgr, image_gray, COLOR_BGR2GRAY);
-
-	/*imshow("image_gray", image_gray);
-	waitKey(0);*/
-	//gaussian filter on the image to remove noise
-	//syntax: gray scale image, kernel size(positive and odd), sigma
-	Mat blurred_image_gaussian;
-	GaussianBlur(image_gray, blurred_image_gaussian, Size(5, 5), 1);
-	/*imshow("blurred_image_gaussian", blurred_image_gaussian);
-	waitKey(0);*/
-	/*median filter to remove salt and pepper
-	syntax: image-kernel size
-	blurred_image_median = cv2.medianblur(img_gray, 5)*/
-
-
-	Mat binary_image;
-	threshold(image_gray, binary_image, 160, 255, THRESH_BINARY);//converting grayscale image stored in converted matrix into binary image//
-	/*imshow("binary_image", binary_image);
-	waitKey(0);*/
-
-	Mat erosion_image;
-	erode(binary_image, erosion_image, Mat(), Point(-1, -1), 7, 1, 1);
-	/*imshow("erosion_image", erosion_image);
-	waitKey(0);*/
-
-
-	Mat dilated_image;
-	dilate(erosion_image, dilated_image, Mat(), Point(-1, -1), 7, 1, 1);
-	/*imshow("dilated_image", dilated_image);
-	waitKey(0);*/
-
-	//===========================================================edge detection=========================================================
-	//canny edge detection (optimal edge detector)
-	Mat edged_image;
-	Canny(dilated_image, edged_image, 150, 350);
-	/*imshow("edged_image", edged_image);
-	waitKey(0);*/
-	//===========================================================erosion & dilation=======================================================
-	//mat dilated_img = edged_image;
-	//mat errored_img = edged_image;
-
-
-	//============================================================getting contours=========================================================
-	//findcontour() works best on binary images
-	vector<vector<Point>> contours;
-	vector<Vec4i> hierarchy;
-	//findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
-
-	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_NONE);
-	if (contours.size() <= 0) {
-		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
-		return false;
-	}
-
-	/*drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
-	imshow("Largest Contour paperextractor.cpp", image_rgb);
-	std::string path = "./test.jpeg";
-	imwrite(path, image_rgb);
-	waitKey(0);*/
-
-
-	//getting biggest rectangular contour
-	vector<Point>biggest_contour;
-	double max_area;
-	get_biggest_rectangular_contour(biggest_contour, max_area, contours);
-
-
-	//Solving problem of False Contours The max area must be Greater than 10 % of the Image area
-	if (max_area < 0.10 * imgHeight * imgWidth)
-	{
-		cout << "extractpaper():Largest Contour is Very small :(" << endl;
-		return false;
-	}
-
-
-	if (draw) {
-		//draw paper contour
-		drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
-		//show it
-		imshow("Largest Contour paperextractor.cpp", image_rgb);
-		//waitKey(0);
-	}
-
-	//Sort 4 Corner for Prespective
-	vector<Point2f>biggest_contour_ordered = reorderPoints(biggest_contour);
-
-	//Prespective
-	vector<Point2f>image_corner{ Point(0,0),Point(imgWidth - 1, 0),Point(0,imgHeight - 1),Point(imgWidth - 1, imgHeight - 1) };
-	Mat M = getPerspectiveTransform(biggest_contour_ordered, image_corner);
-	transformation_matrix = M;
-	warpPerspective(img_bgr, warped_image, M, Size(imgWidth, imgHeight));
-
-	return true;
-}
-
-void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+//void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	//maxLineGap gets its value from the default value in the .h file or from scan track function
 	// donst change it here 
 	//maxLineGap = 10;
@@ -169,9 +59,10 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	* Extract Line out of the RGB image
 
 	* @param image_lines: Matrix of size = Image size with St lines Drawn with color Depedning on its order
-	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2
+	* @param start_end_points: Vector of 4 for evey line x1,y1  x2,y2 ************************************
 
 	* @param image: RGB Track image
+	* @param sliding: length to be cut from the lines
 	* @param rho: rho Resolution
 	* @param theta: theta Resolution
 	* @param threshold : no of min votes so that line is detected as line by Hough
@@ -180,14 +71,13 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	* @param thickness : thickness of white line drawn for straight line (image_lines)
 	*/
 
-
 	// Convert the image to gray - scale
 	Mat  image_gray;
 	cvtColor(image, image_gray, COLOR_RGB2GRAY);
 
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
-	//imshow("thinned", thinned);
+	//imshow("thinned_image extract_lines()", thinned);
 	//waitKey(0);
 
 	// Dilate
@@ -198,6 +88,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	// Find the edges in the image using canny detector
 	Mat edges = Dilate;
 
+	/*************************************************************Hough Lines********************************************************/
 	// Hough Lines
 	// Syntax:HoughLinesP(Edged image, Rho Resolution, Angle Resolution, threshold, min length of line, max distance between lines)
 	//	minLineLength : Lines shorter than that are rejected
@@ -208,7 +99,8 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	//imshow("	Diatled image", edges);
 	//waitKey(0);
 
-	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
+	//minLineLength
+	HoughLinesP(edges, lines, 1, theta, threshold, 155, maxLineGap);
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image
@@ -220,7 +112,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	FIXME: no of line, 1 * **, 4[Take care to tale[0] before taking point 😉](Solved this Problem by reshape)
 	*/
 	//Mat start_end_points = lines.reshape((np.shape(lines)[0], 4);
-	start_end_points = lines;
+	//start_end_points = lines;
 
 	//cout << "Lines" << endl;
 	//for (auto it : lines) {
@@ -229,7 +121,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 
 	//Draw Lines on Image
 	//int index = 0;
-	int sliding = 50;
+	//int sliding = 50;
 	for (auto line_inst : lines) {
 		double x1 = line_inst[0];
 		double y1 = line_inst[1];
@@ -293,8 +185,8 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image
 	//}
 
 
-	//if (globals.debug) :
-	//	show_images([image, image_gray], ['original', "gray"], windowtitle = "extract_lines", bgr = false)
-	//	show_images([thinned, edges, image_lines], ['thinned', 'edges', 'lines matrix'], windowtitle = "extract_lines", bgr = false)
+
+	//imshow("image_lines extract_lines()", image_lines);
+	//waitKey(0);
 	return;
 }

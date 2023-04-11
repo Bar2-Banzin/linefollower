@@ -10,6 +10,10 @@
 using namespace cv;
 using namespace std;
 
+//Paper Operations
+bool extract_paper(Mat& warped_image,Mat& img_bgr);
+
+
 Mat thin_image(Mat image);
 
 bool color_center(int& x, int& y, Mat image, Scalar color);

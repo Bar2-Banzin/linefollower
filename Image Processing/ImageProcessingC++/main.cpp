@@ -5,15 +5,18 @@
 #include "ScanTrack.h";
 #include "ScanCar.h";
 #include "utils.h";
+#include "common.h";
 
 using namespace cv;
 using namespace std;
+
+int testcase = 6;
 
 int main(int argc, char** argv)
 {
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/TestCases/TestCase2/track.jpeg";
+	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/track.jpeg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;
@@ -21,15 +24,18 @@ int main(int argc, char** argv)
 	//2.Scanning Track Initially
 	Mat image_lines,transformation_matrix;
 	vector<Vec4i>start_end_points;
-	bool wrapped = scan_track(image_lines, transformation_matrix, start_end_points, image);
+	bool wrapped = scan_track(image_lines, image);
 
 	if (!wrapped) {
 		cout << "Failed To Scan Track" << endl;
 		return -1;
 	}
-	imshow("lines", image_lines);
-	imwrite("./1.jpeg",image_lines);
-	//waitKey(0);
+
+	//namedWindow("image_lines main()", WINDOW_NORMAL);
+	imshow("image_lines main()", image_lines);
+	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/image_lines.jpeg", image_lines);
+	waitKey(0);
+	return 0;
 
 	/************************************************************************************************/
 	//step(2) find car on track
