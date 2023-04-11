@@ -19,9 +19,9 @@ int main(int argc, char** argv)
 	cout << "Size" << typeid(image.size()).name() << endl;
 	
 	//2.Scanning Track Initially
-	Mat image_lines;
+	Mat image_lines,transformation_matrix;
 	vector<Vec4i>start_end_points;
-	bool wrapped = scan_track(image_lines, start_end_points, image);
+	bool wrapped = scan_track(image_lines, transformation_matrix, start_end_points, image);
 
 	if (!wrapped) {
 		cout << "Failed To Scan Track" << endl;
@@ -29,14 +29,13 @@ int main(int argc, char** argv)
 	}
 	imshow("lines", image_lines);
 	imwrite("./1.jpeg",image_lines);
-	waitKey(0);
+	//waitKey(0);
 
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
 	std::string path2 = "./assets/TestCases/TestCase2/car.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
-
 	//cout << "size" << typeid(image.size()).name() << endl;
 	//imshow("original car main.cpp", image);
 
@@ -45,7 +44,7 @@ int main(int argc, char** argv)
 	Scalar front_color(255,0, 0);//red
 	Scalar back_color(0, 255, 0);//green
 	
-	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
+	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image, transformation_matrix,front_color,back_color);
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
@@ -55,8 +54,8 @@ int main(int argc, char** argv)
 	//Debug
 	Mat draw_temp2 = image_lines.clone();
 	cv::line(draw_temp2, Point(x_center, y_center), Point(0, 0), Scalar(255, 255, 255), 2);
-	imshow("Center vs lines", image_lines);
-	waitKey(0);
+	imshow("Center vs lines", draw_temp2);
+	//waitKey(0);
 
 
 	///************************************************************************************************/

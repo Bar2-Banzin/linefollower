@@ -2,7 +2,7 @@
 # include "ScanTrack.h";
 #include <math.h>
 
-bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image) {
+bool scan_track(Mat& image_lines,Mat& transformation_matrix, vector<Vec4i>& start_end_points, Mat& track_image) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
@@ -17,21 +17,21 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, track_image, false);
+	bool wrapped = extract_paper(paper_img, transformation_matrix, track_image, false);
 
 	//if (! wrapped) {
 	//	return false;
 	// }
 
 	imshow("Wrapped Paper  scan_track()", paper_img);
-	waitKey(0);
+	//waitKey(0);
 	//Temp Till Tomorrow
-	paper_img = track_image;
+	//paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
 	extract_lines(image_lines, start_end_points, paper_img);
 
-	imshow("image_lines scan_track()", image_lines);
+	//imshow("image_lines scan_track()", image_lines);
 
 	return true;
 }
@@ -44,7 +44,7 @@ struct str {
 	}
 } comp;
 
-bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
+bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
 	/**
 	* extract paper out of the image
 	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
@@ -155,13 +155,13 @@ bool extract_paper(Mat& warped_image, Mat img_bgr, bool draw) {
 	//Prespective
 	vector<Point2f>image_corner{ Point(0,0),Point(imgWidth - 1, 0),Point(0,imgHeight - 1),Point(imgWidth - 1, imgHeight - 1) };
 	Mat M = getPerspectiveTransform(biggest_contour_ordered, image_corner);
-
+	transformation_matrix = M;
 	warpPerspective(img_bgr, warped_image, M, Size(imgWidth, imgHeight));
 
 	return true;
 }
 
-void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	//maxLineGap gets its value from the default value in the .h file or from scan track function
 	// donst change it here 
 	//maxLineGap = 10;
@@ -187,7 +187,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
-	imshow("thinned", thinned);
+	//imshow("thinned", thinned);
 	//waitKey(0);
 
 	// Dilate
@@ -205,7 +205,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 	//	0 <= rho < Rmax
 	vector<Vec4i>lines;
 	//HoughLinesP(edges, lines, rho, theta, 100, minLineLength, maxLineGap);
-	imshow("	Diatled image", edges);
+	//imshow("	Diatled image", edges);
 	//waitKey(0);
 
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
@@ -268,7 +268,7 @@ void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat image,
 
 		}*/
 		//line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255-index, 255, 255), thickness);
-		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(255, 255, 255), thickness);
+		line(image_lines, Point(x1, y1), Point(x2, y2), Scalar(250, 250, 250), thickness);
 		//cout << "1:" << x1 << "," << y1 << "=>" << "2:" << x2 << "," << y2 << endl;
 		//index++;
 	}

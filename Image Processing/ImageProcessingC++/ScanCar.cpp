@@ -4,7 +4,7 @@
 #include <set>
 
 //Basma :Not sure of Data Type of front_color- back_color check
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat image, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -30,12 +30,19 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Temp Till Tomorrow
 	//image = image_input;
-
+	Mat warped_image;
+	int imgWidth = image.cols;
+	int imgHeight = image.rows;
+	warpPerspective(image, warped_image, transofmation_matrix, Size(imgWidth, imgHeight));
+	imshow("warped_car_image", warped_image);
+	//waitKey(0);
 
 	//Convert BGR to RGB
 	Mat image_rgb;
-	cvtColor(image, image_rgb, COLOR_BGR2RGB);
-
+	cvtColor(warped_image, image_rgb, COLOR_BGR2RGB);
+	imshow("warped_car_image_rgb", image_rgb);
+	imwrite("car.jpeg", image_rgb);
+	//waitKey(0);
 	//Detect front of the car
 	//image isn't modified here 😊
 	bool found;
@@ -62,7 +69,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat lines_matrix, int threshold) {
+void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -73,23 +80,47 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 	* @lines_matrix : Binary Matrix with 1's = lines
 	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
 	*/
-	set<int>s;
-	map<int, int>m, m2;
-	/*for (int i = 0; i < lines_matrix.rows; i++) {
-		for (int j = 0; j < lines_matrix.cols; j++) {
-			s.insert((int)lines_matrix.at<char>(i, j));
-			m2[(int)lines_matrix.at<char>(i, j)]++;
-		}
-	}*/
-	//for (auto m : s)cout << m << " ";
-
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
 	int x_car = (x_car_front + x_car_back) / 2;
 	int y_car = (y_car_front + y_car_back) / 2;
-	int windo_size = calculateDistance(x_car_front , y_car_front , x_car_back, y_car_back)*1.5;
+	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2;
 	int count = 0;
 	on_line = false;
+
+	/*cv::line(lines_matrix, Point(x_car, y_car), Point(0, 0), Scalar(255, 255, 255), 10);
+	imshow("lines_matrix", lines_matrix);
+	waitKey(0);*/
+
+	set<int>s;
+	map<int, int>m, m2;
+	/*for (int i = 0; i < lines_matrix.rows; i++) {
+		for (int j = 0; j < lines_matrix.cols; j++) {
+			s.insert((int)lines_matrix.at<uchar>(i, j));
+			m2[(int)lines_matrix.at<char>(i, j)]++;
+		}
+	}*/
+	//for (int i = y_car-50; i < y_car+50; i++) {
+	//	for (int j = x_car-50; j < x_car+50; j++) {
+	//		s.insert((int)lines_matrix.at<uchar>(i, j));
+	//		m2[(int)lines_matrix.at<uchar>(i, j)]++;
+	//		//cv::line(lines_matrix, Point(i, j), Point(0, 0), Scalar(255, 255, 255), 10);
+	//	}
+	//}
+	/*imshow("lines_matrix", lines_matrix);
+	waitKey(0);*/
+	/*for (int i = x_car - 50; i  < x_car + 50; i++) {
+		for (int j = y_car - 50; j < y_car + 50; j++) {
+			s.insert((int)lines_matrix.at<uchar>(i, j));
+			m2[(int)lines_matrix.at<uchar>(i, j)]++;
+			cv::line(lines_matrix, Point(i, j), Point(0, 0), Scalar(255, 255, 255), 2);
+
+		}
+	}
+	imshow("lines_matrix", lines_matrix);*/
+	//waitKey(0);
+	//for (auto m : s)cout << m << " ";
+	
 	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
 		if (i < 0 || i >= size_i)continue;
 		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
@@ -98,10 +129,12 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 			count += ((int)scaler != 0);
 			//m[scaler]++;
 			on_line=on_line|| ((int)scaler != 0);
+			//cout << scaler << " ";
 		}
+		cout << endl;
 	}
-	/*int maxi = -1, maxi_indx = -1;
-	for (auto x : m) {
+	int maxi = -1, maxi_indx = -1;
+	/*for (auto x : m) {
 		if (x.first && x.second > maxi) {
 			maxi = x.second;
 			maxi_indx = 255 - x.first;
@@ -112,7 +145,7 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 	line_index = (on_line) ? maxi_indx : -1;*/
 }
 
-bool increase_decrease_speed(Mat draw,double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+bool increase_decrease_speed(Mat& draw,double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**
 	/**
 	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
