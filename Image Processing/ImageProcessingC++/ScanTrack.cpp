@@ -50,11 +50,7 @@ struct str {
 	}
 } comp;
 
-//void extract_lines(Mat& image_lines, vector<Vec4i>& start_end_points, Mat& image, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
-	//maxLineGap gets its value from the default value in the .h file or from scan track function
-	// donst change it here 
-	//maxLineGap = 10;
 	/**
 	* Extract Line out of the RGB image
 
@@ -99,8 +95,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//imshow("	Diatled image", edges);
 	//waitKey(0);
 
-	//minLineLength
-	HoughLinesP(edges, lines, 1, theta, threshold, 170, maxLineGap);
+	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image

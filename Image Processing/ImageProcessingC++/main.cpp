@@ -22,8 +22,7 @@ int main(int argc, char** argv)
 	cout << "Size" << typeid(image.size()).name() << endl;
 	
 	//2.Scanning Track Initially
-	Mat image_lines,transformation_matrix;
-	vector<Vec4i>start_end_points;
+	Mat image_lines;
 	bool wrapped = scan_track(image_lines, image);
 
 	if (!wrapped) {
@@ -64,7 +63,6 @@ int main(int argc, char** argv)
 	//Step(3) Is Car on a straight line
 	bool on_line;
 	
-
 	//Debug [Comment]
 	Mat draw_car_online = image_lines.clone();
 	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
@@ -75,7 +73,6 @@ int main(int argc, char** argv)
 	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/car_on_line.jpeg", draw_car_online);
 	//waitKey(0);
 
-	//waitKey(0);
 	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
 	if (!on_line) {
 		cout << "Car isn't on a straight line" << endl;

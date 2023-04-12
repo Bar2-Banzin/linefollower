@@ -26,6 +26,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	bool wrapped = extract_paper(paper_img, image,"car");
 
 	if (!wrapped) {
+		cout << "Couldn't extract paper" << endl;
 		return false;
 	}
 	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
@@ -36,15 +37,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//Uncomment to Disable extract_paper
 	//paper_img = image_input;
 
-	/*****************************************************************************************************/
-	//Mat warped_image;
-	//int imgWidth = image.cols;
-	//int imgHeight = image.rows;
-	//warpPerspective(image, warped_image, transofmation_matrix, Size(imgWidth, imgHeight));
-	//imshow("warped_car_image", warped_image);
-	//waitKey(0);
-	/*****************************************************************************************************/
-
+	//2.Find car center
 	//Convert BGR to RGB
 	Mat image_rgb;
 	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
@@ -81,8 +74,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-//void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
-	void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat & lines_matrix, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat & lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*

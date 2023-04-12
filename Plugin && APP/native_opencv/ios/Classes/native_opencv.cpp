@@ -47,8 +47,6 @@ extern "C" {
         	/************************************************************************************************/
         	//step(2) find car on track
         	//1.read an car on track image
-
-
             vector<Vec4i>start_end_points=detector->get_start_end_points();
             Mat image_lines =detector->get_image_lines();
         	Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
@@ -58,7 +56,8 @@ extern "C" {
             int x_center, y_center, x_f, y_f, x_b, y_b;
             Scalar front_color(255, 0, 0);//red
             Scalar back_color(0, 255, 0);//green
-           car_found = find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image, front_color, back_color);
+
+           	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
         	if (!car_found) {
         		//cout << "failed to find car 😟" << endl;
@@ -68,10 +67,9 @@ extern "C" {
 
         	///************************************************************************************************/
         	//Step(3) Is Car on a straight line
-
         	bool on_line;
-            int line_index;
-            car_on_line(on_line, line_index, x_f, y_f, x_b, y_b, image_lines,100);
+
+            car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
             *inc_speed=on_line;
             return inc_speed;
             /*if (!on_line) {
@@ -119,18 +117,22 @@ extern "C" {
             Mat image = marker.clone();//imread(path, 1); //Reading from a path
          /*    Mat koko;
             koko= imread("D:/subjects/3-2/Embedded System/projects/flutter app/flutter-opencv-stream-processing-master/zeinb/native_opencv/ios/Classes/1.jpeg",1);
-*/
+            */
 
 
             //2.Scanning Track Initially
-
             Mat image_lines;
-            vector<Vec4i>start_end_points;
-            bool wrapped=scan_track(image_lines, start_end_points, image);
-            //imshow("image_lines.jpg", image);
+            bool wrapped=scan_track(image_lines, image);
+            if (!wrapped) {
+            //cout << "Failed To Scan Track" << endl;
+            *inc_speed=-1;
+            return inc_speed;
+            }
+           
             detector = new ArucoDetector();
             detector->set_image_lines(image_lines);
-            detector->set_start_end_points(start_end_points);
+
+        
 
 
 

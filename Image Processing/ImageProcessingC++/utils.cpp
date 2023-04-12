@@ -222,7 +222,6 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	waitKey(0);
 
 	
-
 	//Approcimate to Rect
 	Rect rect= boundingRect(biggestContour);
 
@@ -241,10 +240,6 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	x = int(M.m10 / M.m00);
 	y = int(M.m01 / M.m00);*/
 
-	////Caution:This Modifies on image  It Draws on it :D
-	//min_rectangle(image,x,y, biggestContour,color,10,true);
-
-	//Show image is Here (image)
 	return true;
 }
 
