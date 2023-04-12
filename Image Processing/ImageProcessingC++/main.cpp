@@ -10,10 +10,40 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 6;
+int testcase = 9;
 
 int main(int argc, char** argv)
 {
+
+	//bool found;
+	//int x, y;
+	//std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
+	//Mat image33 = imread(path33, 1); //Reading from a path
+
+
+	////cout << "Type" << image33.type() << endl;
+	////cout << "channels" << image33.channels() << endl;
+
+	////cout << image33 << endl;
+
+	////auto scaler1 = (int)image33.at<uchar>(0,150, 150);
+	////auto scaler2 = (int)image33.at<uchar>(1,150, 150);
+	////auto scaler3= (int)image33.at<uchar>(2,150, 150);
+	////cout << scaler1 << " " << scaler2 << " " << scaler3 << endl;
+
+
+	////convert to rgb scale
+	//Mat image_rgb;
+	//cvtColor(image33, image_rgb, COLOR_BGR2RGB);
+	//	
+	//found = color_center(x, y, image_rgb, Scalar(247, 85, 109), "red");
+	//if (!found) {
+	//	cout << "find_car():Couldn't find front of the car" << endl;
+	//	return false;
+	//}
+
+	//return 0;
+	 
 	//Step(1) Scan Track 
 	//1.Read Track Image
 	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/track.jpeg";

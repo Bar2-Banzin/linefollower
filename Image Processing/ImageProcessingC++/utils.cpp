@@ -217,9 +217,9 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	double max_area;
 	get_biggest_rectangular_contour(biggestContour, max_area, contours);
 
-	drawContours(image, vector<vector<Point> >(1, biggestContour), -1, Scalar(255, 255, 0), 10);
-	imshow("Biggest for Mask color_center()", image);
-	waitKey(0);
+	//drawContours(image, vector<vector<Point> >(1, biggestContour), -1, Scalar(255, 255, 0), 10);
+	//imshow("Biggest for Mask color_center()", image);
+	//waitKey(0);
 
 	
 	//Approcimate to Rect

@@ -75,8 +75,8 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat & lines_matrix, int threshold) {
-/**
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+	/**
 	* This function detrmines whether car is on a straight line or not
 	*
 	* @param on_line boolean to detect wether car is on a st line or not
@@ -86,71 +86,68 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	* @lines_matrix : Binary Matrix with 1's = lines
 	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
 	*/
-
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
 	int x_car = (x_car_front + x_car_back) / 2;
 	int y_car = (y_car_front + y_car_back) / 2;
-	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2;
+	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2.5;
 	int count = 0;
 	on_line = false;
 
-	// cv::line(lines_matrix, Point(x_car, y_car), Point(0, 0), Scalar(255, 255, 255), 10);
-	// imshow("lines_matrix", lines_matrix);
-	// waitKey(0);
-
-	set<int>s;
-	map<int, int>m, m2;
-	/*for (int i = 0; i < lines_matrix.rows; i++) {
-		for (int j = 0; j < lines_matrix.cols; j++) {
-			s.insert((int)lines_matrix.at<uchar>(i, j));
-			m2[(int)lines_matrix.at<char>(i, j)]++;
-		}
-	}*/
-	//for (int i = y_car-50; i < y_car+50; i++) {
-	//	for (int j = x_car-50; j < x_car+50; j++) {
-	//		s.insert((int)lines_matrix.at<uchar>(i, j));
-	//		m2[(int)lines_matrix.at<uchar>(i, j)]++;
-	//		//cv::line(lines_matrix, Point(i, j), Point(0, 0), Scalar(255, 255, 255), 10);
-	//	}
-	//}
-	/*imshow("lines_matrix", lines_matrix);
-	waitKey(0);*/
-	/*for (int i = x_car - 50; i  < x_car + 50; i++) {
-		for (int j = y_car - 50; j < y_car + 50; j++) {
-			s.insert((int)lines_matrix.at<uchar>(i, j));
-			m2[(int)lines_matrix.at<uchar>(i, j)]++;
-			cv::line(lines_matrix, Point(i, j), Point(0, 0), Scalar(255, 255, 255), 2);
-
-		}
+	int x_start = x_car - windo_size/2;
+	if (x_start < 0) {
+		x_start = 0;
 	}
-	imshow("lines_matrix", lines_matrix);*/
+
+	int y_start = y_car - windo_size / 2;
+	if (y_start < 0) {
+		y_start = 0;
+	}
+
+	int x_end = x_start + windo_size;
+	if (x_end >= lines_matrix.cols) {
+		x_end = lines_matrix.cols-1;
+	}
+
+
+	int y_end = y_start + windo_size;
+	if (y_end >= lines_matrix.rows) {
+		y_end = lines_matrix.rows-1;
+	}
+	Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
+	Mat window = lines_matrix(rectangle_var);
+
+	//Debug  Comment
+	//namedWindow("window on_line()", WINDOW_NORMAL);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/window on_line() Cropped.jpeg", window);
+	//imshow("window on_line()", window);
 	//waitKey(0);
-	//for (auto m : s)cout << m << " ";
-	
-	for (int i = y_car - windo_size / 2; i <= y_car + windo_size / 2; i++) {
-		if (i < 0 || i >= size_i)continue;
-		for (int j = x_car - windo_size / 2; j <= x_car + windo_size / 2; j++) {
-			if (j < 0 || j >= size_j)continue;
-			auto scaler = (int)lines_matrix.at<uchar>(i, j);
-			count += ((int)scaler != 0);
-			//m[scaler]++;
-			on_line=on_line|| ((int)scaler != 0);
-			//cout << scaler << " ";
+
+	//cout << "Type" << window.type() << endl;
+	//cout << "channels" << window.channels() << endl;
+
+	int count2 = 0;
+	for (int i = 0;i < window.rows;i++) {
+		for (int j = 0;j < window.cols;j++) {
+			count2++;
+			auto scaler = (int)window.at<uchar>(i, j);
+			on_line = on_line || ((int)scaler != 0);
+			//cout << scaler << endl;
 		}
-		//cout << endl;
+		//cout << endl << endl;
 	}
-	//int maxi = -1, maxi_indx = -1;
-	/*for (auto x : m) {
-		if (x.first && x.second > maxi) {
-			maxi = x.second;
-			maxi_indx = 255 - x.first;
-		}
-	}*/
-	////threshold
-	/*on_line = (count >= threshold);
-	line_index = (on_line) ? maxi_indx : -1;*/
+
+	//Debug Rectangle to We search in
+	//Mat rect_img = lines_matrix.clone();
+	//rectangle(rect_img, Point(x_start,y_start), Point(x_end,y_end), (100, 100, 100), 2);
+	//cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
+
+	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
+	//imshow("Search Window car_on_line()", rect_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line().jpeg", rect_img);
+	//waitKey(0);
 }
+
 
 bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**

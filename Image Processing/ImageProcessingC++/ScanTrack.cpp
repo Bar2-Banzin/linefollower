@@ -99,7 +99,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image
-	image_lines = Mat::zeros(image.size(), CV_8UC3);//Inverted image
+	image_lines = Mat::zeros(image.size(), CV_8UC1);//Inverted image
 
 	/*
 	Store start and end points of each line

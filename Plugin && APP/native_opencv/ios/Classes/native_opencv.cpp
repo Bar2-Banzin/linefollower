@@ -54,8 +54,8 @@ extern "C" {
 
             bool car_found;
             int x_center, y_center, x_f, y_f, x_b, y_b;
-            Scalar front_color(255, 0, 0);//red
-            Scalar back_color(0, 255, 0);//green
+            Scalar front_color(247, 85, 109);//red
+            Scalar back_color(0,0,255);//blue
 
            	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
