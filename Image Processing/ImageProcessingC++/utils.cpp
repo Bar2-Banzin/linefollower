@@ -258,49 +258,72 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 	*/
 
 	//Get Color Mask
-	Scalar lower_range, upper_range;
-	bool accepted =color_range(lower_range, upper_range, color);
-	if (!accepted) {
-		return false;
-	}
+	//Scalar lower_range, upper_range;
+	//bool accepted =color_range(lower_range, upper_range, color);
+	//if (!accepted) {
+	//	return false;
+	//}
 
 	//Convert RGB image to HSV
 	Mat image_hsv;
-	cvtColor(image, image_hsv, COLOR_RGB2HSV);
+	cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
 
-	inRange(image_hsv, lower_range, upper_range, mask);
+	//cv::inRange(image_hsv, lower_range, upper_range, mask);
+
+	if (color == Scalar(255, 0, 0)) {
+
+		Mat1b mask1, mask2;
+			cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(10, 255, 255), mask1);
+			cv::inRange(image_hsv, Scalar(170, 70, 50), Scalar(180, 255, 255), mask2);
+
+			mask = mask1 | mask2;
+	}
+	else if (color==Scalar(0,0,255)) {
+		cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
+	}
 
 	//Check If This is Required
 	image.copyTo(masked_image, mask);
 
 	return true;
 }
-bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
-	/**
-	* Gets Upper & Lower HSV Range of the RGB color
-	*
-	* @param lower_range Hue lower range for color
-	* @param upper_range Hue upper range for color
-	*
-	* @param color : RGB color i.e[0, 255, 0] to be masked
-	* 
-	* @return bool if Error in getting Hue Value
-	*/
-
-	Mat hsv(1, 1, CV_8UC3, color);
-	cvtColor(hsv, hsv, COLOR_RGB2HSV);
-
-	int Hue = hsv.at<Vec3b>(0, 0)[0];
-
-	//if (Hue < 10 || Hue >255 - 10) {
-	//	cout << "Error in Getting Range of Color" << endl;
-	//	return false;
-	//}
-	lower_range = Scalar(Hue - 10, 100, 100);
-	upper_range = Scalar(Hue + 10, 255, 255);
-
-	return true;
-}
+//bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
+//	/**
+//	* Gets Upper & Lower HSV Range of the RGB color
+//	*
+//	* @param lower_range Hue lower range for color
+//	* @param upper_range Hue upper range for color
+//	*
+//	* @param color : RGB color i.e[0, 255, 0] to be masked
+//	* 
+//	* @return bool if Error in getting Hue Value
+//	*/
+//
+//	Mat hsv(1, 1, CV_8UC3, color);
+//	cvtColor(hsv, hsv, COLOR_RGB2HSV);
+//
+//	int Hue = hsv.at<Vec3b>(0, 0)[0];
+//
+//	//if (Hue < 10 || Hue >255 - 10) {
+//	//	cout << "Error in Getting Range of Color" << endl;
+//	//	return false;
+//	//}
+//	//lower_range = Scalar(Hue - 10, 100, 100);
+//	//upper_range = Scalar(Hue + 10, 255, 255);
+//
+//	//lower_range = Scalar(100, 147, 0);
+//	//upper_range = Scalar(144, 255, 255);
+//
+//	//blue
+//	lower_range = Scalar(100, 147, 0);
+//	upper_range = Scalar(144, 255, 255);
+//
+//	//green
+//	lower_range = Scalar(36, 110, 61);
+//	upper_range = Scalar(102, 255, 255);
+//
+//	return true;
+//}
 
 //void  min_rectangle (Mat &image,int&x,int&y, vector<Point> contour, Scalar color, int thickness,bool draw) {
 //	/**

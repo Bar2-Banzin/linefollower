@@ -18,10 +18,10 @@ Mat thin_image(Mat image);
 
 bool color_center(int& x, int& y, Mat image, Scalar color, string name="");
 bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color);
-bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
+//bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
 
 //Distance and Direction
-void  min_rectangle(Mat& image, int& x, int& y, vector<Point> contour, Scalar color = Scalar(255, 0, 0), int thickness = 10, bool draw = false);
+//void  min_rectangle(Mat& image, int& x, int& y, vector<Point> contour, Scalar color = Scalar(255, 0, 0), int thickness = 10, bool draw = false);
 double calculateDistance(double x1, double y1, double x2, double y2);
 Vec2i direction(double x1, double y1, double x2, double y2);
 int sign(double x);

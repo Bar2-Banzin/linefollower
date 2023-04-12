@@ -15,35 +15,36 @@ int testcase = 9;
 int main(int argc, char** argv)
 {
 
-	//bool found;
-	//int x, y;
-	//std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
-	//Mat image33 = imread(path33, 1); //Reading from a path
+	bool found;
+	int x, y;
+	std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
+	Mat image33 = imread(path33, 1); //Reading from a path
 
 
-	////cout << "Type" << image33.type() << endl;
-	////cout << "channels" << image33.channels() << endl;
+	//cout << "Type" << image33.type() << endl;
+	//cout << "channels" << image33.channels() << endl;
 
-	////cout << image33 << endl;
+	//cout << image33 << endl;
+	//152,  68,  50
+	//auto scaler1 = (int)image33.at<uchar>(0,150, 150);
+	//auto scaler2 = (int)image33.at<uchar>(1,150, 150);
+	//auto scaler3= (int)image33.at<uchar>(2,150, 150);
+	//cout << scaler1 << " " << scaler2 << " " << scaler3 << endl;
 
-	////auto scaler1 = (int)image33.at<uchar>(0,150, 150);
-	////auto scaler2 = (int)image33.at<uchar>(1,150, 150);
-	////auto scaler3= (int)image33.at<uchar>(2,150, 150);
-	////cout << scaler1 << " " << scaler2 << " " << scaler3 << endl;
 
+	//convert to rgb scale
+	Mat image_rgb;
+	cvtColor(image33, image_rgb, COLOR_BGR2RGB);
+		
+	found = color_center(x, y, image_rgb, Scalar(0,0,255), "blue");
+	if (!found) {
+		cout << "find_car():Couldn't find front of the car" << endl;
+		return false;
+	}
 
-	////convert to rgb scale
-	//Mat image_rgb;
-	//cvtColor(image33, image_rgb, COLOR_BGR2RGB);
-	//	
-	//found = color_center(x, y, image_rgb, Scalar(247, 85, 109), "red");
-	//if (!found) {
-	//	cout << "find_car():Couldn't find front of the car" << endl;
-	//	return false;
-	//}
-
-	//return 0;
+	return 0;
 	 
+
 	//Step(1) Scan Track 
 	//1.Read Track Image
 	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/track.jpeg";
@@ -76,9 +77,11 @@ int main(int argc, char** argv)
 
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
-	Scalar front_color(255,0, 0);//red
-	Scalar back_color(0, 255, 0);//green
-	
+	//Scalar front_color(247, 85, 109);//red
+	//Scalar back_color(50, 68, 152);//blue
+	//
+	Scalar front_color(255, 0, 0);//red
+	Scalar back_color(0, 255, 0);//blue
 	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {
