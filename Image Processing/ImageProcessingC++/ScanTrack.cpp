@@ -19,9 +19,9 @@ bool scan_track(Mat & image_lines, Mat & track_image) {
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, track_image);
-	namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
-	imshow("Wrapped Paper  scan_track()", paper_img);
+	bool wrapped = extract_paper(paper_img, track_image,"track");
+	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
+	//imshow("Wrapped Paper  scan_track()", paper_img);
 	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/track_paper.jpeg", paper_img);
 	//waitKey(0);
 
@@ -100,7 +100,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//waitKey(0);
 
 	//minLineLength
-	HoughLinesP(edges, lines, 1, theta, threshold, 155, maxLineGap);
+	HoughLinesP(edges, lines, 1, theta, threshold, 170, maxLineGap);
 	cout << "Hough Lines Detected " << lines.size();
 
 	// # Draw lines on the image

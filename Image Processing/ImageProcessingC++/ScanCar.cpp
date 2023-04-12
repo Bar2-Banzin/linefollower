@@ -1,10 +1,13 @@
-﻿# include"utils.h"
-# include "ScanTrack.h";
-#include <opencv2/core/mat.hpp>
+﻿#include <opencv2/core/mat.hpp>
 #include <set>
 
+#include"utils.h";
+#include"common.h";
+
+#include "ScanTrack.h";
 //Basma :Not sure of Data Type of front_color- back_color check
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
+//bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat & image, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -19,34 +22,37 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	*/
 
 	//1.Extract Track Paper From the Image
-	//Mat image;
-	////bool wrapped = extract_paper(image_input, image, false);
+	Mat paper_img;
+	bool wrapped = extract_paper(paper_img, image,"car");
 
-	//if (!wrapped) {
-	//	return false;
-	//}
-
-	//imshow("Wrapped Paper  find_car()", image);
-
-	//Temp Till Tomorrow
-	//image = image_input;
-	Mat warped_image;
-	int imgWidth = image.cols;
-	int imgHeight = image.rows;
-	warpPerspective(image, warped_image, transofmation_matrix, Size(imgWidth, imgHeight));
-	imshow("warped_car_image", warped_image);
+	if (!wrapped) {
+		return false;
+	}
+	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
+	//imshow("Wrapped Paper  find_car()", paper_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
 	//waitKey(0);
+
+	//Uncomment to Disable extract_paper
+	//paper_img = image_input;
+
+	/*****************************************************************************************************/
+	//Mat warped_image;
+	//int imgWidth = image.cols;
+	//int imgHeight = image.rows;
+	//warpPerspective(image, warped_image, transofmation_matrix, Size(imgWidth, imgHeight));
+	//imshow("warped_car_image", warped_image);
+	//waitKey(0);
+	/*****************************************************************************************************/
 
 	//Convert BGR to RGB
 	Mat image_rgb;
-	cvtColor(warped_image, image_rgb, COLOR_BGR2RGB);
-	imshow("warped_car_image_rgb", image_rgb);
-	imwrite("car.jpeg", image_rgb);
-	//waitKey(0);
-	//Detect front of the car
+	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+
+	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color);
+	found = color_center(x_f, y_f, image_rgb, front_color,"front");
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -54,18 +60,24 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color);
+	found = color_center(x_b, y_b, image_rgb, back_color,"back");
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
 	}
 
-	//line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
-	//imshow("find_car", image);
-
-	//Car Center
+	//car center
 	x_center = (x_f + x_b) / 2;
 	y_center = (y_f + y_b) / 2;
+
+	//Draw Car centers [Debug]
+	//paper_img not used again 😉
+	line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
+	//imshow("find_car()", image);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car.jpeg", paper_img);
+	//waitKey(0);
+
 	return true;
 }
 

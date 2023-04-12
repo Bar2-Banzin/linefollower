@@ -1,13 +1,15 @@
 #include "utils.h";
+#include"common.h"
+
 
 //bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
-bool extract_paper(Mat& warped_image,Mat& img_bgr) {
+bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 	/**
 	* extract paper out of the image
 	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
 	*
 	* @param img_bgr: bgr image INPUT IMAGE
-	* @param draw bool if true draw rectangle on image else no :( [Performance wise]
+	* @param name: String for the flag of saved image [For Debug Optional]
 	*
 	* @return boolean to determine wether paper is extracted sucessfully
 	*/
@@ -19,8 +21,8 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr) {
 	//convert to rgb scale
 	Mat image_rgb;
 	cvtColor(img_bgr, image_rgb, COLOR_BGR2RGB);
-	/*imshow("image_rgb", image_rgb);
-	waitKey(0);*/
+	//imshow("image_rgb", image_rgb);
+	//waitKey(0);
 
 	//convert to gray scale
 	Mat image_gray;
@@ -75,10 +77,10 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr) {
 		return false;
 	}
 
-	//drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
+	drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
+	//namedWindow("Contours extract_paper()", WINDOW_NORMAL);
 	//imshow("Contours extract_paper()", image_rgb);
-	//std::string path = "./test.jpeg";
-	//imwrite(path, image_rgb);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/paper_contours"+ name +".jpeg", image_rgb);
 	//waitKey(0);
 
 
@@ -162,7 +164,7 @@ Mat thin_image(Mat image) {
 }
 
 
-bool color_center(int& x,int &y,Mat image, Scalar color) {
+bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
 	* 
@@ -171,6 +173,8 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 	* 
 	* @param image: RGB image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
+	* @param name: String for the flag of saved image [For Debug Optional]
+	*
 	*/
 
 	//Get Color Mask
@@ -181,8 +185,14 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
 	morphologyEx(mask, mask, MORPH_CLOSE, kernel);
 
-	/*imshow("mask Color color_center()", mask);
-	waitKey(0);*/
+
+
+	//namedWindow("mask color_center() "+string", WINDOW_NORMAL);
+	//imshow("mask color_center() "+string, mask);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/mask_color color_center()" + name + ".jpeg", mask);
+	//waitKey(0);
+
+
 	if (!accepted)
 		return false;
 
@@ -198,18 +208,38 @@ bool color_center(int& x,int &y,Mat image, Scalar color) {
 		return false;
 	}
 
-	//drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
-	//imshow("Contours for Mask color_center()", image);
-	//waitKey(0);
+	/*drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
+	imshow("Contours for Mask color_center()", image);
+	waitKey(0);*/
+
 	//Grab contours [Biggest]
 	vector<Point>biggestContour;
 	double max_area;
 	get_biggest_rectangular_contour(biggestContour, max_area, contours);
 
+	drawContours(image, vector<vector<Point> >(1, biggestContour), -1, Scalar(255, 255, 0), 10);
+	imshow("Biggest for Mask color_center()", image);
+	waitKey(0);
 
-	Moments M = moments(biggestContour);
+	
+
+	//Approcimate to Rect
+	Rect rect= boundingRect(biggestContour);
+
+	//For Debug Comment
+	Mat rect_img = image.clone();
+	rectangle(rect_img, Point(rect.x, rect.y), Point(rect.x + rect.width, rect.y + rect.height), (0, 255, 0), 2);
+	//namedWindow("Bounding Rect color_center() "+string", WINDOW_NORMAL);
+    //imshow("Bounding Rect color_center() "+string, mask);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Bounding Rectangle color_center()" + name + ".jpeg", rect_img);
+	//waitKey(0);
+
+	x = int(rect.x + rect.width / 2);
+	y = int(rect.y + rect.height / 2);
+
+	/*Moments M = moments(biggestContour);
 	x = int(M.m10 / M.m00);
-	y = int(M.m01 / M.m00);
+	y = int(M.m01 / M.m00);*/
 
 	////Caution:This Modifies on image  It Draws on it :D
 	//min_rectangle(image,x,y, biggestContour,color,10,true);

@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 6;
+int testcase = 8;
 
 int main(int argc, char** argv)
 {
@@ -32,36 +32,33 @@ int main(int argc, char** argv)
 	}
 
 	//namedWindow("image_lines main()", WINDOW_NORMAL);
-	imshow("image_lines main()", image_lines);
+	//imshow("image_lines main()", image_lines);
 	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/image_lines.jpeg", image_lines);
-	waitKey(0);
-	return 0;
+	//waitKey(0);
+
+	//return 0;
+
 
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/TestCases/TestCase2/car.jpeg";
+	std::string path2 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
-	//cout << "size" << typeid(image.size()).name() << endl;
-	//imshow("original car main.cpp", image);
 
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
 	Scalar front_color(255,0, 0);//red
 	Scalar back_color(0, 255, 0);//green
 	
-	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image, transformation_matrix,front_color,back_color);
+	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
 		return -1;
 	}
 
-	//Debug
-	Mat draw_temp2 = image_lines.clone();
-	cv::line(draw_temp2, Point(x_center, y_center), Point(0, 0), Scalar(255, 255, 255), 2);
-	imshow("Center vs lines", draw_temp2);
-	//waitKey(0);
+	//To see Image Car scan_car()
+	return 0;
 
 
 	///************************************************************************************************/

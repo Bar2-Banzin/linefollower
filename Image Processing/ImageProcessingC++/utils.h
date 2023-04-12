@@ -11,12 +11,12 @@ using namespace cv;
 using namespace std;
 
 //Paper Operations
-bool extract_paper(Mat& warped_image,Mat& img_bgr);
+bool extract_paper(Mat& warped_image,Mat& img_bgr,string name="");
 
 
 Mat thin_image(Mat image);
 
-bool color_center(int& x, int& y, Mat image, Scalar color);
+bool color_center(int& x, int& y, Mat image, Scalar color, string name="");
 bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color);
 bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
 
