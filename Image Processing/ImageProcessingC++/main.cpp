@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 8;
+int testcase = 6;
 
 int main(int argc, char** argv)
 {
@@ -58,22 +58,25 @@ int main(int argc, char** argv)
 	}
 
 	//To see Image Car scan_car()
-	return 0;
-
-
+	// 
+	//return 0;
 	///************************************************************************************************/
 	//Step(3) Is Car on a straight line
-	//int x_center = 20;
-	//int y_center = 700;
 	bool on_line;
-	int line_index;
-	/*Mat draw_temp2 = image_lines.clone();
-	cv::line(draw_temp2, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
-	cv::line(draw_temp2, Point(0, 0), Point(x_b, y_b), Scalar(0, 255, 255), 5);
+	
 
-	imshow("front and back of the car", draw_temp2);*/
+	//Debug [Comment]
+	Mat draw_car_online = image_lines.clone();
+	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
+	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(0, 255, 255), 5);
+
+	//namedWindow("car_on_line main()", WINDOW_NORMAL);
+	//imshow("car_on_line main()", image_lines);
+	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/car_on_line.jpeg", draw_car_online);
 	//waitKey(0);
-	car_on_line(on_line, line_index, x_f, y_f, x_b, y_b, image_lines,100);
+
+	//waitKey(0);
+	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
 	if (!on_line) {
 		cout << "Car isn't on a straight line" << endl;
 		return 0;
@@ -81,13 +84,13 @@ int main(int argc, char** argv)
 	cout << "Car is on a straight line" << endl;
 	return 0;
 
-	/************************************************************************************************/
+	/*/************************************************************************************************/
 	//Step(4) Inc or Dec Speed
 	/*bool inc_speed=false;
 	int dist_threshold = 10;
 	Vec4i line = start_end_points[line_index];
 
-	*/
+	
 	bool inc_speed = false;
 	int dist_threshold = calculateDistance(x_f, y_f, x_b, y_b)*2;
 	//int x_f = 50, y_f = 200, x_b = 50, y_b = 250;
@@ -111,6 +114,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	cout << "Inc Speed of the Car" << endl;
+	*/
 	///**********************************************************************************************/
 	////--------- MATRIX DEFINITION
 	//cv::Mat mat0 = Mat::zeros(5, 2, CV_8UC1); //ones, eye

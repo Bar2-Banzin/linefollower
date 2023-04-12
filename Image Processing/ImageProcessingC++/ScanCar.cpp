@@ -81,7 +81,8 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+//void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+	void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat & lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -100,9 +101,9 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 	int count = 0;
 	on_line = false;
 
-	/*cv::line(lines_matrix, Point(x_car, y_car), Point(0, 0), Scalar(255, 255, 255), 10);
+	cv::line(lines_matrix, Point(x_car, y_car), Point(0, 0), Scalar(255, 255, 255), 10);
 	imshow("lines_matrix", lines_matrix);
-	waitKey(0);*/
+	waitKey(0);
 
 	set<int>s;
 	map<int, int>m, m2;
@@ -143,9 +144,9 @@ void car_on_line(bool& on_line, int& line_index, double x_car_front, double  y_c
 			on_line=on_line|| ((int)scaler != 0);
 			//cout << scaler << " ";
 		}
-		cout << endl;
+		//cout << endl;
 	}
-	int maxi = -1, maxi_indx = -1;
+	//int maxi = -1, maxi_indx = -1;
 	/*for (auto x : m) {
 		if (x.first && x.second > maxi) {
 			maxi = x.second;
