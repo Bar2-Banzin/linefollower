@@ -19,16 +19,17 @@ class ImageProcessing {
     Uint8List? uBuffer;
     Uint8List? vBuffer;
 
-      uBuffer = planes[1].bytes;
-      vBuffer = planes[2].bytes;
-var start = DateTime.now();
+    uBuffer = planes[1].bytes;
+    vBuffer = planes[2].bytes;
+    var start = DateTime.now();
     print(
         "=================Start Time==============${start.hour}hr ${start.minute} min ${start.second} sec ${start.millisecond} msec ");
-    var res = _nativeOpencv!.detect(image.width, image.height,yBuffer, uBuffer, vBuffer);
+    var res = _nativeOpencv!
+        .detect(image.width, image.height, yBuffer, uBuffer, vBuffer);
     var end = DateTime.now();
     print(
         "=================End Time==============${end.hour}hr ${end.minute} min ${end.second} sec ${end.millisecond} msec ");
-  
+
     print("=================image processing result${res.value}");
     return res.value;
   }
@@ -40,7 +41,8 @@ var start = DateTime.now();
     int imgWidth = decodedImage.width;
     int imgHeight = decodedImage.height;
     _nativeOpencv = NativeOpencv();
-    _nativeOpencv!.initDetector(_output, 36);
-    return Future.value(1);
+    var res = _nativeOpencv!.initDetector(_output, 36);
+     return Future.value(res.value);
+
   }
 }
