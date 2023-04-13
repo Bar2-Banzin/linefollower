@@ -47,17 +47,19 @@ extern "C" {
         	/************************************************************************************************/
         	//step(2) find car on track
         	//1.read an car on track image
-            vector<Vec4i>start_end_points=detector->get_start_end_points();
+
+
+
             Mat image_lines =detector->get_image_lines();
         	Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
             Mat image=frame.clone();
 
             bool car_found;
             int x_center, y_center, x_f, y_f, x_b, y_b;
-            Scalar front_color(247, 85, 109);//red
-            Scalar back_color(0,0,255);//blue
+            Scalar front_color(255, 0, 0);//red
+            Scalar back_color(0, 0, 255);//blue
 
-           	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
+	        car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
         	if (!car_found) {
         		//cout << "failed to find car 😟" << endl;
@@ -67,7 +69,8 @@ extern "C" {
 
         	///************************************************************************************************/
         	//Step(3) Is Car on a straight line
-        	bool on_line;
+
+        	bool on_line=0;
 
             car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
             *inc_speed=on_line;
@@ -106,7 +109,7 @@ extern "C" {
 	}
 
 	__attribute__((visibility("default"))) __attribute__((used))
-	void initDetector(uint8_t* markerPngBytes, int inBytesCount) {
+	int* initDetector(uint8_t* markerPngBytes, int inBytesCount) {
 
             //OutputDebugString(L"This debug is worth an upvote;)");
 			vector<uint8_t> buffer(markerPngBytes, markerPngBytes + inBytesCount);
@@ -117,23 +120,24 @@ extern "C" {
             Mat image = marker.clone();//imread(path, 1); //Reading from a path
          /*    Mat koko;
             koko= imread("D:/subjects/3-2/Embedded System/projects/flutter app/flutter-opencv-stream-processing-master/zeinb/native_opencv/ios/Classes/1.jpeg",1);
-            */
+*/
 
 
             //2.Scanning Track Initially
+
             Mat image_lines;
+            int* extract=new int;
+            *extract = 0;
             bool wrapped=scan_track(image_lines, image);
             if (!wrapped) {
-            //cout << "Failed To Scan Track" << endl;
-            *inc_speed=-1;
-            return inc_speed;
+                *extract = 5;
+            	return extract;
             }
-           
+            //imshow("image_lines.jpg", image);
             detector = new ArucoDetector();
             detector->set_image_lines(image_lines);
 
-        
-
+            return extract;
 
 
 
