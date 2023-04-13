@@ -13,7 +13,7 @@ final DynamicLibrary nativeLib = Platform.isAndroid
 
 // C Functions signatures
 typedef _c_version = Pointer<Utf8> Function();
-typedef _c_initDetector = Void Function(
+typedef _c_initDetector = Pointer<Uint8> Function(
     Pointer<Uint8> markerPngBytes, Int32 inSize, Int32 bits);
 typedef _c_destroyDetector = Void Function();
 typedef _c_detect = Pointer<Uint8> Function(
@@ -25,8 +25,8 @@ typedef _c_detect = Pointer<Uint8> Function(
 
 // Dart functions signatures
 typedef _dart_version = Pointer<Utf8> Function();
-typedef _dart_initDetector = void Function(
-    Pointer<Uint8> markerPngBytes, int inSize, int bits);
+typedef _dart_initDetector = Pointer<Uint8> Function(
+    Pointer<Uint8> markerPngBytes, int inSize,int bits);
 typedef _dart_destroyDetector = void Function();
 typedef _dart_detect = Pointer<Uint8> Function(
   int width,
@@ -57,15 +57,16 @@ class NativeOpencv {
     return _version().toDartString();
   }
 
-  void initDetector(Uint8List markerPngBytes, int bits) {
+  Pointer<Uint8> initDetector(Uint8List markerPngBytes, int bits) {
     var totalSize = markerPngBytes.lengthInBytes;
     var imgBuffer = malloc.allocate<Uint8>(totalSize);
     Uint8List bytes = imgBuffer.asTypedList(totalSize);
     bytes.setAll(0, markerPngBytes);
 
-    _initDetector(imgBuffer, totalSize, bits);
+    Pointer<Uint8> extract = _initDetector(imgBuffer, totalSize, bits);
 
     malloc.free(imgBuffer);
+    return extract;
   }
 
   void destroy() {
