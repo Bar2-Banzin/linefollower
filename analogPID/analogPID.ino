@@ -1,7 +1,4 @@
-/*
- Sample Line Following Code for the Robojunkies LF-2 robot
-*/
-
+#include <avr/io.h>
 #define speedL 10
 #define IN1 7
 #define IN2 6

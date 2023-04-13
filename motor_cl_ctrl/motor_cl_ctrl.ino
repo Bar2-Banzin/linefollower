@@ -28,7 +28,7 @@ long long start_time_r = 0;
 int count = 1000;
 long long current_time = 0;
 long long dt = 0;
-long long encoder_resolution = pow(10,3) * (60/20);
+long long encoder_resolution = (60/20);
 
 uint16_t left_revolutions;
 uint16_t right_revolutions;
@@ -49,31 +49,37 @@ void setup()
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
-  digitalWrite(IN1,LOW);
+  digitalWrite(IN1,HIGH);
   digitalWrite(IN2,LOW);
   analogWrite(speedL, 0);
   analogWrite(speedR, 0);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
   // start_time_l = millis();
-  start_time_r = millis();
-  // INT0_Init();
+  // start_time_r = millis();
+  INT0_Init();
   INT1_Init(); 
+  timer2_init(); 
   Serial.begin(9600);
 }
 
 void loop()
 {
   //some code
-  uint16_t desiredRPM = simulate_setpoint(pot);
+  // uint16_t desiredRPM = simulate_setpoint(pot);
+  uint16_t lol = map(analogRead(pot), 0, 1023, 0, 255);
+  analogWrite(speedL, lol);
+  analogWrite(speedR, lol);
   getMotorSpeeds();
-  int actualPWM = motor_ctrl(speedR, desiredRPM, actual_speeds[1], 0.8, 0);
-  Serial.print(desiredRPM);
-  Serial.print(",");
-  Serial.print(actual_speeds[1]);
-  Serial.print(",");
-  Serial.println(actualPWM);
-  // Serial.println(analogRead(A5));
+  // int actualPWM = motor_ctrl(speedR, desiredRPM, actual_speeds[1], 0.8, 0);
+  // Serial.print(desiredRPM);
+  // Serial.print(",");
+  // Serial.print(actual_speeds[1]);
+  // Serial.print(",");
+  // Serial.println(actualPWM);
+  Serial.print(actual_speeds[0]);
+  Serial.print(" - ");
+  Serial.println(actual_speeds[1]);
 }
 
 
@@ -102,12 +108,38 @@ int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float K
 
 void getMotorSpeeds()
 { 
-  // uint16_t rpm_left = left_revolutions / (float)seconds;
-  uint16_t rpm_right = 3 * right_pulses;
-  right_pulses = 0;
+  // current_time = millis();
 
-  // actual_speeds[0] = rpm_left;
-  actual_speeds[1] = rpm_right;
+  // if(current_time - start_time_l >= count)
+  // {
+  //   start_time_l = current_time;
+    
+  // }
+
+  if(timer_iterations >= 40)
+  {
+    timer_iterations = 0;
+    TCNT2 = 132;
+    long rpm_left = (left_pulses * encoder_resolution);
+    long rpm_right = (right_pulses * encoder_resolution);
+    left_pulses = 0;
+    right_pulses = 0;
+    actual_speeds[0] = rpm_left;
+    actual_speeds[1] = rpm_right;
+  }
+
+  // long rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
+
+  // if((right_pulses - right_pulses_prev) >= count){
+  //   right_pulses_prev = right_pulses;
+  //   start_time_r = millis();
+  // }
+
+  // actual_speeds[1] = rpm_right;
+}
+
+ISR(TIMER2_OVF_vect){
+  timer_iterations++;
 }
 
 ISR(INT0_vect) {
@@ -132,6 +164,20 @@ void INT1_Init (void) {
   EIMSK |= (1<<INT1);
   EICRA |= (1<<ISC10) | (1<<ISC11);
   SREG |= (1<<7);
+}
+
+void timer2_init(){
+  // TIMER 2 NORMAL MODE
+  CLEAR_BIT(SREG,7);
+  CLEAR_BIT(TCCR2B,6);
+  CLEAR_BIT(TCCR2B,3);
+  TCCR2B |= 0x07;     // prescaler
+  CLEAR_BIT(TCCR2B,4);
+  CLEAR_BIT(TCCR2B,5);
+  // initialize counter
+  TIMSK2 |= (1<<TOIE2);
+  TCNT2 = 132;
+  SET_BIT(SREG,7);
 }
 
 uint16_t simulate_setpoint(uint8_t pin)
