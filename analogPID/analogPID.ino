@@ -6,31 +6,40 @@
 #define IN4 8
 #define speedR 11
 
-#define base_speed_PWM 100
+#define base_speed_PWM 0
 #define base_speed_RPM 220
 #define kp_line 0.1
 #define kd_line 0.25
+
+#define SET_BIT(reg,pin) (reg|=(1<<pin))
+#define CLEAR_BIT(reg,pin) (reg&=~(1<<pin))
+#define TOGGLE_BIT(reg,pin) (reg^=(1<<pin))
 
 int c = 1, h = 1, s = 1;
 int rpm_speeds[2] = {0, 0};
 int actual_speeds[2] = {0, 0};
 
 
-long printing_count = 0;
+// long printing_count = 0;
 
 //Encoder variables
 int right_pulses = 0;
 int left_pulses = 0;
-int right_pulses_prev = 0;
-int left_pulses_prev = 0;
-long long start_time_l = 0;
-long long start_time_r = 0;
-int count = 1000;
-long long current_time = 0;
-long long dt = 0;
-long long encoder_resolution = pow(10,3) * (60/20);
+// int right_pulses_prev = 0;
+// int left_pulses_prev = 0;
+// long long start_time_l = 0;
+// long long start_time_r = 0;
+// int count = 1000;
+// long long current_time = 0;
+// long long encoder_resolution = pow(10,3) * (60/20);
+long long encoder_resolution = (60/20);
 
-int count_print = 0;
+// int count_print = 0;
+
+//Timer variables
+int timer_iterations = 0;
+
+int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Kd = 0);
 
 void setup()
 {
@@ -46,10 +55,11 @@ void setup()
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
 //  Serial.begin(9600);
-  start_time_l = millis();
-  start_time_r = millis();
+  // start_time_l = millis();
+  // start_time_r = millis();
   INT0_Init();
   INT1_Init(); 
+  timer2_init(); 
 }
 
 
@@ -60,8 +70,8 @@ void loop()
   linefollow(kp_line, kd_line);
 
   getMotorSpeeds();
-  int sppedy_l = motor_ctrl(speedL, rpm_speeds[0], actual_speeds[0], 1.352, 0); // 0.668
-  int sppedy_r = motor_ctrl(speedR, rpm_speeds[1], actual_speeds[1], 0.83, 0); // 0.707 --- 261
+  int actualPWM_L = motor_ctrl(speedL, rpm_speeds[0], actual_speeds[0], 0.8, 0); // 0.668            ==>  1.352
+  int actualPWM_R = motor_ctrl(speedR, rpm_speeds[1], actual_speeds[1], 0.6, 0); // 0.707 --- 261     ==>  0.83
 
 
 //  if(printing_count == 1000)
@@ -75,6 +85,10 @@ void loop()
 //  }
 //  
 //  printing_count++;
+
+  // Serial.print(actual_speeds[0]);
+  // Serial.print(" - ");
+  // Serial.println(actual_speeds[1]);
 }
 
 void linefollow(float Kp, float Kd)
@@ -163,25 +177,44 @@ int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp, float Kd)
   return out;
 }
 
+// void getMotorSpeeds()
+// {
+//   current_time = millis();
+
+//   long rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
+//   long rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
+
+//   if((left_pulses - left_pulses_prev) >= count){
+//     left_pulses_prev = left_pulses;
+//     start_time_l = millis();
+//   }
+
+//   if((right_pulses - right_pulses_prev) >= count){
+//     right_pulses_prev = right_pulses;
+//     start_time_r = millis();
+//   }
+
+//   actual_speeds[0] = rpm_left;
+//   actual_speeds[1] = rpm_right;
+// }
+
 void getMotorSpeeds()
-{
-  current_time = millis();
-
-  long rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
-  long rpm_left = ((left_pulses - left_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_l);
-
-  if((left_pulses - left_pulses_prev) >= count){
-    left_pulses_prev = left_pulses;
-    start_time_l = millis();
+{ 
+  if(timer_iterations >= 40)
+  {
+    timer_iterations = 0;
+    TCNT2 = 132;
+    long rpm_left = (left_pulses * encoder_resolution);
+    long rpm_right = (right_pulses * encoder_resolution);
+    left_pulses = 0;
+    right_pulses = 0;
+    actual_speeds[0] = rpm_left;
+    actual_speeds[1] = rpm_right;
   }
+}
 
-  if((right_pulses - right_pulses_prev) >= count){
-    right_pulses_prev = right_pulses;
-    start_time_r = millis();
-  }
-
-  actual_speeds[0] = rpm_left;
-  actual_speeds[1] = rpm_right;
+ISR(TIMER2_OVF_vect){
+  timer_iterations++;
 }
 
 ISR(INT0_vect) {
@@ -207,3 +240,19 @@ void INT1_Init (void) {
   EICRA |= (1<<ISC10) | (1<<ISC11);
   SREG |= (1<<7);
 }
+
+
+void timer2_init(){
+  // TIMER 2 NORMAL MODE
+  CLEAR_BIT(SREG,7);
+  CLEAR_BIT(TCCR2B,6);
+  CLEAR_BIT(TCCR2B,3);
+  TCCR2B |= 0x07;     // prescaler
+  CLEAR_BIT(TCCR2B,4);
+  CLEAR_BIT(TCCR2B,5);
+  // initialize counter
+  TIMSK2 |= (1<<TOIE2);
+  TCNT2 = 132;
+  SET_BIT(SREG,7);
+}
+
