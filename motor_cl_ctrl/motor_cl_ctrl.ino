@@ -38,7 +38,7 @@ uint16_t right_revolutions;
 int timer_iterations = 0;
 int seconds = 0;
 
-//int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Kd = 0);
+int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Kd = 0);
 
 void setup()
 {
@@ -57,7 +57,7 @@ void setup()
   digitalWrite(IN4,LOW);
   // start_time_l = millis();
   // start_time_r = millis();
-  INT0_Init();
+  // INT0_Init();
   INT1_Init(); 
   timer2_init(); 
   Serial.begin(9600);
@@ -66,23 +66,22 @@ void setup()
 void loop()
 {
   //some code
-//  uint16_t desiredRPM = simulate_setpoint(pot);
-   uint16_t lol = map(analogRead(pot), 0, 1023, 0, 255);
-   analogWrite(speedL, lol);
-   analogWrite(speedR, lol);
-   getMotorSpeeds();
-//  int actualPWM_L = motor_ctrl(speedL, desiredRPM, actual_speeds[0], 0.8, 0);
-//  int actualPWM_R = motor_ctrl(speedR, desiredRPM, actual_speeds[1], 0.8, 0);
-//   Serial.print(desiredRPM);
-//   Serial.print(",");
-//   Serial.print(actual_speeds[1]);
-//   Serial.print(",");
-//   Serial.println(actualPWM);
-  Serial.print(actual_speeds[0]);
-  Serial.print(", ");
+  uint16_t desiredRPM = simulate_setpoint(pot);
+  // uint16_t lol = map(analogRead(pot), 0, 1023, 0, 255);
+  // analogWrite(speedL, lol);
+  // analogWrite(speedR, lol);
+  getMotorSpeeds();
+  int actualPWM = motor_ctrl(speedR, desiredRPM, actual_speeds[1], 1, 4);
+  Serial.print(desiredRPM);
+  Serial.print(",");
   Serial.print(actual_speeds[1]);
-  Serial.print(", ");
-  Serial.println(lol);
+  Serial.print(",");
+  Serial.println(actualPWM);
+  // Serial.print(lol);
+  // Serial.print(", ");
+  // Serial.print(actual_speeds[0]);
+  // Serial.print(", ");
+  // Serial.println(actual_speeds[1]);
 }
 
 
