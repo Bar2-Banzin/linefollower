@@ -48,15 +48,13 @@ void setup()
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
-  digitalWrite(IN1,HIGH);
-  digitalWrite(IN2,LOW);
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
   analogWrite(speedL, 0);
   analogWrite(speedR, 0);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-  // start_time_l = millis();
-  // start_time_r = millis();
-  // INT0_Init();
+  INT0_Init();
   INT1_Init(); 
   timer2_init(); 
   Serial.begin(9600);
@@ -64,7 +62,36 @@ void setup()
 
 
 
-int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
+int motor_ctrl_r(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
+{
+  static int I = 0;
+  static int previousError = 0;
+  static int prev_set_point = 0;
+  int error = setPoint-actualSpeed; 
+  
+  int P = error;
+  I += error;
+  int D = error - previousError;
+
+  int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
+  
+  previousError = error;
+  prev_set_point = setPoint;
+  int out = PIDvalue;
+  
+  if (out > 255) {
+    out = 255;
+  }
+  if (out < 0) {
+    out = 0;
+  }
+  if(out >= 10)
+  analogWrite(pin, out);
+  return out; 
+}
+
+
+int motor_ctrl_l (uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
 {
   static int I = 0;
   static int previousError = 0;
@@ -96,17 +123,23 @@ void loop()
 {
   //some code
   uint16_t desiredRPM = simulate_setpoint(pot);
+  desiredRPM = 200;
 //   uint16_t lol = map(analogRead(pot), 0, 1023, 0, 255);
-//   analogWrite(speedL, lol);
-//   analogWrite(speedR, lol);
+//   analogWrite(speedL, 70);
+//   analogWrite(speedR, 70);
 //  Serial.println(desiredRPM);
   getMotorSpeeds();
-  int actualPWM = motor_ctrl(speedR, desiredRPM, actual_speeds[1], 0.5, 0.01, 0.5); // des 300 actuale 190 pwm 110
+  int actualPWM_r = motor_ctrl_r(speedR, desiredRPM, actual_speeds[1], 0.5, 0.01, 0.5);
+  int actualPWM_l = motor_ctrl_l(speedL, desiredRPM, actual_speeds[0], 0.5, 0.01 , 0.5);
   Serial.print(desiredRPM);
   Serial.print(",");
-  Serial.print(actual_speeds[1]);
+  Serial.print(actual_speeds[0]);
   Serial.print(",");
-  Serial.println(actualPWM);
+  Serial.println(actual_speeds[1]);
+//  Serial.print(",");
+//  Serial.print(actualPWM_r);
+//  Serial.print(",");
+//  Serial.println(actualPWM_l);
 //   Serial.print(lol);
 //   Serial.print(", ");
 //   Serial.print(actual_speeds[0]);
