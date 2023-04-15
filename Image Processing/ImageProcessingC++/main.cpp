@@ -10,15 +10,15 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 9;
+int testcase = 12;
 
 int main(int argc, char** argv)
 {
 
-	bool found;
-	int x, y;
-	std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
-	Mat image33 = imread(path33, 1); //Reading from a path
+	//bool found;
+	//int x, y;
+	//std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
+	//Mat image33 = imread(path33, 1); //Reading from a path
 
 
 	//cout << "Type" << image33.type() << endl;
@@ -33,16 +33,16 @@ int main(int argc, char** argv)
 
 
 	//convert to rgb scale
-	Mat image_rgb;
-	cvtColor(image33, image_rgb, COLOR_BGR2RGB);
-		
-	found = color_center(x, y, image_rgb, Scalar(0,0,255), "blue");
-	if (!found) {
-		cout << "find_car():Couldn't find front of the car" << endl;
-		return false;
-	}
+	//Mat image_rgb;
+	//cvtColor(image33, image_rgb, COLOR_BGR2RGB);
+	//	
+	//found = color_center(x, y, image_rgb, Scalar(0,0,255), "blue");
+	//if (!found) {
+	//	cout << "find_car():Couldn't find front of the car" << endl;
+	//	return false;
+	//}
 
-	return 0;
+	//return 0;
 	 
 
 	//Step(1) Scan Track 
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 	//Scalar back_color(50, 68, 152);//blue
 	//
 	Scalar front_color(255, 0, 0);//red
-	Scalar back_color(0, 255, 0);//blue
+	Scalar back_color(0, 0, 255);//blue
 	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
 	if (!car_found) {

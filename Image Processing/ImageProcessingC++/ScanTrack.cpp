@@ -19,18 +19,18 @@ bool scan_track(Mat & image_lines, Mat & track_image) {
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, track_image,"track");
+	//bool wrapped = extract_paper(paper_img, track_image,"track");
 	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	//imshow("Wrapped Paper  scan_track()", paper_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/track_paper.jpeg", paper_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/track_paper.jpeg", paper_img);
 	//waitKey(0);
 
-	if (! wrapped) {
-		return false;
-	 }
+	//if (! wrapped) {
+		//return false;
+	 //}
 
 	//Uncomment to Disable extract_paper
-	//paper_img = track_image;
+	paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
 	//extract_lines(image_lines, start_end_points, paper_img);

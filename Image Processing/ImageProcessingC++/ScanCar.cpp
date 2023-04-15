@@ -23,19 +23,19 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, image, "car");
+	//bool wrapped = extract_paper(paper_img, image, "car");
 
-	if (!wrapped) {
-		cout << "Couldn't extract paper" << endl;
-		return false;
-	}
+	//if (!wrapped) {
+		//cout << "Couldn't extract paper" << endl;
+		//return false;
+	//}
 	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
 	//imshow("Wrapped Paper  find_car()", paper_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
 	//waitKey(0);
 
 	//Uncomment to Disable extract_paper
-	//paper_img = image_input;
+	paper_img = image;
 
 	//2.Find car center
 	//Convert BGR to RGB
@@ -89,27 +89,32 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	int size_j = lines_matrix.cols;
 	int x_car = (x_car_front + x_car_back) / 2;
 	int y_car = (y_car_front + y_car_back) / 2;
-	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2.5;
+	
+	int distance_between_2_centers= calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) ;
+	int windo_size_x = distance_between_2_centers * 1.5;
+	int windo_size_y = distance_between_2_centers * 2;
+
+
 	int count = 0;
 	on_line = false;
 
-	int x_start = x_car - windo_size/2;
+	int x_start = x_car_front - windo_size_x /2;
 	if (x_start < 0) {
 		x_start = 0;
 	}
 
-	int y_start = y_car - windo_size / 2;
+	int y_start = y_car_front - windo_size_y / 2;
 	if (y_start < 0) {
 		y_start = 0;
 	}
 
-	int x_end = x_start + windo_size;
+	int x_end = x_start + windo_size_x;
 	if (x_end >= lines_matrix.cols) {
 		x_end = lines_matrix.cols-1;
 	}
 
 
-	int y_end = y_start + windo_size;
+	int y_end = y_start + windo_size_y;
 	if (y_end >= lines_matrix.rows) {
 		y_end = lines_matrix.rows-1;
 	}
