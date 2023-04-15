@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #define speedL 10
 #define IN1 7
 #define IN2 6
@@ -6,10 +7,9 @@
 #define IN4 8
 #define speedR 11
 
-#define base_speed_PWM 0
-#define base_speed_RPM 220
-#define kp_line 0.1
-#define kd_line 0.25
+#define base_speed_RPM 150
+#define kp_line 0.2
+#define kd_line 0
 
 #define SET_BIT(reg,pin) (reg|=(1<<pin))
 #define CLEAR_BIT(reg,pin) (reg&=~(1<<pin))
@@ -18,6 +18,8 @@
 int c = 1, h = 1, s = 1;
 int rpm_speeds[2] = {0, 0};
 int actual_speeds[2] = {0, 0};
+
+int count_print = 0;
 
 
 // long printing_count = 0;
@@ -39,7 +41,7 @@ long long encoder_resolution = (60/20);
 //Timer variables
 int timer_iterations = 0;
 
-int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Kd = 0);
+//int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Kd = 0);
 
 void setup()
 {
@@ -50,29 +52,91 @@ void setup()
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
   pinMode(speedR, OUTPUT);
-  digitalWrite(IN1,HIGH);
-  digitalWrite(IN2,LOW);
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
+  analogWrite(speedL, 0);
+  analogWrite(speedR, 0);
 //  Serial.begin(9600);
-  // start_time_l = millis();
-  // start_time_r = millis();
   INT0_Init();
   INT1_Init(); 
   timer2_init(); 
 }
 
+int motor_ctrl_r(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
+{
+  static int I = 0;
+  static int previousError = 0;
+  static int prev_set_point = 0;
+  int error = setPoint-actualSpeed; 
+  
+  int P = error;
+  I += error;
+  int D = error - previousError;
+
+  int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
+  
+  previousError = error;
+  prev_set_point = setPoint;
+  int out = PIDvalue;
+  
+  if (out > 255) {
+    out = 255;
+  }
+  if (out < 0) {
+    out = 0;
+  }
+  if(out >= 10)
+  analogWrite(pin, out);
+  return out; 
+}
+
+
+int motor_ctrl_l (uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
+{
+  static int I = 0;
+  static int previousError = 0;
+  static int prev_set_point = 0;
+  int error = setPoint-actualSpeed; 
+  
+  int P = error;
+  I += error;
+  int D = error - previousError;
+
+  int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
+  
+  previousError = error;
+  prev_set_point = setPoint;
+  int out = PIDvalue;
+  
+  if (out > 255) {
+    out = 255;
+  }
+  if (out < 0) {
+    out = 0;
+  }
+  if(out >= 10)
+  analogWrite(pin, out);
+  return out; 
+}
+
+
 
 void loop()
 {
-//  Serial.print("Sensor_1 = ");
-//  Serial.println(analogRead(A1));
   linefollow(kp_line, kd_line);
 
   getMotorSpeeds();
-  int actualPWM_L = motor_ctrl(speedL, rpm_speeds[0], actual_speeds[0], 0.8, 0); // 0.668            ==>  1.352
-  int actualPWM_R = motor_ctrl(speedR, rpm_speeds[1], actual_speeds[1], 0.6, 0); // 0.707 --- 261     ==>  0.83
-
+  int actualPWM_r = motor_ctrl_r(speedR, rpm_speeds[1], actual_speeds[1], 0.5, 0.01, 0.5);
+  int actualPWM_l = motor_ctrl_l(speedL, rpm_speeds[0], actual_speeds[0], 0.5, 0.02 , 0.5);
+//  Serial.print(rpm_speeds[0]);
+//  Serial.print(",");
+//  Serial.print(rpm_speeds[1]);
+//  Serial.print(",");
+//  Serial.print(actual_speeds[0]);
+//  Serial.print(",");
+//  Serial.println(actual_speeds[1]);
 
 //  if(printing_count == 1000)
 //  {
@@ -95,8 +159,8 @@ void linefollow(float Kp, float Kd)
 {
   
   static int previousError = 0;
-  int half_error = analogRead(A4) - analogRead(A1) ;
-  int side_error = analogRead(A5) - analogRead(A0) ; 
+  int half_error = analogRead(A3) - analogRead(A1) ;
+  int side_error = analogRead(A4) - analogRead(A0) ; 
   int error = h*half_error + s*side_error; 
   
   int P = error;
@@ -121,26 +185,26 @@ void linefollow(float Kp, float Kd)
     rsp = 0;
   }
 //  if(count_print == 2000){
-//  Serial.print("PID = ");
-//  Serial.println(PIDvalue); 
+////  Serial.print("PID = ");
+////  Serial.println(PIDvalue); 
 //  Serial.print("half = ");
 //  Serial.println(half_error);    
 //  Serial.print("side = ");
 //  Serial.println(side_error);
-   
+//   
 //  Serial.print("Sensor_0 = ");
 //  Serial.println(analogRead(A0));
 //  Serial.print("Sensor_1 = ");
 //  Serial.println(analogRead(A1));
-//  Serial.print("Sensor_2 = ");
-//  Serial.println(analogRead(A2));
+////  Serial.print("Sensor_2 = ");
+////  Serial.println(analogRead(A2));
 //  Serial.print("Sensor_3 = ");
 //  Serial.println(analogRead(A3));
 //  Serial.print("Sensor_4 = ");
 //  Serial.println(analogRead(A4)); 
-//  Serial.print("Sensor_5 = ");
-//  Serial.println(analogRead(A5));   
-  // delay(2000); 
+////  Serial.print("Sensor_5 = ");
+////  Serial.println(analogRead(A5));   
+////   delay(2000); 
 //  count_print = 0;
 //  }
 //  count_print++;
@@ -149,33 +213,6 @@ void linefollow(float Kp, float Kd)
   rpm_speeds[1] = rsp;
 }
 
-
-
-int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp, float Kd)
-{
-  
-  static int previousError = 0;
-  int error = setPoint-actualSpeed; 
-  
-  int P = error;
-  int D = error - previousError;
-
-  int PIDvalue = (Kp * P) + (Kd * D);
-  previousError = error;
-
-  int out = base_speed_PWM + PIDvalue;
-//  Serial.print("pid val = ");
-//  Serial.println(PIDvalue);
-
-  if (out > 255) {
-    out = 255;
-  }
-  if (out < 0) {
-    out = 0;
-  }
-  analogWrite(pin, out);
-  return out;
-}
 
 // void getMotorSpeeds()
 // {
@@ -200,7 +237,7 @@ int motor_ctrl(uint8_t pin, int setPoint, int actualSpeed, float Kp, float Kd)
 
 void getMotorSpeeds()
 { 
-  if(timer_iterations >= 40)
+  if(timer_iterations >= 20)
   {
     timer_iterations = 0;
     TCNT2 = 132;
@@ -255,4 +292,3 @@ void timer2_init(){
   TCNT2 = 132;
   SET_BIT(SREG,7);
 }
-
