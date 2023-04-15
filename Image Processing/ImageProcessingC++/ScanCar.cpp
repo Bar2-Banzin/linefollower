@@ -93,12 +93,15 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	int distance_between_2_centers= calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) ;
 	int windo_size_x = distance_between_2_centers * 1.5;
 	int windo_size_y = distance_between_2_centers * 2;
+	//int windo_size_y = distance_between_2_centers * 50;
+
 
 
 	int count = 0;
 	on_line = false;
 
-	int x_start = x_car_front - windo_size_x /2;
+	//int x_start = x_car_front - windo_size_x /2;//
+	int x_start = x_car_front;//Basma
 	if (x_start < 0) {
 		x_start = 0;
 	}
@@ -118,8 +121,17 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	if (y_end >= lines_matrix.rows) {
 		y_end = lines_matrix.rows-1;
 	}
+
+	cout << "x_start" << x_start << endl;
+	cout << "y_start" << y_start << endl;
+	cout << " x_end-x_start" << x_end - x_start << endl;
+	cout << "y_end- y_start" << y_end - y_start << endl;
+
 	Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
 	Mat window = lines_matrix(rectangle_var);
+	cout << "window.rows" << window.rows << endl;
+	cout << "window.vols" << window.cols << endl;
+
 
 	//Debug  Comment
 	//namedWindow("window on_line()", WINDOW_NORMAL);
@@ -144,11 +156,13 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	//Debug Rectangle to We search in
 	Mat rect_img = lines_matrix.clone();
 	rectangle(rect_img, Point(x_start,y_start), Point(x_end,y_end), (100, 100, 100), 2);
-	cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
+	//cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
+	cv::line(rect_img, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 20);
+
 
 	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
 	//imshow("Search Window car_on_line()", rect_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line().jpeg", rect_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line() from front of car.jpeg", rect_img);
 	//waitKey(0);
 
 

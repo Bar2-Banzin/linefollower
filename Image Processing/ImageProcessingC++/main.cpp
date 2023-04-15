@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 12;
+int testcase = 13;
 
 int main(int argc, char** argv)
 {
@@ -98,8 +98,8 @@ int main(int argc, char** argv)
 	
 	//Debug [Comment]
 	Mat draw_car_online = image_lines.clone();
-	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
-	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(0, 255, 255), 5);
+	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 255, 255), 5);
+	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(255, 255, 255), 5);
 
 	//namedWindow("car_on_line main()", WINDOW_NORMAL);
 	//imshow("car_on_line main()", image_lines);

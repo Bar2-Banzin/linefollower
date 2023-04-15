@@ -125,10 +125,10 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 		double y2 = line_inst[3];
 
 		double change_x = x2 - x1, change_y = y2 - y1;
-		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));
+		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));//length
 		change_x /= length; change_y /= length;
-		change_x *= sliding;
-		change_y *= sliding;
+		change_x *= 0.20*length;///////////Basma
+		change_y *= 0.20* length;///////////Basma
 		x1 += change_x;
 		y1 += change_y;
 
@@ -136,8 +136,8 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 		y2 -= change_y;
 		//int m = (x1 - x2) / (y1 - y2);
 		//int c = x2 - m*y2;
-		double a = y1 - y2, b = x2 - x1, c = x1 * y2 - x2 * y1;
-		int threshold_cut = 50;
+		//double a = y1 - y2, b = x2 - x1, c = x1 * y2 - x2 * y1;
+		//int threshold_cut = 50;
 		/*if (x1 > x2) {
 			x1 = x1 - threshold_cut;
 			y1 = (a * x1 + c) / -b;
