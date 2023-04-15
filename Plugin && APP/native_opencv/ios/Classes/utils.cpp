@@ -1,6 +1,7 @@
 #include "utils.h"
 
-bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
+//bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
+bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 	/**
 	* extract paper out of the image
 	* @param warped_image bgr warpPerspective OUTPUT image contain paper only
@@ -27,7 +28,6 @@ bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
 	/*imshow("image_gray", image_gray);
 	waitKey(0);*/
 
-	
 	//gaussian filter on the image to remove noise
 	//syntax: gray scale image, kernel size(positive and odd), sigma
 	Mat blurred_image_gaussian;
@@ -51,6 +51,7 @@ bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
 	/*imshow("erosion_image", erosion_image);
 	waitKey(0);*/
 
+
 	Mat dilated_image;
 	dilate(erosion_image, dilated_image, Mat(), Point(-1, -1), 7, 1, 1);
 	/*imshow("dilated_image", dilated_image);
@@ -62,10 +63,6 @@ bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
 	Canny(dilated_image, edged_image, 150, 350);
 	/*imshow("edged_image", edged_image);
 	waitKey(0);*/
-	//===========================================================erosion & dilation=======================================================
-	//mat dilated_img = edged_image;
-	//mat errored_img = edged_image;
-
 
 	//============================================================getting contours=========================================================
 	//findcontour() works best on binary images
@@ -74,12 +71,10 @@ bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
 	//findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
 	findContours(edged_image, contours, hierarchy, RETR_LIST, CHAIN_APPROX_NONE);
 	if (contours.size() <= 0) {
-		cout << "extractpaper(): couldn't extract Contours out of image" << endl;
+		//cout << "extractpaper(): couldn't extract Contours out of image" << endl;
 		return false;
 	}
 
-
-	//Debug
 	//drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
 	//namedWindow("Contours extract_paper()", WINDOW_NORMAL);
 	//imshow("Contours extract_paper()", image_rgb);
@@ -166,14 +161,13 @@ Mat thin_image(Mat image) {
 	return thin;
 }
 
-
 bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
-	* 
+	*
 	* @param found boolean to determine wether this color is found or not
 	* @param x,y Center of the Color
-	* 
+	*
 	* @param image: RGB image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
 	* @param name: String for the flag of saved image [For Debug Optional]
@@ -188,11 +182,13 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
 	morphologyEx(mask, mask, MORPH_CLOSE, kernel);
 
-	
+
+
 	//namedWindow("mask color_center() "+string", WINDOW_NORMAL);
 	//imshow("mask color_center() "+string, mask);
 	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/mask_color color_center()" + name + ".jpeg", mask);
 	//waitKey(0);
+
 
 	if (!accepted)
 		return false;
@@ -209,7 +205,6 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 		return false;
 	}
 
-	
 	/*drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
 	imshow("Contours for Mask color_center()", image);
 	waitKey(0);*/
@@ -222,6 +217,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	//drawContours(image, vector<vector<Point> >(1, biggestContour), -1, Scalar(255, 255, 0), 10);
 	//imshow("Biggest for Mask color_center()", image);
 	//waitKey(0);
+
 
 	//Approcimate to Rect
 	Rect rect= boundingRect(biggestContour);
@@ -245,36 +241,49 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 }
 
 
+
 bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 	/**
-	* Get Center and Draw Rectangle Around Largest Contour of a given Color
-	*
-	* @param mask Binary Image with 1's are is are with color passed
-	* @param masked_img RGB Image with mask applied on it (image passed)
-	*
-	* @param image: RGB image
-	* @param color : RGB color i.e[0, 255, 0] to be masked
-	* 
-	* @return bool if Error in Getting Range of Color
-	*/
+    	* Get Center and Draw Rectangle Around Largest Contour of a given Color
+    	*
+    	* @param mask Binary Image with 1's are is are with color passed
+    	* @param masked_img RGB Image with mask applied on it (image passed)
+    	*
+    	* @param image: RGB image
+    	* @param color : RGB color i.e[0, 255, 0] to be masked
+    	*
+    	* @return bool if Error in Geeting Range of Color
+    	*/
 
-	//Get Color Mask
-	Scalar lower_range, upper_range;
-	bool accepted =color_range(lower_range, upper_range, color);
-	if (!accepted) {
-		return false;
-	}
+    	//Get Color Mask
+    	//Scalar lower_range, upper_range;
+    	//bool accepted =color_range(lower_range, upper_range, color);
+    	//if (!accepted) {
+    	//	return false;
+    	//}
 
-	//Convert RGB image to HSV
-	Mat image_hsv;
-	cvtColor(image, image_hsv, COLOR_RGB2HSV);
+    	//Convert RGB image to HSV
+    	Mat image_hsv;
+    	cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
 
-	inRange(image_hsv, lower_range, upper_range, mask);
+    	//cv::inRange(image_hsv, lower_range, upper_range, mask);
 
-	//Check If This is Required
-	image.copyTo(masked_image, mask);
+    	if (color == Scalar(255, 0, 0)) {
 
-	return true;
+    		Mat1b mask1, mask2;
+    			cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(10, 255, 255), mask1);
+    			cv::inRange(image_hsv, Scalar(170, 70, 50), Scalar(180, 255, 255), mask2);
+
+    			mask = mask1 | mask2;
+    	}
+    	else if (color==Scalar(0,0,255)) {
+    		cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
+    	}
+
+    	//Check If This is Required
+    	image.copyTo(masked_image, mask);
+
+    	return true;
 }
 
 
@@ -286,7 +295,7 @@ bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 	* @param upper_range Hue upper range for color
 	*
 	* @param color : RGB color i.e[0, 255, 0] to be masked
-	* 
+	*
 	* @return bool if Error in getting Hue Value
 	*/
 
@@ -348,7 +357,7 @@ bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 // 	x = center.x;
 // 	y = center.y;
 
-// 	//Dimensions of the Rectangle 
+// 	//Dimensions of the Rectangle
 // 	//int width = (int)(rect.size.width);
 // 	//int height = (int)(rect.size.height);
 
@@ -360,7 +369,7 @@ bool color_range(Scalar& lower_range, Scalar& upper_range,Scalar color) {
 double calculateDistance(double x1, double y1, double x2, double y2) {
 	/**
 	* Calculate the Euclidean distance between the two vectors x1, y1and x2, y2.
-	* 
+	*
 	* @param x1, y1:point 1
 	* @param x2, y2:point 2
 	*
@@ -373,10 +382,10 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
 Vec2i direction(double x1, double y1, double x2, double y2) {
 	/**
 	* Gets Direction between 2 Points
-	* 
+	*
 	* @param x1, y1:point 1
 	* @param x2, y2:point 2
-	* 
+	*
 	* @return : vector x1y1 - x2y2
 	*/
 	Vec2i arr( x2 - x1, y2 - y1 );
@@ -411,7 +420,7 @@ void get_biggest_rectangular_contour(vector<Point>& biggest_contour,double& max_
 	* @param contour: contours to be sorted
 	*/
 
-	//Get Biggest Contour 
+	//Get Biggest Contour
 	for (int i = 0;i < contours.size();i++) {
 		double area=contourArea(contours[i]);
 

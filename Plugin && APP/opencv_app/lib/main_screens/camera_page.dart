@@ -6,9 +6,11 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../detection_line_curve/image_processing.dart';
-import 'package:native_opencv/native_opencv.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:screenshot/screenshot.dart';
 import 'dart:convert';
+import 'package:zoom_widget/zoom_widget.dart';
+import 'package:sizer/sizer.dart';
 
 class CameraPage extends StatefulWidget {
   final BluetoothDevice device;
@@ -28,8 +30,10 @@ class _Message {
 class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   CameraController? _camController;
   int _camFrameRotation = 0;
+
+  ScreenshotController? _screenshotController;
   ImageProcessing? _imageProcessing;
-  late BluetoothConnection connection;
+  BluetoothConnection? connection;
 
   List<_Message> messages = [];
   String _messageBuffer = '';
@@ -38,13 +42,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   final ScrollController listScrollController = ScrollController();
 
   bool isConnecting = true;
-  bool get isConnected => connection.isConnected;
+  bool get isConnected => connection!.isConnected;
 
   bool isDisconnecting = false;
   Timer? timer;
   int _lastRun = 0;
   bool _detectionInProgress = false;
-  NativeOpencv? _nativeOpencv;
   bool first_time = true;
   var zooming = 0.0;
   @override
@@ -61,7 +64,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         isDisconnecting = false;
       });
 
-      connection.input!.listen(_onDataReceived).onDone(() {
+      connection!.input!.listen(_onDataReceived).onDone(() {
         if (isDisconnecting) {
           print('Disconnecting locally!');
         } else {
@@ -80,7 +83,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = _camController;
-
+    final ScreenshotController? screenshotController = _screenshotController;
     // App state changed before we got the chance to initialize.
     if (cameraController == null || !cameraController.value.isInitialized) {
       return;
@@ -99,7 +102,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     _camController?.dispose();
     if (isConnected) {
       isDisconnecting = true;
-      connection.dispose();
+      connection!.dispose();
       // connection = null;
     }
     super.dispose();
@@ -124,6 +127,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
           ? ImageFormatGroup.yuv420
           : ImageFormatGroup.bgra8888,
     );
+    _screenshotController = ScreenshotController();
 
     try {
       await _camController!.initialize();
@@ -138,12 +142,16 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   void take_photo_first() async {
     var image = await _camController!.takePicture();
-    await GallerySaver.saveImage(image.path);
-    await _imageProcessing!.first_detect(image);
-    setState(() {
-      first_time = false;
-    });
-    print("First Time$first_time");
+    var res = await _imageProcessing!.first_detect(image);
+    // if (res != -1) {
+      setState(() {
+        first_time = false;
+      });
+      print("=============First Time$first_time=======================$res");
+    // }
+    // else{
+    //   print("Retake $first_time");
+    // }
   }
 
   void take_photo_Multi() async {
@@ -176,14 +184,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   void _Zoom_in() async {
     setState(() {
-      zooming++;
+      zooming += 0.3;
     });
     await _camController!.setZoomLevel(zooming);
   }
 
   void _Zoom_out() async {
     setState(() {
-      zooming--;
+      zooming -= 0.3;
     });
     await _camController!.setZoomLevel(zooming);
   }
@@ -194,8 +202,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
     if (text.isNotEmpty) {
       try {
-        connection.output.add(Uint8List.fromList(utf8.encode(text)));
-        await connection.output.allSent;
+        connection!.output.add(Uint8List.fromList(utf8.encode(text)));
+        await connection!.output.allSent;
 
         // setState(() {
         //   messages.add(_Message(clientID, text));
@@ -266,6 +274,20 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     }
   }
 
+  void _screenShot() async {
+    await _screenshotController!
+        .capture(delay: const Duration(milliseconds: 10))
+        .then((Uint8List? image) async {
+      print(
+          "====================================image====================$image");
+      XFile xFile = XFile.fromData(image as Uint8List);
+      await GallerySaver.saveImage(xFile.path);
+    });
+    // var image = await _camController!.takePicture();
+    // await GallerySaver.saveImage(image.path);
+    // print("======================take Screen Shot=====================");
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_camController == null) {
@@ -273,12 +295,13 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         child: Text('Loading...'),
       );
     }
-
     return Column(
       children: [
-        SizedBox(
-          height: 600,
-          child: CameraPreview(_camController!),
+        Expanded(
+          child: AspectRatio(
+            aspectRatio: _camController!.value.aspectRatio,
+            child: CameraPreview(_camController!),
+          ),
         ),
         Row(
           children: [
@@ -300,6 +323,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
               // Provide an onPressed callback.
               onPressed: () => _Zoom_out(),
               child: const Icon(Icons.remove),
+            ),
+            FloatingActionButton(
+              heroTag: "btn4",
+              // Provide an onPressed callback.
+              onPressed: () => _screenShot(),
+              child: const Icon(Icons.camera),
             ),
           ],
         )

@@ -2,8 +2,7 @@
 # include "ScanTrack.h"
 #include <opencv2/core/mat.hpp>
 #include <set>
-
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat & image, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -19,16 +18,15 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, image,"car");
+	bool wrapped = extract_paper(paper_img, image, "car");
 
 	if (!wrapped) {
-		cout << "Couldn't extract paper" << endl;
+		//cout << "Couldn't extract paper" << endl;
 		return false;
 	}
-
 	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
 	//imshow("Wrapped Paper  find_car()", paper_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
 	//waitKey(0);
 
 	//Uncomment to Disable extract_paper
@@ -39,14 +37,10 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	Mat image_rgb;
 	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
 
-	//Convert BGR to RGB
-	Mat image_rgb;
-	cvtColor(image, image_rgb, COLOR_BGR2RGB);
-
-    //detect front of the car
+	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color,"front");
+	found = color_center(x_f, y_f, image_rgb, front_color, "front");
 	if (!found) {
 		//cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -54,7 +48,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color,"back");
+	found = color_center(x_b, y_b, image_rgb, back_color, "back");
 	if (!found) {
 		//cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
@@ -66,7 +60,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Draw Car centers [Debug]
 	//paper_img not used again 😉
-	//line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//9line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
 	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	//imshow("find_car()", image);
 	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car.jpeg", paper_img);
@@ -74,7 +68,6 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	return true;
 }
-
 void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
@@ -90,7 +83,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	int size_j = lines_matrix.cols;
 	int x_car = (x_car_front + x_car_back) / 2;
 	int y_car = (y_car_front + y_car_back) / 2;
-	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2.5;
+	int windo_size  = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2.5;
 	int count = 0;
 	on_line = false;
 
@@ -117,14 +110,6 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
 	Mat window = lines_matrix(rectangle_var);
 
-	//Debug  Comment
-	//namedWindow("window on_line()", WINDOW_NORMAL);
-	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/window on_line() Cropped.jpeg", window);
-	//imshow("window on_line()", window);
-	//waitKey(0);
-
-	//cout << "Type" << window.type() << endl;
-	//cout << "channels" << window.channels() << endl;
 
 	int count2 = 0;
 	for (int i = 0;i < window.rows;i++) {
@@ -136,16 +121,6 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 		}
 		//cout << endl << endl;
 	}
-
-	//Debug Rectangle to We search in
-	//Mat rect_img = lines_matrix.clone();
-	//rectangle(rect_img, Point(x_start,y_start), Point(x_end,y_end), (100, 100, 100), 2);
-	//cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
-
-	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
-	//imshow("Search Window car_on_line()", rect_img);
-	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line().jpeg", rect_img);
-	//waitKey(0);
 }
 
 

@@ -1,8 +1,7 @@
 ﻿# include"utils.h"
 # include "ScanTrack.h"
 
-
-bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_image) {
+bool scan_track(Mat & image_lines, Mat & track_image) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
@@ -39,6 +38,7 @@ bool scan_track(Mat& image_lines, vector<Vec4i>& start_end_points, Mat track_ima
 	return true;
 }
 
+
 struct str {
 	bool operator() (Point a, Point b) {
 		if (a.y != b.y)
@@ -46,7 +46,6 @@ struct str {
 		return a.x <= b.x;
 	}
 } comp;
-
 
 void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	/**
@@ -76,7 +75,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 
 	// Dilate
 	Mat kernel, Dilate;
-	kernel = getStructuringElement(MORPH_CROSS, Size(3,3));
+	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
 	dilate(thinned, Dilate, kernel);
 
 	// Find the edges in the image using canny detector
@@ -89,9 +88,10 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//	maxLineGap : max allowed gap between lines to be treated as a 1 line(this breaks long un connected lines to 2 lines :D)
 	//	0 <= rho < Rmax
 	vector<Vec4i>lines;
+	//HoughLinesP(edges, lines, rho, theta, 100, minLineLength, maxLineGap);
 	//imshow("	Diatled image", edges);
 	//waitKey(0);
-	
+
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
 	//cout << "Hough Lines Detected " << lines.size();
 
@@ -101,8 +101,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	/*
 	Store start and end points of each line
 	start_end_points = np.empty((1, np.shape(lines))[0])# 1d with size = no of lines detected
-	FIXME: no of line, 1 * **, 4[Take care to tale[0] before taking point 😉](Solved this Problem by reshape)
-	*/
+		*/
 	//Mat start_end_points = lines.reshape((np.shape(lines)[0], 4);
 	//start_end_points = lines;
 
@@ -114,8 +113,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//Draw Lines on Image
 	//int index = 0;
 	//int sliding = 50;
-    	
-		for (auto line_inst : lines) {
+	for (auto line_inst : lines) {
 		double x1 = line_inst[0];
 		double y1 = line_inst[1];
 
