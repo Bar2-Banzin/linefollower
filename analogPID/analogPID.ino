@@ -8,7 +8,7 @@
 #define speedR 11
 
 #define base_speed_RPM 150
-#define kp_line 0.5
+#define kp_line 0.2
 #define kd_line 0
 
 #define SET_BIT(reg,pin) (reg|=(1<<pin))
@@ -58,7 +58,7 @@ void setup()
   digitalWrite(IN4,LOW);
   analogWrite(speedL, 0);
   analogWrite(speedR, 0);
-  Serial.begin(9600);
+//  Serial.begin(9600);
   INT0_Init();
   INT1_Init(); 
   timer2_init(); 
@@ -125,13 +125,11 @@ int motor_ctrl_l (uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, floa
 
 void loop()
 {
-//  Serial.print("Sensor_1 = ");
-//  Serial.println(analogRead(A1));
   linefollow(kp_line, kd_line);
 
-//  getMotorSpeeds();
-//  int actualPWM_r = motor_ctrl_r(speedR, rpm_speeds[1], actual_speeds[1], 0.5, 0.01, 0.5);
-//  int actualPWM_l = motor_ctrl_l(speedL, rpm_speeds[0], actual_speeds[0], 0.5, 0.01 , 0.5);
+  getMotorSpeeds();
+  int actualPWM_r = motor_ctrl_r(speedR, rpm_speeds[1], actual_speeds[1], 0.5, 0.01, 0.5);
+  int actualPWM_l = motor_ctrl_l(speedL, rpm_speeds[0], actual_speeds[0], 0.5, 0.02 , 0.5);
 //  Serial.print(rpm_speeds[0]);
 //  Serial.print(",");
 //  Serial.print(rpm_speeds[1]);
@@ -186,30 +184,30 @@ void linefollow(float Kp, float Kd)
   if (rsp < 0) {
     rsp = 0;
   }
-  if(count_print == 2000){
-//  Serial.print("PID = ");
-//  Serial.println(PIDvalue); 
-  Serial.print("half = ");
-  Serial.println(half_error);    
-  Serial.print("side = ");
-  Serial.println(side_error);
-   
-  Serial.print("Sensor_0 = ");
-  Serial.println(analogRead(A0));
-  Serial.print("Sensor_1 = ");
-  Serial.println(analogRead(A1));
-//  Serial.print("Sensor_2 = ");
-//  Serial.println(analogRead(A2));
-  Serial.print("Sensor_3 = ");
-  Serial.println(analogRead(A3));
-  Serial.print("Sensor_4 = ");
-  Serial.println(analogRead(A4)); 
-//  Serial.print("Sensor_5 = ");
-//  Serial.println(analogRead(A5));   
-//   delay(2000); 
-  count_print = 0;
-  }
-  count_print++;
+//  if(count_print == 2000){
+////  Serial.print("PID = ");
+////  Serial.println(PIDvalue); 
+//  Serial.print("half = ");
+//  Serial.println(half_error);    
+//  Serial.print("side = ");
+//  Serial.println(side_error);
+//   
+//  Serial.print("Sensor_0 = ");
+//  Serial.println(analogRead(A0));
+//  Serial.print("Sensor_1 = ");
+//  Serial.println(analogRead(A1));
+////  Serial.print("Sensor_2 = ");
+////  Serial.println(analogRead(A2));
+//  Serial.print("Sensor_3 = ");
+//  Serial.println(analogRead(A3));
+//  Serial.print("Sensor_4 = ");
+//  Serial.println(analogRead(A4)); 
+////  Serial.print("Sensor_5 = ");
+////  Serial.println(analogRead(A5));   
+////   delay(2000); 
+//  count_print = 0;
+//  }
+//  count_print++;
 
   rpm_speeds[0] = lsp;
   rpm_speeds[1] = rsp;
