@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import './led.dart';
 import './device.dart';
 
 class SelectBondedDevicePage extends StatefulWidget {
   final bool checkAvailability;
   static const routeName = '/connection';
-  const SelectBondedDevicePage({Key? key, this.checkAvailability = true}) : super(key: key);
+  const SelectBondedDevicePage({Key? key, this.checkAvailability = true})
+      : super(key: key);
 
   @override
   _SelectBondedDevicePage createState() => _SelectBondedDevicePage();
@@ -100,7 +100,7 @@ class _SelectBondedDevicePage extends State<SelectBondedDevicePage> {
   void dispose() {
     // Avoid memory leak (`setState` after dispose) and cancel discovery
     _discoveryStreamSubscription.cancel();
-
+    print("error in conction");
     super.dispose();
   }
 

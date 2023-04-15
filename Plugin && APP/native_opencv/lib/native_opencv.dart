@@ -21,6 +21,7 @@ typedef _c_detect = Pointer<Uint8> Function(
   Int32 height,
   Pointer<Uint8> bytes,
   Bool isYUV,
+  Int32 rotation
 );
 
 // Dart functions signatures
@@ -33,6 +34,7 @@ typedef _dart_detect = Pointer<Uint8> Function(
   int height,
   Pointer<Uint8> bytes,
   bool isYUV,
+  int rotation
 );
 
 // Create dart functions that invoke the C funcion
@@ -77,7 +79,7 @@ class NativeOpencv {
   }
 
   Pointer<Uint8> detect(int width, int height, Uint8List yBuffer,
-      Uint8List? uBuffer, Uint8List? vBuffers) {
+      Uint8List? uBuffer, Uint8List? vBuffers, int rotation) {
     var ySize = yBuffer.lengthInBytes;
     var uSize = uBuffer?.lengthInBytes ?? 0;
     var vSize = vBuffers?.lengthInBytes ?? 0;
@@ -94,7 +96,7 @@ class NativeOpencv {
       bytes.setAll(ySize + vSize, uBuffer!);
     }
     Pointer<Uint8> flag = _detect(
-        width, height, _imageBuffer!, Platform.isAndroid ? true : false);
+        width, height, _imageBuffer!, Platform.isAndroid ? true : false, rotation);
 
     return flag;
   }
