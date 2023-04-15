@@ -15,6 +15,20 @@ using namespace cv;
 
 static ArucoDetector* detector = nullptr;
 
+
+void rotateMat(Mat &matImage, int rotation)
+{
+	if (rotation == 90) {
+		transpose(matImage, matImage);
+		flip(matImage, matImage, 1); //transpose+flip(1)=CW
+	} else if (rotation == 270) {
+		transpose(matImage, matImage);
+		flip(matImage, matImage, 0); //transpose+flip(0)=CCW
+	} else if (rotation == 180) {
+		flip(matImage, matImage, -1);    //flip(-1)=180
+	}
+}
+
 extern "C" {
 	// Attributes to prevent 'unused' function from being removed and to make it visible
 	__attribute__((visibility("default"))) __attribute__((used))
@@ -23,7 +37,7 @@ extern "C" {
 	}
 
 	__attribute__((visibility("default"))) __attribute__((used))
-	int* detect(int width, int height, uint8_t* bytes, bool isYUV ) {
+	int* detect(int width, int height ,uint8_t* bytes, bool isYUV,int rotation ) {
 		 int* inc_speed=new int;
          *inc_speed = 0;
 		if (detector == nullptr) {
@@ -38,66 +52,37 @@ extern "C" {
         } else {
            frame = Mat(height, width, CV_8UC4, bytes);
         }
+        rotateMat(frame, rotation);
 
+        /************************************************************************************************/
+        //step(2) find car on track
+        //1.read an car on track image
 
+        Mat image_lines =detector->get_image_lines();
+        Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
+        Mat image=frame.clone();
 
+        bool car_found;
+        int x_center, y_center, x_f, y_f, x_b, y_b;
+        Scalar front_color(255, 0, 0);//red
+        Scalar back_color(0, 0, 255);//blue
 
+        car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
 
-
-        	/************************************************************************************************/
-        	//step(2) find car on track
-        	//1.read an car on track image
-
-
-
-            Mat image_lines =detector->get_image_lines();
-        	Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
-            Mat image=frame.clone();
-
-            bool car_found;
-            int x_center, y_center, x_f, y_f, x_b, y_b;
-            Scalar front_color(255, 0, 0);//red
-            Scalar back_color(0, 0, 255);//blue
-
-	        car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
-
-        	if (!car_found) {
-        		//cout << "failed to find car 😟" << endl;
-        		*inc_speed=5;
-        		return inc_speed;
-        	}
-
-        	///************************************************************************************************/
-        	//Step(3) Is Car on a straight line
-
-        	bool on_line=0;
-
-            car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
-            *inc_speed=on_line;
+        if (!car_found) {
+            // failed to find car 😟
+            *inc_speed=5;
             return inc_speed;
-            /*if (!on_line) {
-                //cout << "Car isn't on a straight line" << endl;
-                //continue;
+        }
 
-                *inc_speed=4;
-                return inc_speed;
-            }*/
+        ///************************************************************************************************/
+        //Step(3) Is Car on a straight line
 
+        bool on_line=0;
 
-        	/************************************************************************************************/
-        	/*//Step(4) Inc or Dec Speed
-            //int dist_threshold = 150;
-            int dist_threshold = calculateDistance(x_f, y_f, x_b, y_b)*2.2;
-            Vec4i lineto = start_end_points[line_index];
-            //line(image, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
-            //cv::line(image, Point(lineto[0], lineto[1]), Point(lineto[2], lineto[3]), Scalar(255, 0, 255), 5);
-
-            Mat draw_temp = car_image.clone();
-            *inc_speed = increase_decrease_speed(draw_temp, x_f, y_f, x_b, y_b, lineto, dist_threshold);
-*/
-
-
-        //return inc_speed;
+        car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
+        *inc_speed=on_line;
+        return inc_speed;
 	}
 
 	__attribute__((visibility("default"))) __attribute__((used))
@@ -111,33 +96,31 @@ extern "C" {
 	__attribute__((visibility("default"))) __attribute__((used))
 	int* initDetector(uint8_t* markerPngBytes, int inBytesCount) {
 
-            //OutputDebugString(L"This debug is worth an upvote;)");
-			vector<uint8_t> buffer(markerPngBytes, markerPngBytes + inBytesCount);
-            Mat marker = imdecode(buffer, IMREAD_COLOR);
-            //Step(1) Scan Track
-            //1.Read Track Image
-            //std::string path = "./assets/track/00.jpeg";
-            Mat image = marker.clone();//imread(path, 1); //Reading from a path
-         /*    Mat koko;
-            koko= imread("D:/subjects/3-2/Embedded System/projects/flutter app/flutter-opencv-stream-processing-master/zeinb/native_opencv/ios/Classes/1.jpeg",1);
-*/
+        // get image from bits
+        vector<uint8_t> buffer(markerPngBytes, markerPngBytes + inBytesCount);
+        Mat marker = imdecode(buffer, IMREAD_COLOR);
+        //Step(1) Scan Track
+        //1.Read Track Image
+
+        Mat image = marker.clone();
 
 
-            //2.Scanning Track Initially
 
-            Mat image_lines;
-            int* extract=new int;
-            *extract = 0;
-            bool wrapped=scan_track(image_lines, image);
-            if (!wrapped) {
-                *extract = 5;
-            	return extract;
-            }
-            //imshow("image_lines.jpg", image);
-            detector = new ArucoDetector();
-            detector->set_image_lines(image_lines);
+        //2.Scanning Track Initially
 
+        Mat image_lines;
+        int* extract=new int;
+        *extract = 0;
+        bool wrapped=scan_track(image_lines, image);
+        if (!wrapped) {
+            *extract = 5;
             return extract;
+        }
+
+        detector = new ArucoDetector();
+        detector->set_image_lines(image_lines);
+
+        return extract;
 
 
 

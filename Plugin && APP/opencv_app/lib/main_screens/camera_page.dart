@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import '../detection_line_curve/image_processing.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:screenshot/screenshot.dart';
-import 'dart:convert';
-import 'package:zoom_widget/zoom_widget.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import '../detection_line_curve/image_processing.dart';
 
 class CameraPage extends StatefulWidget {
   final BluetoothDevice device;
@@ -30,7 +28,7 @@ class _Message {
 class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   CameraController? _camController;
   int _camFrameRotation = 0;
-
+  double _camFrameToScreenScale = 0;
   ScreenshotController? _screenshotController;
   ImageProcessing? _imageProcessing;
   BluetoothConnection? connection;
@@ -105,6 +103,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       connection!.dispose();
       // connection = null;
     }
+    print("error in cccccccccccccc");
     super.dispose();
   }
 
@@ -144,10 +143,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     var image = await _camController!.takePicture();
     var res = await _imageProcessing!.first_detect(image);
     // if (res != -1) {
-      setState(() {
-        first_time = false;
-      });
-      print("=============First Time$first_time=======================$res");
+    setState(() {
+      first_time = false;
+    });
+    print("=============First Time$first_time=======================$res");
     // }
     // else{
     //   print("Retake $first_time");
@@ -166,12 +165,19 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         DateTime.now().millisecondsSinceEpoch - _lastRun < 60) {
       return;
     }
+    if (_camFrameToScreenScale == 0) {
+      var w = (_camFrameRotation == 0 || _camFrameRotation == 180)
+          ? image.width
+          : image.height;
+      _camFrameToScreenScale = MediaQuery.of(context).size.width / w;
+    }
+
     try {
       print("===========================in Streaming=============");
       // var image = await _camController!.takePicture();
       // await GallerySaver.saveImage(image);
       _detectionInProgress = true;
-      var res = await _imageProcessing!.detect(image);
+      var res = await _imageProcessing!.detect(image, _camFrameRotation);
       _detectionInProgress = false;
       _lastRun = DateTime.now().millisecondsSinceEpoch;
       print("Result of process${res.toString()}");
@@ -205,19 +211,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         connection!.output.add(Uint8List.fromList(utf8.encode(text)));
         await connection!.output.allSent;
 
-        // setState(() {
-        //   messages.add(_Message(clientID, text));
-        // });
         DateTime dt;
-        // Future.delayed(const Duration(milliseconds: 333)).then((_) {
         dt = DateTime.now();
         print(
             "=================Time==============${dt.hour}hr ${dt.minute} min ${dt.second} sec ${dt.millisecond} msec ");
-        //   listScrollController.animateTo(
-        //       listScrollController.position.maxScrollExtent,
-        //       duration: const Duration(milliseconds: 333),
-        //       curve: Curves.easeOut);
-        // });
       } catch (e) {
         // Ignore error, but notify state
         setState(() {});
@@ -324,30 +321,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
               onPressed: () => _Zoom_out(),
               child: const Icon(Icons.remove),
             ),
-            FloatingActionButton(
-              heroTag: "btn4",
-              // Provide an onPressed callback.
-              onPressed: () => _screenShot(),
-              child: const Icon(Icons.camera),
-            ),
           ],
         )
       ],
     );
   }
 }
-
-// A widget that displays the picture taken by the user.
-// class DisplayPictureScreen extends StatelessWidget {
-//   final String imagePath;
-//   const DisplayPictureScreen({Key? key, required this.imagePath}) : super(key: key);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Display the Picture')),
-//       // The image is stored as a file on the device. Use the `Image.file`
-//       // constructor with the given path to display the image.
-//       body: Image.file(File(imagePath)),
-//     );
-//   }
-// }
