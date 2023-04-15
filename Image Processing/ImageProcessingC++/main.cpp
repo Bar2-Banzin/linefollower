@@ -10,15 +10,15 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 9;
+int testcase = 13;
 
 int main(int argc, char** argv)
 {
 
-	bool found;
-	int x, y;
-	std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
-	Mat image33 = imread(path33, 1); //Reading from a path
+	//bool found;
+	//int x, y;
+	//std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
+	//Mat image33 = imread(path33, 1); //Reading from a path
 
 
 	//cout << "Type" << image33.type() << endl;
@@ -33,16 +33,16 @@ int main(int argc, char** argv)
 
 
 	//convert to rgb scale
-	Mat image_rgb;
-	cvtColor(image33, image_rgb, COLOR_BGR2RGB);
-		
-	found = color_center(x, y, image_rgb, Scalar(0,0,255), "blue");
-	if (!found) {
-		cout << "find_car():Couldn't find front of the car" << endl;
-		return false;
-	}
+	//Mat image_rgb;
+	//cvtColor(image33, image_rgb, COLOR_BGR2RGB);
+	//	
+	//found = color_center(x, y, image_rgb, Scalar(0,0,255), "blue");
+	//if (!found) {
+	//	cout << "find_car():Couldn't find front of the car" << endl;
+	//	return false;
+	//}
 
-	return 0;
+	//return 0;
 	 
 
 	//Step(1) Scan Track 
@@ -77,12 +77,15 @@ int main(int argc, char** argv)
 
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
+
+	//For Debug ONLY //Basma
+	Mat car_image_debug;
 	//Scalar front_color(247, 85, 109);//red
 	//Scalar back_color(50, 68, 152);//blue
 	//
 	Scalar front_color(255, 0, 0);//red
-	Scalar back_color(0, 255, 0);//blue
-	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
+	Scalar back_color(0, 0, 255);//blue
+	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color, car_image_debug);
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
@@ -98,15 +101,15 @@ int main(int argc, char** argv)
 	
 	//Debug [Comment]
 	Mat draw_car_online = image_lines.clone();
-	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 0, 0), 5);
-	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(0, 255, 255), 5);
+	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 255, 255), 5);
+	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(255, 255, 255), 5);
 
 	//namedWindow("car_on_line main()", WINDOW_NORMAL);
 	//imshow("car_on_line main()", image_lines);
 	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/car_on_line.jpeg", draw_car_online);
 	//waitKey(0);
 
-	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
+	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug,100);
 	if (!on_line) {
 		cout << "Car isn't on a straight line" << endl;
 		return 0;

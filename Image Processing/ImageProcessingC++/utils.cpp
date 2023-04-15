@@ -10,7 +10,8 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 	*
 	* @param img_bgr: bgr image INPUT IMAGE
 	* @param name: String for the flag of saved image [For Debug Optional]
-	*
+	*4
+	* 
 	* @return boolean to determine wether paper is extracted sucessfully
 	*/
 
@@ -98,8 +99,8 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 	}
 
 	//draw paper contour
-	//drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 0), 10);
-	//imshow("Biggest Contour extract_paper()", image_rgb);
+	drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 255), 10);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/biggestContour" + name + ".jpeg", image_rgb);
 	//waitKey(0);
 
 
@@ -164,7 +165,7 @@ Mat thin_image(Mat image) {
 }
 
 
-bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
+bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string name) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
 	* 
@@ -174,6 +175,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	* @param image: RGB image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
 	* @param name: String for the flag of saved image [For Debug Optional]
+	* @param Mat&colormask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
 	*
 	*/
 
@@ -221,6 +223,16 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	//imshow("Biggest for Mask color_center()", image);
 	//waitKey(0);
 
+	//get image dimensions
+	int imgHeight = image.rows;
+	int imgWidth = image.cols;
+
+	if (max_area < 0.001 * imgHeight * imgWidth)
+	{
+		cout << "color_center():Largest Contour is Very small :(" << endl;
+		return false;
+	}
+
 	
 	//Approcimate to Rect
 	Rect rect= boundingRect(biggestContour);
@@ -239,6 +251,10 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	/*Moments M = moments(biggestContour);
 	x = int(M.m10 / M.m00);
 	y = int(M.m01 / M.m00);*/
+
+
+	//Debug Basma
+	colormask = mask;
 
 	return true;
 }
@@ -273,14 +289,16 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 	if (color == Scalar(255, 0, 0)) {
 
 		Mat1b mask1, mask2;
-			cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(10, 255, 255), mask1);
+			//cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(10, 255, 255), mask1);
 			cv::inRange(image_hsv, Scalar(170, 70, 50), Scalar(180, 255, 255), mask2);
 
-			mask = mask1 | mask2;
+			//mask = mask1 | mask2;
+			mask = mask2;
 	}
 	else if (color==Scalar(0,0,255)) {
 		cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
 	}
+
 
 	//Check If This is Required
 	image.copyTo(masked_image, mask);
@@ -431,6 +449,7 @@ void get_biggest_rectangular_contour(vector<Point>& biggest_contour,double& max_
 
 		//Approximate The Contour to the nearest Poly
 		double perimeter =arcLength(contours[i], true);
+		
 		const double ratio = 0.02;
 		vector<Point>approx;
 		approxPolyDP(contours[i], approx, ratio * perimeter, true);
@@ -483,5 +502,6 @@ vector<Point2f> reorderPoints(vector<Point>points) {
 	newPoints[2] = points[argMin];
 	newPoints[1] = points[argMax];
 
+	return newPoints;
 	return newPoints;
 }

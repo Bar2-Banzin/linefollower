@@ -16,7 +16,7 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name="");
 
 Mat thin_image(Mat image);
 
-bool color_center(int& x, int& y, Mat image, Scalar color, string name="");
+bool color_center(int& x, int& y, Mat image, Scalar color, Mat& colormask,string name="");
 bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color);
 //bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
 
@@ -30,5 +30,6 @@ int sign(double x);
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2);
 void get_biggest_rectangular_contour(vector<Point>& biggest_contour, double& max_area, vector<vector<Point>> contours);
 vector<Point2f> reorderPoints(vector<Point>points);
+
 #endif
 

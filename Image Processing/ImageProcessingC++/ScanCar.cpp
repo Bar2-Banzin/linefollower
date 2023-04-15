@@ -7,7 +7,7 @@
 #include "ScanTrack.h";
 //Basma :Not sure of Data Type of front_color- back_color check
 //bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color, Mat& car_image_debug) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -19,23 +19,26 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	* @param image: BGR img with car
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
+	*
+	* @param Mat&front_mask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
+	* @param Mat&back_mask : for drawing the car just for Debug not on Eslam and Zainab //Basma
 	*/
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	bool wrapped = extract_paper(paper_img, image, "car");
+	//bool wrapped = extract_paper(paper_img, image, "car");
 
-	if (!wrapped) {
-		cout << "Couldn't extract paper" << endl;
-		return false;
-	}
+	//if (!wrapped) {
+		//cout << "Couldn't extract paper" << endl;
+		//return false;
+	//}
 	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
 	//imshow("Wrapped Paper  find_car()", paper_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
 	//waitKey(0);
 
 	//Uncomment to Disable extract_paper
-	//paper_img = image_input;
+	paper_img = image;
 
 	//2.Find car center
 	//Convert BGR to RGB
@@ -45,7 +48,9 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color, "front");
+	//Debug only //Basma
+	Mat front_mask, back_mask;
+	found = color_center(x_f, y_f, image_rgb, front_color, front_mask, "front");
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -53,7 +58,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, "back");
+	found = color_center(x_b, y_b, image_rgb, back_color, back_mask, "back");
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
@@ -62,6 +67,11 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//car center
 	x_center = (x_f + x_b) / 2;
 	y_center = (y_f + y_b) / 2;
+
+
+
+	//Debug only //Basma
+	bitwise_or(front_mask, back_mask, car_image_debug);
 
 	//Draw Car centers [Debug]
 	//paper_img not used again 😉
@@ -74,7 +84,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, Mat car_image_debug, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -83,38 +93,150 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 
 	* @param x_car, y_car : Center of the Car
 	* @lines_matrix : Binary Matrix with 1's = lines
+	* @Mat car_image_debug  :for drawing the car just for Debug not on Eslam and Zainab //Basma
 	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
 	*/
+	//(1)Car Center
 	int size_i = lines_matrix.rows;
 	int size_j = lines_matrix.cols;
 	int x_car = (x_car_front + x_car_back) / 2;
 	int y_car = (y_car_front + y_car_back) / 2;
-	int windo_size = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) * 2.5;
+
+	int distance_between_2_centers = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back);
+	int windo_size_x = distance_between_2_centers * 1.5;
+	int windo_size_y = distance_between_2_centers * 2;
+	//int windo_size_y = distance_between_2_centers * 50;
+
+	//(2)Unit vector from back to front
+	double change_x = x_car_front - x_car_back, change_y = y_car_front - y_car_back;//Basma
+	double length = sqrt(pow(change_x, 2) + pow(change_y, 2));//Basma
+	change_x /= length; change_y /= length;//Basma
+	double unit_vector_x = change_x, unit_vector_y = change_y;
+
+
+	////(3)Perpendicular unit vector
+	//double per_unit_vector_x = 1;
+	//double per_unit_vector_y = 1;
+	//if (unit_vector_x == 0) {
+	//	per_unit_vector_y = 0;
+	//}
+	//else if (unit_vector_y == 0) {
+	//	per_unit_vector_x = 0;
+	//}
+	//else {
+	//	per_unit_vector_y = -1 * per_unit_vector_x * unit_vector_x / unit_vector_y;
+	//	double temp_vector_length = sqrt(pow(per_unit_vector_y, 2) + pow(per_unit_vector_x, 2));//mad;
+	//	per_unit_vector_y /= temp_vector_length;
+	//	per_unit_vector_x /= temp_vector_length;
+	//}
+
+	//(4)Getting Seach window Rect
+	change_x = 0.5 *  unit_vector_x*(length);///////////Basma
+	change_y = 0.5 * unit_vector_y * (length);///////////Basma
+
+	//(4.1)Getting Search Window Center
+	int x_window_center = x_car_front + change_x;//Basma
+	int y_window_center = y_car_front + change_y;//Basma
+
+
+	//(4.1)Getting Search Window Angle
+	float angle = 0;
+	if (change_x == 0) {
+		angle = 90;
+	}
+	else {
+		angle = atan(change_y / change_x) * 180 / 3.1415;
+	}
+	//Rotate Image by angle
+	//Mat lines_matrix_rotated=rotate_Image(lines_matrix, angle);
+
+	//Point(x_car_front,y_car_front)
+	
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Rotated lime_matrix on_line() .jpeg", lines_matrix_rotated);
+	//return ;
+
+	//if (x_window_center+ windo_size_x/2) {
+	//	//out of boundary
+	//}
+	//if () {
+	//	// out boundary
+	//}
+	RotatedRect rectangle_var = cv::RotatedRect::RotatedRect(Point2f(x_window_center, y_window_center), Size2f(windo_size_x, windo_size_y), angle);
+
+	Mat rect_img2 = lines_matrix.clone();
+
+	//Search window
+	Point2f vertices[4];
+	rectangle_var.points(vertices);
+	for (int i = 0; i < 4; i++)
+		line(rect_img2, vertices[i], vertices[(i + 1) % 4], Scalar(100, 100, 100), 2);
+	//Center of car
+	cv::line(rect_img2, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 10);
+	
+	//Car Centers
+	cv::line(rect_img2, Point(x_car_front, y_car_front), Point(x_car_back, y_car_back), Scalar(100, 100, 100), 10);
+	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
+	//imshow("Search Window car_on_line()", rect_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line() from front of car.jpeg", rect_img2);
+	//waitKey(0);
+
+
+
+	return;
+
+	Rect_<int> rcBound = rectangle_var.boundingRect();
+	Mat window = lines_matrix(cv::Rect2f(cv::Point2f(x_window_center - rcBound.width / 2, y_window_center - rcBound.height / 2), cv::Size(rcBound.width, rcBound.height)));
+
+
+
 	int count = 0;
 	on_line = false;
 
-	int x_start = x_car - windo_size/2;
-	if (x_start < 0) {
-		x_start = 0;
-	}
+	////int x_start = x_car_front - windo_size_x /2;//
+	//int x_start = x_car_front;//Basma
+	//if (x_start < 0) {
+	//	x_start = 0;
+	//}
 
-	int y_start = y_car - windo_size / 2;
-	if (y_start < 0) {
-		y_start = 0;
-	}
+	//int y_start = y_car_front - windo_size_y / 2;
+	//if (y_start < 0) {
+	//	y_start = 0;
+	//}
 
-	int x_end = x_start + windo_size;
-	if (x_end >= lines_matrix.cols) {
-		x_end = lines_matrix.cols-1;
-	}
+	//int x_end = x_start + windo_size_x;
+	//if (x_end >= lines_matrix.cols) {
+	//	x_end = lines_matrix.cols-1;
+	//}
 
 
-	int y_end = y_start + windo_size;
-	if (y_end >= lines_matrix.rows) {
-		y_end = lines_matrix.rows-1;
-	}
-	Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
-	Mat window = lines_matrix(rectangle_var);
+	//int y_end = y_start + windo_size_y;
+	//if (y_end >= lines_matrix.rows) {
+	//	y_end = lines_matrix.rows-1;
+	//}
+
+	//int x_window_center = x_car_front + windo_size_x / 2;
+	//if (x_window_center < 0) {
+	//	x_window_center = 0;
+	//}
+
+	//int x_window_center = x_car_front - windo_size_x / 2;
+	//if (x_window_center < 0) {
+	//	x_window_center = 0;
+	//}
+
+	//cout << "x_start" << x_start << endl;
+	//cout << "y_start" << y_start << endl;
+	//cout << " x_end-x_start" << x_end - x_start << endl;
+	//cout << "y_end- y_start" << y_end - y_start << endl;
+
+	//Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
+	//Rect rectangle_var = Rect(x_car, y_car, x_end - x_start, y_end - y_start);
+
+
+	//Mat window = lines_matrix(rectangle_var);
+	//cout << "window.rows" << window.rows << endl;
+	//cout << "window.vols" << window.cols << endl;
+
 
 	//Debug  Comment
 	//namedWindow("window on_line()", WINDOW_NORMAL);
@@ -128,22 +250,36 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	int count2 = 0;
 	for (int i = 0;i < window.rows;i++) {
 		for (int j = 0;j < window.cols;j++) {
-			count2++;
+
 			auto scaler = (int)window.at<uchar>(i, j);
-			on_line = on_line || ((int)scaler != 0);
+			//on_line = on_line || ((int)scaler != 0);
+			count2 += ((int)scaler != 0) ? 1 : 0;
 			//cout << scaler << endl;
 		}
 		//cout << endl << endl;
 	}
+	on_line = count2 > 20;
 
-	//Debug Rectangle to We search in
+	//Debug Rectangle to We search in +Car 
 	Mat rect_img = lines_matrix.clone();
-	rectangle(rect_img, Point(x_start,y_start), Point(x_end,y_end), (100, 100, 100), 2);
-	cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
+	bitwise_or(rect_img, car_image_debug, rect_img);
 
+	//Search window
+
+	vector<Point2f> boxPts(4);
+	rectangle_var.points(boxPts.data());
+	//boxPts[3] = rectangle_var.br();
+	//The order of the box points : bottom left, top left, top right, bottom right
+	cv::line(rect_img, boxPts[0], boxPts[1], Scalar(100, 100, 100), 1);
+	cv::line(rect_img, boxPts[1], boxPts[2], Scalar(100, 100, 100), 2);
+	cv::line(rect_img, boxPts[2], boxPts[3], Scalar(100, 100, 100), 2);
+	cv::line(rect_img, boxPts[3], boxPts[0], Scalar(100, 100, 100), 2);
+	//rectangle(rect_img,va, (100, 100, 100), 2);
+	//Center of car
+	cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
 	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
 	//imshow("Search Window car_on_line()", rect_img);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line().jpeg", rect_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line() from front of car.jpeg", rect_img);
 	//waitKey(0);
 
 
