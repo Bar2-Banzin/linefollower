@@ -77,12 +77,15 @@ int main(int argc, char** argv)
 
 	bool car_found;
 	int x_center, y_center, x_f, y_f, x_b, y_b;
+
+	//For Debug ONLY //Basma
+	Mat car_image_debug;
 	//Scalar front_color(247, 85, 109);//red
 	//Scalar back_color(50, 68, 152);//blue
 	//
 	Scalar front_color(255, 0, 0);//red
 	Scalar back_color(0, 0, 255);//blue
-	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color);
+	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color, car_image_debug);
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
@@ -106,7 +109,7 @@ int main(int argc, char** argv)
 	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/car_on_line.jpeg", draw_car_online);
 	//waitKey(0);
 
-	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100);
+	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug,100);
 	if (!on_line) {
 		cout << "Car isn't on a straight line" << endl;
 		return 0;

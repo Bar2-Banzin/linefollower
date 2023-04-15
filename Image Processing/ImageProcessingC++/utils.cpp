@@ -165,7 +165,7 @@ Mat thin_image(Mat image) {
 }
 
 
-bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
+bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string name) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
 	* 
@@ -175,6 +175,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	* @param image: RGB image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
 	* @param name: String for the flag of saved image [For Debug Optional]
+	* @param Mat&colormask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
 	*
 	*/
 
@@ -250,6 +251,10 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	/*Moments M = moments(biggestContour);
 	x = int(M.m10 / M.m00);
 	y = int(M.m01 / M.m00);*/
+
+
+	//Debug Basma
+	colormask = mask;
 
 	return true;
 }

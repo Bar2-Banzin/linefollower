@@ -7,7 +7,7 @@
 #include "ScanTrack.h";
 //Basma :Not sure of Data Type of front_color- back_color check
 //bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color,Mat&car_image_debug) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -19,6 +19,9 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	* @param image: BGR img with car
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
+	* 
+	* @param Mat&front_mask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
+	* @param Mat&back_mask : for drawing the car just for Debug not on Eslam and Zainab //Basma
 	*/
 
 	//1.Extract Track Paper From the Image
@@ -45,7 +48,9 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color, "front");
+	//Debug only //Basma
+	Mat front_mask, back_mask;
+	found = color_center(x_f, y_f, image_rgb, front_color, front_mask, "front");
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -53,7 +58,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, "back");
+	found = color_center(x_b, y_b, image_rgb, back_color, back_mask, "back");
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
@@ -62,6 +67,11 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//car center
 	x_center = (x_f + x_b) / 2;
 	y_center = (y_f + y_b) / 2;
+
+
+
+	//Debug only //Basma
+	bitwise_or(front_mask, back_mask, car_image_debug);
 
 	//Draw Car centers [Debug]
 	//paper_img not used again 😉
@@ -74,7 +84,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, Mat car_image_debug,int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -83,6 +93,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 
 	* @param x_car, y_car : Center of the Car
 	* @lines_matrix : Binary Matrix with 1's = lines
+	* @Mat car_image_debug  :for drawing the car just for Debug not on Eslam and Zainab //Basma
 	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
 	*/
 	int size_i = lines_matrix.rows;
@@ -153,13 +164,13 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 		//cout << endl << endl;
 	}
 
-	//Debug Rectangle to We search in
+	//Debug Rectangle to We search in +Car 
 	Mat rect_img = lines_matrix.clone();
+	bitwise_or(rect_img, car_image_debug, rect_img);
+	//Search window
 	rectangle(rect_img, Point(x_start,y_start), Point(x_end,y_end), (100, 100, 100), 2);
+	//Center of car
 	//cv::line(rect_img, Point(x_car, y_car), Point(0, 0), Scalar(100, 100, 100), 20);
-	cv::line(rect_img, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 20);
-
-
 	//namedWindow("Search Window car_on_line()", WINDOW_NORMAL);
 	//imshow("Search Window car_on_line()", rect_img);
 	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Search Window car_on_line() from front of car.jpeg", rect_img);
