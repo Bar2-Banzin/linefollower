@@ -30,5 +30,7 @@ int sign(double x);
 bool compareContourAreas(vector<Point> contour1, vector<Point> contour2);
 void get_biggest_rectangular_contour(vector<Point>& biggest_contour, double& max_area, vector<vector<Point>> contours);
 vector<Point2f> reorderPoints(vector<Point>points);
+
+Mat rotate_Image(const Mat &src, double angle);
 #endif
 
