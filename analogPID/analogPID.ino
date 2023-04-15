@@ -129,9 +129,9 @@ void loop()
 //  Serial.println(analogRead(A1));
   linefollow(kp_line, kd_line);
 
-  getMotorSpeeds();
-  int actualPWM_r = motor_ctrl_r(speedR, rpm_speeds[1], actual_speeds[1], 0.5, 0.01, 0.5);
-  int actualPWM_l = motor_ctrl_l(speedL, rpm_speeds[0], actual_speeds[0], 0.5, 0.01 , 0.5);
+//  getMotorSpeeds();
+//  int actualPWM_r = motor_ctrl_r(speedR, rpm_speeds[1], actual_speeds[1], 0.5, 0.01, 0.5);
+//  int actualPWM_l = motor_ctrl_l(speedL, rpm_speeds[0], actual_speeds[0], 0.5, 0.01 , 0.5);
 //  Serial.print(rpm_speeds[0]);
 //  Serial.print(",");
 //  Serial.print(rpm_speeds[1]);
@@ -161,8 +161,8 @@ void linefollow(float Kp, float Kd)
 {
   
   static int previousError = 0;
-  int half_error = analogRead(A4) - analogRead(A1) ;
-  int side_error = analogRead(A3) - analogRead(A0) ; 
+  int half_error = analogRead(A3) - analogRead(A1) ;
+  int side_error = analogRead(A4) - analogRead(A0) ; 
   int error = h*half_error + s*side_error; 
   
   int P = error;
@@ -198,15 +198,15 @@ void linefollow(float Kp, float Kd)
   Serial.println(analogRead(A0));
   Serial.print("Sensor_1 = ");
   Serial.println(analogRead(A1));
-  Serial.print("Sensor_2 = ");
-  Serial.println(analogRead(A2));
-//  Serial.print("Sensor_3 = ");
-//  Serial.println(analogRead(A3));
+//  Serial.print("Sensor_2 = ");
+//  Serial.println(analogRead(A2));
+  Serial.print("Sensor_3 = ");
+  Serial.println(analogRead(A3));
   Serial.print("Sensor_4 = ");
   Serial.println(analogRead(A4)); 
-  Serial.print("Sensor_5 = ");
-  Serial.println(analogRead(A5));   
-  // delay(2000); 
+//  Serial.print("Sensor_5 = ");
+//  Serial.println(analogRead(A5));   
+//   delay(2000); 
   count_print = 0;
   }
   count_print++;
