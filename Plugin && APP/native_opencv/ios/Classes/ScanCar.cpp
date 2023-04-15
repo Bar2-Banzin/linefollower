@@ -60,62 +60,96 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	return true;
 }
 void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
-	/**
-	* This function detrmines whether car is on a straight line or not
-	*
-	* @param on_line boolean to detect wether car is on a st line or not
-	* @param line_index line index on which car is on
+    /**
+    * This function detrmines whether car is on a straight line or not
+    *
+    * @param on_line boolean to detect wether car is on a st line or not
+    * @param line_index line index on which car is on
 
-	* @param x_car, y_car : Center of the Car
-	* @lines_matrix : Binary Matrix with 1's = lines
-	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
-	*/
-	int size_i = lines_matrix.rows;
-	int size_j = lines_matrix.cols;
-	int x_car = (x_car_front + x_car_back) / 2;
-	int y_car = (y_car_front + y_car_back) / 2;
-	int distance_between_2_centers= calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back) ;
+    * @param x_car, y_car : Center of the Car
+    * @lines_matrix : Binary Matrix with 1's = lines
+    * @Mat car_image_debug  :for drawing the car just for Debug not on Eslam and Zainab //Basma
+    * @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
+    */
+    //(1)Car Center
+    int size_i = lines_matrix.rows;
+    int size_j = lines_matrix.cols;
+    int x_car = (x_car_front + x_car_back) / 2;
+    int y_car = (y_car_front + y_car_back) / 2;
+
+    int distance_between_2_centers = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back);
     int windo_size_x = distance_between_2_centers * 1.5;
-    int windo_size_y = distance_between_2_centers * 2;
+    int windo_size_y = distance_between_2_centers * 1;
+
+    //(2)Unit vector from back to front
+    double change_x = x_car_front - x_car_back, change_y = y_car_front - y_car_back;//Basma
+    double length = sqrt(pow(change_x, 2) + pow(change_y, 2));//Basma
+    change_x /= length; change_y /= length;//Basma
+    double unit_vector_x = change_x, unit_vector_y = change_y;
+
+
+    //(3)Perpendicular unit vector
+    double per_unit_vector_x = 1;
+    double per_unit_vector_y = 1;
+    if (unit_vector_x == 0) {
+        per_unit_vector_y = 0;
+    }
+    else if (unit_vector_y == 0) {
+        per_unit_vector_x = 0;
+    }
+    else {
+        per_unit_vector_y = -1 * per_unit_vector_x * unit_vector_x / unit_vector_y;
+        double temp_vector_length = sqrt(pow(per_unit_vector_y, 2) + pow(per_unit_vector_x, 2));//mad;
+        per_unit_vector_y /= temp_vector_length;
+        per_unit_vector_x /= temp_vector_length;
+    }
+
+    //(4)Getting Seach window Rect
+    change_x = 0.5 * unit_vector_x * (length);
+    change_y = 0.5 * unit_vector_y * (length);
+
+    //(4.1)Getting Search Window Center
+    int x_window_center = x_car_front ;
+    int y_window_center = y_car_front ;
 
 
     int count = 0;
     on_line = false;
+    int count2 = 0;
+    Mat temp_matrix = lines_matrix.clone();
 
-    int x_start = x_car_front;
-    if (x_start < 0) {
-        x_start = 0;
+    //Debug Only
+    //Mat image_test = lines_matrix.clone();
+
+    for (int i = 0;i < windo_size_y;i++) {
+        double base_x = x_window_center + i * unit_vector_x;
+        double base_y = y_window_center + i * unit_vector_y;
+        int point_x, point_y;
+        for (int j = 0;j < windo_size_x / 2;j++) {
+            point_x = round(base_x + j * per_unit_vector_x);
+            point_y = round(base_y + j * per_unit_vector_y);
+            if (point_x < 0 || point_y < 0 || point_x >= lines_matrix.cols || point_y >= lines_matrix.rows)
+                continue;
+            auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
+            count2 += ((int)scaler != 0) ? 1 : 0;
+
+
+        }
+        for (int j = 1;j < windo_size_x / 2;j++) {
+            point_x = round(base_x - j * per_unit_vector_x);
+            point_y = round(base_y - j * per_unit_vector_y);
+            if (point_x < 0 || point_y < 0 || point_x >= lines_matrix.cols || point_y >= lines_matrix.rows)
+                continue;
+            auto scaler = (int)temp_matrix.at<uchar>(point_y,point_x);
+            count2 += ((int)scaler != 0) ? 1 : 0;
+
+        }
     }
+    on_line = count2 > 50;
 
-    int y_start = y_car_front - windo_size_y / 2;
-    if (y_start < 0) {
-        y_start = 0;
-    }
+    return;
 
-    int x_end = x_start + windo_size_x;
-    if (x_end >= lines_matrix.cols) {
-        x_end = lines_matrix.cols-1;
-    }
-
-
-    int y_end = y_start + windo_size_y;
-    if (y_end >= lines_matrix.rows) {
-        y_end = lines_matrix.rows-1;
-    }
-	Rect rectangle_var = Rect(x_start,y_start , x_end-x_start,y_end- y_start);
-	Mat window = lines_matrix(rectangle_var);
-
-
-	int count2 = 0;
-	for (int i = 0;i < window.rows;i++) {
-		for (int j = 0;j < window.cols;j++) {
-			count2++;
-			auto scaler = (int)window.at<uchar>(i, j);
-			on_line = on_line || ((int)scaler != 0);
-		}
-	}
 }
-
 
 bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**
