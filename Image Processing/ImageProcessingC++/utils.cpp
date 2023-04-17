@@ -129,14 +129,12 @@ Mat thin_image(Mat image) {
 	//Syntax:threshold(src_gray, dst, threshold_value, max_binary_value, threshold_type);
 	Mat image_binary;
 	threshold(image, image_binary, 127, 255, 0);
-
 	//Make lines white
 	bitwise_not(image_binary, image_binary);
 
 	//Structuring Element
 	Mat kernel;
 	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
-
 	//Create an empty output image to hold values
 	Mat thin;
 	thin = Mat::zeros(image_binary.size(), CV_8UC1);
@@ -159,8 +157,6 @@ Mat thin_image(Mat image) {
 		// Set the eroded image for next iteration
 		image_binary = erode_image.clone();
 	}
-
-	// show_images([image, image_binary, thin], ["Original", "Binary", "Thin"])
 	return thin;
 }
 
