@@ -72,8 +72,6 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	cvtColor(image, image_gray, COLOR_RGB2GRAY);
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
-	//imshow("thinned_image extract_lines()", thinned);
-	//waitKey(0);
 
 	// Dilate
 	Mat kernel, Dilate;
@@ -82,7 +80,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 
 	// Find the edges in the image using canny detector
 	Mat edges = Dilate;
-
+	/************************************************************************************************************************************************/
 	vector<Point>biggest_contour;
 	double max_area=-1;
 	int counter_index = 0;
@@ -116,7 +114,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//waitKey(0);
 
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
-	cout << "Hough Lines Detected " << lines.size();
+	cout << "Hough Lines Detected " << lines.size() << endl;
 
 	// # Draw lines on the image
 	image_lines = Mat::zeros(image.size(), CV_8UC1);//Inverted image
@@ -200,6 +198,9 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//}
 
 
+
+	//imshow("thinned_image extract_lines()", thinned);
+	//waitKey(0);
 
 	//imshow("image_lines extract_lines()", image_lines);
 	//waitKey(0);
