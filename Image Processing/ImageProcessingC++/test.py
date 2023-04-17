@@ -40,7 +40,7 @@ def runTestCase_minor(i,j):
         # read a list of lines into data
         data = file.readlines()
 
-    data[j-1]=str(j)+":"+" "+str(return_code.returncode)
+    data[j-1]=str(j)+":"+" "+str(return_code.returncode)+"\n"
 
     # and write everything back
     with open(path_of_the_directory+"/TestCase"+str(i)+"/result.txt", 'w') as file:
@@ -81,7 +81,7 @@ def runTestCase(i):
             result.append(str(j)+":"+" "+str(return_code.returncode)+"\n")
             j=j+1
 
-    result[-1]=result[-1].strip()
+    # result[-1]=result[-1].strip()
     # Save Results in the file
     with open(path_of_the_directory+"/TestCase"+str(i)+"/result.txt", 'w') as file:
         file.writelines(result)
@@ -142,8 +142,9 @@ def main(argv):
     try:
         # Parsing argument
         arguments, values = getopt.getopt(argumentList, options, long_options)
-        # print(arguments)
-        # print(values)
+        print(arguments)
+        print(values)
+        # return 
 
         
         # checking for all argument

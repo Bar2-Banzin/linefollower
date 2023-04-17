@@ -2,4 +2,4 @@
 msbuild "Image Processing C++ Original.sln" 
 
 :: Run Test
-python test.py %1 %2% %3%
+python test.py %1 %2 %3
