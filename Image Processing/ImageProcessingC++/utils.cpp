@@ -81,7 +81,7 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 	drawContours(image_rgb, contours, -1, Scalar(255, 0, 0), 5);
 	//namedWindow("Contours extract_paper()", WINDOW_NORMAL);
 	//imshow("Contours extract_paper()", image_rgb);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/paper_contours"+ name +".jpeg", image_rgb);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/paper_contours"+ name +".jpeg", image_rgb);
 	//waitKey(0);
 
 
@@ -100,7 +100,7 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name) {
 
 	//draw paper contour
 	drawContours(image_rgb, vector<vector<Point> >(1, biggest_contour), -1, Scalar(255, 0, 255), 10);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/biggestContour" + name + ".jpeg", image_rgb);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase)  + name + ".jpeg", image_rgb);
 	//waitKey(0);
 
 
@@ -191,7 +191,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 
 	//namedWindow("mask color_center() "+string", WINDOW_NORMAL);
 	//imshow("mask color_center() "+string, mask);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/mask_color color_center()" + name + ".jpeg", mask);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/mask_color color_center()" + name + ".jpeg", mask);
 	//waitKey(0);
 
 
@@ -242,7 +242,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 	rectangle(rect_img, Point(rect.x, rect.y), Point(rect.x + rect.width, rect.y + rect.height), (0, 255, 0), 2);
 	//namedWindow("Bounding Rect color_center() "+string", WINDOW_NORMAL);
     //imshow("Bounding Rect color_center() "+string, mask);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/Bounding Rectangle color_center()" + name + ".jpeg", rect_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/Bounding Rectangle color_center()" + name + ".jpeg", rect_img);
 	//waitKey(0);
 
 	x = int(rect.x + rect.width / 2);

@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <opencv2/opencv.hpp> //Include OpenCV header file
 
 #include "ScanTrack.h";
@@ -10,10 +11,23 @@
 using namespace cv;
 using namespace std;
 
-int testcase = 13;
+int testcase;
+int minor_testcase;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
+	cout << "Hello World from C++ :D" << endl;
+
+	testcase = atoi(argv[1]);
+	minor_testcase = atoi(argv[2]);
+
+	//cout << testcase << endl;
+	//cout << minor_testcase << endl;
+
+
+	// Create and open a text file
+	//std::string output_path ="./assets/TestCases/TestCase" + std::to_string(testcase) + "/result.txt";
+	//ofstream MyFile(output_path);
+
 	//bool found;
 	//int x, y;
 	//std::string path33 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
@@ -46,10 +60,11 @@ int main(int argc, char** argv)
 
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/track.jpeg";
+	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/"+ std::to_string(minor_testcase) + "/track.jpeg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;
+
 	
 	//2.Scanning Track Initially
 	Mat image_lines;
@@ -62,16 +77,15 @@ int main(int argc, char** argv)
 
 	//namedWindow("image_lines main()", WINDOW_NORMAL);
 	//imshow("image_lines main()", image_lines);
-	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/image_lines.jpeg", image_lines);
+	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) + "/" + std::to_string(minor_testcase)+"/results/image_lines.jpeg", image_lines);
 	//waitKey(0);
 
 	//return 0;
 
-
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/car.jpeg";
+	std::string path2 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/car.jpeg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
 	bool car_found;
@@ -88,7 +102,7 @@ int main(int argc, char** argv)
 
 	if (!car_found) {
 		cout << "failed to find car 😟" << endl;
-		return -1;
+		return 5;
 	}
 
 	//To see Image Car scan_car()
@@ -105,7 +119,7 @@ int main(int argc, char** argv)
 
 	//namedWindow("car_on_line main()", WINDOW_NORMAL);
 	//imshow("car_on_line main()", image_lines);
-	imwrite("./assets/TestCases/TestCase"+ std::to_string(testcase) +"/results/car_on_line.jpeg", draw_car_online);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) +"/results/car_on_line.jpeg", draw_car_online);
 	//waitKey(0);
 
 	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug,100);
@@ -114,7 +128,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	cout << "Car is on a straight line" << endl;
-	return 0;
+	return 1;
 
 	/*/************************************************************************************************/
 	//Step(4) Inc or Dec Speed
@@ -167,7 +181,7 @@ int main(int argc, char** argv)
 	//imshow("Display mat4", mat4);
 	//waitKey(0); //Wait for any key press = pause
 
-	destroyAllWindows(); //Close all windows
+	//destroyAllWindows(); //Close all windows
 
-	return 0;
+	//return 0;
 }

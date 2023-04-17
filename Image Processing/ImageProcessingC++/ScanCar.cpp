@@ -78,7 +78,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
 	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	//imshow("find_car()", image);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car.jpeg", paper_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase)+ "/results/car.jpeg", paper_img);
 	//waitKey(0);
 
 	return true;
@@ -182,7 +182,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
 
 
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car on_line()from front of car.jpeg", image_test);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/car on_line()from front of car.jpeg", image_test);
 	//imshow("temp_matrix", temp_matrix);
 	//waitKey(0);
 	return;
