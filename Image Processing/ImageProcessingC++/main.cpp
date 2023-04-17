@@ -17,9 +17,14 @@ int minor_testcase;
 int main(int argc, char** argv) {
 	cout << "Hello World from C++ :D" << endl;
 
+	testcase = 1;
+	minor_testcase = 2;
+
+
 	testcase = atoi(argv[1]);
 	minor_testcase = atoi(argv[2]);
 
+	
 	//cout << testcase << endl;
 	//cout << minor_testcase << endl;
 
