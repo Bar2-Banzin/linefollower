@@ -38,7 +38,8 @@ dependencies:
   screenshot: ^1.3.0
   sizer: ^2.0.15
   zoom_widget: ^2.0.0
-  
+  image: ^4.0.15
+  image_picker: ^0.8.7+3
 
 
 dev_dependencies:

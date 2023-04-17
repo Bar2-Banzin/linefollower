@@ -9,7 +9,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../detection_line_curve/image_processing.dart';
-
+import 'package:image_picker/image_picker.dart';
 class CameraPage extends StatefulWidget {
   final BluetoothDevice device;
   const CameraPage({Key? key, required this.device}) : super(key: key);
@@ -32,7 +32,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   ScreenshotController? _screenshotController;
   ImageProcessing? _imageProcessing;
   BluetoothConnection? connection;
-
+final ImagePicker picker = ImagePicker();
   List<_Message> messages = [];
   String _messageBuffer = '';
 
@@ -142,11 +142,13 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   void take_photo_first() async {
     var image = await _camController!.takePicture();
     var res = await _imageProcessing!.first_detect(image);
+
+
     // if (res != -1) {
     setState(() {
       first_time = false;
     });
-    print("=============First Time$first_time=======================$res");
+    // print("=============First Time$first_time=======================$res");
     // }
     // else{
     //   print("Retake $first_time");
