@@ -116,7 +116,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	//waitKey(0);
 
 	HoughLinesP(edges, lines, 1, theta, threshold, minLineLength, maxLineGap);
-	cout << "Hough Lines Detected " << lines.size();
+	cout << "Hough Lines Detected " << lines.size() << endl;
 
 	// # Draw lines on the image
 	image_lines = Mat::zeros(image.size(), CV_8UC1);//Inverted image
