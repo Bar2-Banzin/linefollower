@@ -1,11 +1,13 @@
-﻿# include"utils.h"
-# include "ScanTrack.h"
-#include <opencv2/core/mat.hpp>
+﻿#include <opencv2/core/mat.hpp>
 #include <set>
 
+#include"utils.h";
+#include"common.h";
 
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
-	/**
+#include "ScanTrack.h";
+//Basma :Not sure of Data Type of front_color- back_color check
+//bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color, Mat& car_image_debug) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -17,21 +19,28 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	* @param image: BGR img with car
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
+	*
+	* @param Mat&front_mask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
+	* @param Mat&back_mask : for drawing the car just for Debug not on Eslam and Zainab //Basma
 	*/
 
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
-	/*bool wrapped = extract_paper(paper_img, image, "car");
+	//bool wrapped = extract_paper(paper_img, image, "car");
 
-	if (!wrapped) {
+	//if (!wrapped) {
 		//cout << "Couldn't extract paper" << endl;
-		return false;
-	}*/
+		//return false;
+	//}
+	//namedWindow("Wrapped Paper  find_car()", WINDOW_NORMAL);
+	//imshow("Wrapped Paper  find_car()", paper_img);
+	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car_paper.jpeg", paper_img);
+	//waitKey(0);
 
 	//Uncomment to Disable extract_paper
 	paper_img = image;
 
-	//2.Find car centerimage
+	//2.Find car center
 	//Convert BGR to RGB
 	Mat image_rgb;
 	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
@@ -39,17 +48,19 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color, "front");
+	//Debug only //Basma
+	Mat front_mask, back_mask;
+	found = color_center(x_f, y_f, image_rgb, front_color, front_mask, "front");
 	if (!found) {
-		// Couldn't find front of the car
+		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
 	}
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, "back");
+	found = color_center(x_b, y_b, image_rgb, back_color, back_mask, "back");
 	if (!found) {
-		// find_car():Couldn't find back of the car
+		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
 	}
 
@@ -57,9 +68,23 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	x_center = (x_f + x_b) / 2;
 	y_center = (y_f + y_b) / 2;
 
+
+
+	//Debug only //Basma
+	bitwise_or(front_mask, back_mask, car_image_debug);
+
+	//Draw Car centers [Debug]
+	//paper_img not used again 😉
+	line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
+	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
+	//imshow("find_car()", image);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car.jpeg", paper_img);
+	//waitKey(0);
+
 	return true;
 }
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, Mat car_image_debug, int threshold) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -79,6 +104,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 
 	int distance_between_2_centers = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back);
 	int windo_size_x = distance_between_2_centers * 1.5;
+	/// look in fron of the car
 	int windo_size_y = distance_between_2_centers * 1;
 
 	//(2)Unit vector from back to front
@@ -109,8 +135,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	change_y = 0.5 * unit_vector_y * (length);
 
 	//(4.1)Getting Search Window Center
-	int x_window_center = x_car_front;
-	int y_window_center = y_car_front;
+	int x_window_center = x_car_front ;
+	int y_window_center = y_car_front ;
 
 
 	int count = 0;
@@ -119,7 +145,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	Mat temp_matrix = lines_matrix.clone();
 
 	//Debug Only
-	//Mat image_test = lines_matrix.clone();
+	Mat image_test = lines_matrix.clone();
 
 	for (int i = 0;i < windo_size_y;i++) {
 		double base_x = x_window_center + i * unit_vector_x;
@@ -132,65 +158,95 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 				continue;
 			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
-
-
+			//Debug only
+			image_test.at<uchar>(point_y, point_x)=(int)100;
 		}
 		for (int j = 1;j < windo_size_x / 2;j++) {
 			point_x = round(base_x - j * per_unit_vector_x);
 			point_y = round(base_y - j * per_unit_vector_y);
 			if (point_x < 0 || point_y < 0 || point_x >= lines_matrix.cols || point_y >= lines_matrix.rows)
 				continue;
-			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
+			auto scaler = (int)temp_matrix.at<uchar>(point_y,point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
-
+			//Debug only
+			image_test.at<uchar>(point_y, point_x) = (int)100;
 		}
 	}
 	on_line = count2 > 50;
 
-	return;
 
+	//Debug Rectangle to We search in +Car 
+	bitwise_or(image_test, car_image_debug, image_test);
+
+	//Car Center
+	cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
+
+
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/car on_line()from front of car.jpeg", image_test);
+	//imshow("temp_matrix", temp_matrix);
+	//waitKey(0);
+	return;
+	
 }
 
-bool increase_decrease_speed(Mat draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
+bool increase_decrease_speed(Mat& draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {
 	/**
-	* Control wether Inc or Dec Car Speed Depending on distance form car and end of the St line
+	/**
+	* Control wether Inc or Dec Car Spped Depending on distance form car and end of the St line
 	*
 	* @param x_car_front, y_car_front : front Center of the Car
 	* @param x_car_back, y_car_back : back Center of the Car
 	* @param line : [x1, y1, x2, y2] : start and end point of the line
-	* @param dist_threshold:threshold to depend on to take action of speed :D
+	* @param dist_threshold:thershold to depend on to take action of speed :D
 	*
 	* @return Boolean True = > increase False Decrease[FIXME:To Be Modified Later to Send Speed Depending on Distance not only a flag 😉]
 	*
 	*/
 
+	//Drawing For Debug
+	cv::line(draw, Point(line[0], line[1]), Point(line[2], line[3]), Scalar(255, 0, 0), 5);
+	cv::line(draw, Point(x_car_front, y_car_front), Point(0, 0), Scalar(0, 255, 255), 5);
+	cv::line(draw, Point(0, 0), Point(x_car_back, y_car_back), Scalar(0, 255, 0), 5);
+
+	imshow("increase_decrease_speed()", draw);
+	//waitKey(0);
+
+
 	//1. Get Car Direction[always from back to front]
 	Vec2i car = direction(x_car_back, y_car_back, x_car_front, y_car_front);
-	// car Vector
+	cout << "car Vector" << car << endl;
 
 	double line_point[] = { 0, 0 };
 
 	//2. Direction P1P2
 	Vec2i P1P2 = direction(line[0], line[1], line[2], line[3]);
+	cout << "P1P2" << P1P2 << endl;
+	//if (sign(P1P2[0]) == sign(car[0]) && sign(P1P2[1]) == sign(car[1])) {
 	if ((sign(P1P2[0]) == sign(car[0]) || abs(car[0] - P1P2[0]) < 10) && (sign(P1P2[1]) == sign(car[1]) || abs(car[1] - P1P2[1]) < 10)) {
+		cout << "Car is Moving towards P2" << endl;
 		line_point[0] = line[2];
 		line_point[1] = line[3];
 	}
 	//3. Direction P2P1
 	Vec2i P2P1 = direction(line[2], line[3], line[0], line[1]);
+	cout << "P2P1" << P2P1 << endl;
 
+	//if (sign(P2P1[0]) == sign(car[0]) and sign(P2P1[1]) == sign(car[1])) {
 	if ((sign(P2P1[0]) == sign(car[0]) || abs(car[0] - P2P1[0]) < 10) && (sign(P2P1[1]) == sign(car[1]) || abs(car[1] - P2P1[1]) < 10)) {
+		cout << "Car is Moving towards P1" << endl;
 		line_point[0] = line[0];
 		line_point[1] = line[1];
 	}
 	//  # 4. Take Action Depending on Distance between Car and the endpoint
-	int distance = calculateDistance((x_car_front + x_car_back) / 2, (y_car_front + y_car_back) / 2, line_point[0], line_point[1]);
-	if (distance > dist_threshold) {
+	int distanse = calculateDistance((x_car_front + x_car_back) / 2, (y_car_front + y_car_back) / 2, line_point[0], line_point[1]);
+	if (distanse > dist_threshold) {
 		//Increase Speed
+		cout << "Increase Speed" << endl;
 		return true;
 	}
 	else {
-		//Don't Increase Speed you are toward the line End
+		//Don't Increase Speed you are toward the line En
+		cout << "Decrease Speed" << endl;
 		return false;
 	}
 }
