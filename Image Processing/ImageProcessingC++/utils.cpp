@@ -157,11 +157,6 @@ Mat thin_image(Mat image) {
 		// Set the eroded image for next iteration
 		image_binary = erode_image.clone();
 	}
-<<<<<<< HEAD
-=======
-
-	// show_images([image, image_binary, thin], ["Original", "Binary", "Thin"])
->>>>>>> f48c5e18cda6df0c538609eb06e854ca1988256d
 	return thin;
 }
 
