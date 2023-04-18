@@ -5,11 +5,8 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../detection_line_curve/image_processing.dart';
-import 'package:image_picker/image_picker.dart';
 class CameraPage extends StatefulWidget {
   final BluetoothDevice device;
   const CameraPage({Key? key, required this.device}) : super(key: key);
@@ -29,10 +26,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   CameraController? _camController;
   int _camFrameRotation = 0;
   double _camFrameToScreenScale = 0;
-  ScreenshotController? _screenshotController;
   ImageProcessing? _imageProcessing;
   BluetoothConnection? connection;
-final ImagePicker picker = ImagePicker();
+
   List<_Message> messages = [];
   String _messageBuffer = '';
 
@@ -81,7 +77,6 @@ final ImagePicker picker = ImagePicker();
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = _camController;
-    final ScreenshotController? screenshotController = _screenshotController;
     // App state changed before we got the chance to initialize.
     if (cameraController == null || !cameraController.value.isInitialized) {
       return;
@@ -126,7 +121,7 @@ final ImagePicker picker = ImagePicker();
           ? ImageFormatGroup.yuv420
           : ImageFormatGroup.bgra8888,
     );
-    _screenshotController = ScreenshotController();
+  
 
     try {
       await _camController!.initialize();
@@ -140,15 +135,14 @@ final ImagePicker picker = ImagePicker();
   }
 
   void take_photo_first() async {
+ //========================================================================================//
     var image = await _camController!.takePicture();
     var res = await _imageProcessing!.first_detect(image);
-
-
     // if (res != -1) {
     setState(() {
       first_time = false;
     });
-    // print("=============First Time$first_time=======================$res");
+    print("=============First Time$first_time=======================$res");
     // }
     // else{
     //   print("Retake $first_time");
@@ -274,14 +268,14 @@ final ImagePicker picker = ImagePicker();
   }
 
   void _screenShot() async {
-    await _screenshotController!
-        .capture(delay: const Duration(milliseconds: 10))
-        .then((Uint8List? image) async {
-      print(
-          "====================================image====================$image");
-      XFile xFile = XFile.fromData(image as Uint8List);
-      await GallerySaver.saveImage(xFile.path);
-    });
+    // await _screenshotController!
+    //     .capture(delay: const Duration(milliseconds: 10))
+    //     .then((Uint8List? image) async {
+    //   print(
+    //       "====================================image====================$image");
+    //   XFile xFile = XFile.fromData(image as Uint8List);
+    //   await GallerySaver.saveImage(xFile.path);
+    // });
     // var image = await _camController!.takePicture();
     // await GallerySaver.saveImage(image.path);
     // print("======================take Screen Shot=====================");
