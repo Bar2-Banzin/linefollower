@@ -8,8 +8,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <opencv2/opencv.hpp> //Include OpenCV header file
-
-
+#include <ctime>
+#include <string>
 using namespace std;
 using namespace cv;
 
@@ -43,7 +43,9 @@ extern "C" {
 		if (detector == nullptr) {
 			return inc_speed;
 		}
+        time_t now = time(0);
 
+        // convert now to string form
 
         Mat frame;
         if (isYUV) {
@@ -61,6 +63,9 @@ extern "C" {
         Mat image_lines =detector->get_image_lines();
         Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
         Mat image=frame.clone();
+        char* date_time = ctime(&now);
+        string name = date_time;
+        imwrite("./data/data/com.example.opencv_app/cache/saher.jpg",image );
 
         bool car_found;
         int x_center, y_center, x_f, y_f, x_b, y_b;
@@ -95,7 +100,8 @@ extern "C" {
 
 	__attribute__((visibility("default"))) __attribute__((used))
 	int* initDetector(uint8_t* markerPngBytes, int inBytesCount) {
-
+        //Mat input = imread("Internal storage\\Pictures\\Screenshots", IMREAD_GRAYSCALE);
+        //imwrite(outputImagePath, input);
         // get image from bits
         vector<uint8_t> buffer(markerPngBytes, markerPngBytes + inBytesCount);
         Mat marker = imdecode(buffer, IMREAD_COLOR);
@@ -104,7 +110,7 @@ extern "C" {
 
         Mat image = marker.clone();
 
-
+        imwrite("./data/data/com.example.opencv_app/cache/eslam.jpg",image );
 
         //2.Scanning Track Initially
 
