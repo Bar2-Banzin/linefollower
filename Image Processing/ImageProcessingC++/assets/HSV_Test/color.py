@@ -32,7 +32,7 @@ while True:
 
     # if not ret:
     #     break
-    color='test'
+    color='car'
     image = cv2.imread('./'+color+'.jpeg' , 1)
     frame=image
 
