@@ -15,10 +15,10 @@ int testcase;
 int minor_testcase;
 
 int main(int argc, char** argv) {
-	cout << "Hello World from C++ ::D" << endl;
+	cout << "Hello World from C++ :D" << endl;
 
-	//testcase = 1;
-	//minor_testcase = 1;
+	testcase = 1;
+	minor_testcase = 1;
 
 	testcase = atoi(argv[1]);
 	minor_testcase = atoi(argv[2]);
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 
 	//Step(1) Scan Track 
 	//1.Read Track Image
-	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/"+ std::to_string(minor_testcase) + "/track.jpeg";
+	std::string path = "./assets/TestCases/TestCase"+ std::to_string(testcase) +"/"+ std::to_string(minor_testcase) + "/track.jpg";
 	Mat image = imread(path, 1); //Reading from a path
 
 	cout << "Size" << typeid(image.size()).name() << endl;
@@ -89,50 +89,64 @@ int main(int argc, char** argv) {
 	/************************************************************************************************/
 	//step(2) find car on track
 	//1.read an car on track image
-	std::string path2 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/car.jpeg";
+	std::string path2 = "./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/car.jpg";
 	Mat car_image = imread(path2, 1); //reading from a path
 
-	bool car_found;
-	int x_center, y_center, x_f, y_f, x_b, y_b;
+	//vector<cv::String> fn;
+	//glob("./assets/TestCases/Tests/*.jpg", fn, false);
+	//cout << "okkoko" << fn.size() << endl;
+	//vector<Mat> images;
+	//size_t count = fn.size(); //number of png files in images folder
+	//for (size_t i = 0; i < count; i++)
+	//	images.push_back(imread(fn[i],1));
+	//for (int i = 0;i < count;i++)
+	//{
+		//Mat car_image = images[i];
+		bool car_found;
+		int x_center, y_center, x_f, y_f, x_b, y_b;
 
-	//For Debug ONLY //Basma
-	Mat car_image_debug;
-	//Scalar front_color(247, 85, 109);//red
-	//Scalar back_color(50, 68, 152);//blue
-	//
-	Scalar front_color(255, 0, 0);//red
-	Scalar back_color(0, 0, 255);//blue
-	car_found=find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image,front_color,back_color, car_image_debug);
+		//For Debug ONLY //Basma
+		Mat car_image_debug;
+		//Scalar front_color(247, 85, 109);//red
+		//Scalar back_color(50, 68, 152);//blue
+		//
+		Scalar front_color(255, 0, 0);//red
+		Scalar back_color(0, 0, 255);//blue
+		car_found = find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image, front_color, back_color, car_image_debug);
 
-	if (!car_found) {
-		cout << "failed to find car 😟" << endl;
-		return 5;
-	}
+		if (!car_found) {
+			cout << "failed to find car 😟" << endl;
+			return 5;
+		}
 
-	//To see Image Car scan_car()
-	// 
-	//return 0;
-	///************************************************************************************************/
-	//Step(3) Is Car on a straight line
-	bool on_line;
-	
-	//Debug [Comment]
-	Mat draw_car_online = image_lines.clone();
-	cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 255, 255), 5);
-	cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(255, 255, 255), 5);
+		//To see Image Car scan_car()
+		// 
+		//return 0;
+		///************************************************************************************************/
+		//Step(3) Is Car on a straight line
+		bool on_line;
 
-	//namedWindow("car_on_line main()", WINDOW_NORMAL);
-	//imshow("car_on_line main()", image_lines);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) +"/results/car_on_line.jpeg", draw_car_online);
-	//waitKey(0);
+		//Debug [Comment]
+		Mat draw_car_online = image_lines.clone();
+		cv::line(draw_car_online, Point(0, 0), Point(x_f, y_f), Scalar(255, 255, 255), 5);
+		cv::line(draw_car_online, Point(0, 0), Point(x_b, y_b), Scalar(255, 255, 255), 5);
 
-	car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug,100);
-	if (!on_line) {
-		cout << "Car isn't on a straight line" << endl;
-		return 0;
-	}
-	cout << "Car is on a straight line" << endl;
-	return 1;
+		//namedWindow("car_on_line main()", WINDOW_NORMAL);
+		//imshow("car_on_line main()", image_lines);
+		imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/car_on_line.jpeg", draw_car_online);
+		//waitKey(0);
+
+		car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug, 100);
+		if (!on_line) {
+			cout << "Car isn't on a straight line" << endl;
+			//continue;
+			return 0;
+		}
+		//imwrite("./assets/TestCases/failed/"+to_string(i)+".jpeg", images[i]);
+		cout << "Car is on a straight line" << endl;
+		return 1;
+		
+	//}
 
 	/*/************************************************************************************************/
 	//Step(4) Inc or Dec Speed
