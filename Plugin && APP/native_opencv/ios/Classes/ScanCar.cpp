@@ -4,8 +4,7 @@
 #include <set>
 
 
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
-	/**
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color,int indx) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -34,7 +33,10 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//2.Find car centerimage
 	//Convert BGR to RGB
 	Mat image_rgb;
-	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+	//cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+	cvtColor(paper_img, image_rgb, COLOR_BGRA2RGB);
+
+	//image_rgb=paper_img;
 
 	//detect front of the car
 	//image isn't modified here 😊
@@ -59,7 +61,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	return true;
 }
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold,int indx) {
     /**
     * This function detrmines whether car is on a straight line or not
     *
@@ -119,7 +121,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
     Mat temp_matrix = lines_matrix.clone();
 
     //Debug Only
-    //Mat image_test = lines_matrix.clone();
+    Mat image_test = lines_matrix.clone();
 
     for (int i = 0;i < windo_size_y;i++) {
         double base_x = x_window_center + i * unit_vector_x;
@@ -133,6 +135,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
             auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
             count2 += ((int)scaler != 0) ? 1 : 0;
 
+            //Debug only
+            image_test.at<uchar>(point_y, point_x)=(int)100;
 
         }
         for (int j = 1;j < windo_size_x / 2;j++) {
@@ -142,10 +146,18 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
                 continue;
             auto scaler = (int)temp_matrix.at<uchar>(point_y,point_x);
             count2 += ((int)scaler != 0) ? 1 : 0;
+            //Debug only
+            image_test.at<uchar>(point_y, point_x)=(int)100;
 
         }
     }
-    on_line = count2 > 50;
+    on_line = count2 > 100;
+
+    //Car Center
+    cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
+
+
+   imwrite("./data/data/com.example.opencv_app/cache/"+to_string(indx)+"_car.jpg",image_test );
 
     return;
 

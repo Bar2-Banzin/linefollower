@@ -21,4 +21,10 @@ vector<Vec4i> ArucoDetector::get_start_end_points()
 {
 	return start_end_points;
 }
+int ArucoDetector::inc()
+{
+
+	return ++indx;
+}
+
 

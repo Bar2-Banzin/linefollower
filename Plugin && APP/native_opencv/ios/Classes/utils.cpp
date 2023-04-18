@@ -218,8 +218,10 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
     if (color == Scalar(255, 0, 0)) {
 
         Mat1b mask1, mask2;
+        cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(3, 255, 255), mask1);
         cv::inRange(image_hsv, Scalar(170, 70, 50), Scalar(180, 255, 255), mask2);
-        mask=mask2;
+
+        mask = mask1 + mask2;
     }
     else if (color==Scalar(0,0,255)) {
         cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);

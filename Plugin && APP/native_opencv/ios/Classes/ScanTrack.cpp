@@ -67,7 +67,29 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	dilate(thinned, Dilate, kernel);
 
 	// Find the edges in the image using canny detector
-	Mat edges = Dilate;
+		Mat edges = Dilate;
+    	/************************************************************************************************************************************************/
+    	vector<Point>biggest_contour;
+    	double max_area=-1;
+    	int counter_index = 0;
+    	vector<vector<Point>> contours;
+    	vector<Vec4i> hierarchy;
+
+    	findContours(Dilate, contours, hierarchy, RETR_LIST, CHAIN_APPROX_NONE);
+    	for (int i = 0; i < contours.size(); i++) {
+    		double area = contourArea(contours[i]);
+
+    		//If Greater than Max Aeaand it is a rectangle
+    		if (area > max_area) {
+    			max_area = area;
+    			biggest_contour = contours[i];
+    			counter_index = i;
+    		}
+    	}
+    	Mat mask= cv::Mat::zeros(cv::Size(Dilate.cols, Dilate.rows), CV_8UC1);
+    	drawContours(mask, contours, counter_index, 255);
+    	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+    	dilate(mask, edges, kernel);
 
 	/*************************************************************Hough Lines********************************************************/
 	// Hough Lines
