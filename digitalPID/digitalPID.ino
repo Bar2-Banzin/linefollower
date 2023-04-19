@@ -43,7 +43,7 @@ int baseSpeed = 240;
 float line = 0;
 int line0, line1, line2, line3, line4, no_line, speed_a, speed_b;
 int threshold = (400 + 19) / 2;
-int l_loss = 190, r_loss = 350, turning_speed = 255;
+int l_loss = 200, r_loss = 200, turning_speed = 255;
 
 void setup()
 {
