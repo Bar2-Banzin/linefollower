@@ -1,14 +1,14 @@
-#define speedL 6
+#define speedL 5
 #define IN1 7
 #define IN2 8
-#define IN3 9
-#define IN4 10
-#define speedR 5
+#define IN3 10
+#define IN4 9
+#define speedR 6
 #define threshold (400 + 19) / 2
 #define baseSpeed 230
 //#define loss_r 10
 //#define loss_l 20
-#define loss_r 20
+#define loss_r 50
 #define loss_l 20
 #define Kd 0
 #define turning_speed 100
@@ -16,8 +16,8 @@
 // speed 255 - kp 50 - turning 100 - two batteries
 // speed 230 - kp 30 - turning 100 - two batteries
 
-int error = 0, leftSpeed, rightSpeed,previousError=0;
-
+float error = 0;
+int leftSpeed, rightSpeed, previousError=0;
 
 void setup() {   
  pinMode(IN1, OUTPUT);   
@@ -55,8 +55,8 @@ void setup_motors(int forward_a, int forward_b) {
 }
 
 void change_speed(int leftSpeed, int rightSpeed) {
- analogWrite(speedL, leftSpeed); 
  analogWrite(speedR, rightSpeed); 
+ analogWrite(speedL, leftSpeed); 
 }
 
 int readSensor(int sensor) {
@@ -77,18 +77,18 @@ void loop() {
  sensor3 = readSensor(A2);
  sensor4 = readSensor(A1);
  sensor5 = readSensor(A0);
- if (sensor1 == sensor2 and sensor2 == sensor3 and sensor3 == sensor4 and sensor4 == sensor5) {
+ if (sensor1 == 1 and sensor2 == 1 and sensor3 == 1 and sensor4 == 1 and sensor5 == 1) {
   brake();
   if (error < 0) {
    change_speed(turning_speed, turning_speed);
    setup_motors(0, 1);
-  }
+   }
   if (error > 0) {
    change_speed(turning_speed, turning_speed);
    setup_motors(1, 0);
-  }
+    }
  } else {
-  error = ((sensor1)*-4 +(sensor2)*-2 +(sensor4)*2 +(sensor5)*4 ); 
+  error = ((sensor1)*-4 +(sensor2)*-2 +(sensor4)*2 +(sensor5)*4 );  // 0 1/2 1 2
   error /= (sensor1 + sensor2 + sensor3 + sensor4 + sensor5);
   leftSpeed = baseSpeed;
   rightSpeed = baseSpeed;
