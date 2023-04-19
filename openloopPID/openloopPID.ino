@@ -3,7 +3,7 @@
 */
 
 // Speed 100
-//  kp =0.055
+// kp =0.055
 // kd=0.18  ---  0.15
 
 //Speed 120 - BATTERIES: 3.95 3.85
@@ -38,7 +38,7 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 120;
+int lfspeed = 130;
 
 float Kp = 0;
 float Kd = 0;
@@ -47,7 +47,7 @@ float Ki = 0;
 void setup()
 {
   Kp = 0.075;
-  Kd = 0.45;
+  Kd = 0.8;
   Ki = 0.001;
   DDRC &= ~(0x1F);
   previousError = 0;

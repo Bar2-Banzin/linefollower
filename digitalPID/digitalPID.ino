@@ -89,7 +89,11 @@ void linefollow()
   lsp = baseSpeed;
   rsp = baseSpeed;
   if(line < 0) lsp += (line * l_loss);
-  if(line > 0) rsp += (-1 * line * r_loss);
+  if(line > 0) 
+  {
+    rsp += (-1 * line * r_loss);
+    lsp += 20;
+  }
 
   if (lsp > 255) lsp = 255;
   if (lsp < 0)   lsp = 0;
