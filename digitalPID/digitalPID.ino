@@ -1,33 +1,6 @@
-/*
- Sample Line Following Code for the Robojunkies LF-2 robot
-*/
+// speed = 150  - BATTERIES: 8.08
+// l_loss = 115   r_loss = 115
 
-// Speed 100
-// kp =0.055
-// kd=0.18  ---  0.15
-
-//Speed 120 - BATTERIES: 3.95 3.85
-//kp =0.075 ---- 0.065
-//kd = 0.3 --- 0.28
-
-// speed = 140
-// kp = 0.1
-// kd = 0
-
-
-// speed =120  - BATTERIES: total 7.2
-//  Kp = 0.075;
-//  Kd = 0.37;
-//  Ki = 0.001;
-
-
-
-// #define speedL 10
-// #define IN1 7
-// #define IN2 6
-// #define IN3 9
-// #define IN4 8
-// #define speedR 11
 
 #define speedL 5
 #define IN1 7
@@ -38,12 +11,12 @@
 
 // int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int baseSpeed = 240;
+int baseSpeed = 150;
 
 float line = 0;
 int line0, line1, line2, line3, line4, no_line, speed_a, speed_b;
 int threshold = (400 + 19) / 2;
-int l_loss = 200, r_loss = 200, turning_speed = 255;
+int l_loss = 115, r_loss = 115, turning_speed = 100;
 
 void setup()
 {
@@ -88,7 +61,11 @@ void linefollow()
 
   lsp = baseSpeed;
   rsp = baseSpeed;
-  if(line < 0) lsp += (line * l_loss);
+  if(line < 0)
+  {
+    lsp += (line * l_loss);
+    rsp += 20;
+  }
   if(line > 0) 
   {
     rsp += (-1 * line * r_loss);
