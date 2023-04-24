@@ -17,7 +17,7 @@ bool extract_paper(Mat& warped_image,Mat& img_bgr,string name="");
 Mat thin_image(Mat image);
 
 bool color_center(int& x, int& y, Mat image, Scalar color, Mat& colormask,string name="");
-bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color);
+bool color_mask(Mat& mask, Mat& masked_image, Mat image_hsv, Scalar color);
 //bool color_range(Scalar& lower_range, Scalar& upper_range, Scalar color);
 
 //Distance and Direction
