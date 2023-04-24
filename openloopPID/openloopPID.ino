@@ -4,7 +4,7 @@
 
 // Speed 100
 // kp =0.055
-// kd=0.18  ---  0.15
+// kd=0.2 --- 0.18  ---  0.15
 
 //Speed 120 - BATTERIES: 3.95 3.85
 //kp =0.075 ---- 0.065
@@ -43,6 +43,7 @@ int lfspeed = 100;
 float Kp = 0.055;
 float Kd = 0.2;
 float Ki = 0;
+char data;
 
 void setup()
 {
@@ -58,31 +59,14 @@ void setup()
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-  // Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 
 void loop()
 {
-  //int x = analogRead(16);
-  // Serial.print("Mid sensor: ");
-  // Serial.println(x);
-
-  // analogWrite(speedL, 150);
-  // analogWrite(speedR, 150);/
-
-  linefollow();
   
-  // Serial.print("A0 = ");
-  // Serial.print(analogRead(A0));
-  // Serial.print(" A1 = ");
-  // Serial.print(analogRead(A1));
-  // Serial.print(" A2 = ");
-  // Serial.print(analogRead(A2));
-  // Serial.print(" A3 = ");
-  // Serial.print(analogRead(A3));
-  // Serial.print(" A4 = ");
-  // Serial.println(analogRead(A4));
+  linefollow();
 }
 
 void linefollow()
@@ -90,6 +74,13 @@ void linefollow()
   int error = (analogRead(A0)+analogRead(A1)) - (analogRead(A4) + analogRead(A3));
   if(error > 900) {
     error = 900;
+  }
+  else if(error<15&&error>-15){
+    if(Serial.available()){
+      data=Serial.read();
+      if(data == 'F')  lfspeed = 200;
+      else lfspeed = 100;
+    }
   }
 //   Serial.println(error);
 //   delay(1000);
