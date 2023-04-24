@@ -5,7 +5,7 @@
 # include "ScanTrack.h";
 
 //bool scan_track(Mat& image_lines,Mat& transformation_matrix, vector<Vec4i>& start_end_points, Mat& track_image) {
-bool scan_track(Mat & image_lines, Mat & track_image) {
+bool scan_track(Mat & image_lines, Mat & track_image , Size s ) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
@@ -20,6 +20,7 @@ bool scan_track(Mat & image_lines, Mat & track_image) {
 	//1.Extract Track Paper From the Image
 	Mat paper_img;
 	//bool wrapped = extract_paper(paper_img, track_image,"track");
+	
 	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	//imshow("Wrapped Paper  scan_track()", paper_img);
 	//imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/results/track_paper.jpeg", paper_img);
@@ -34,7 +35,7 @@ bool scan_track(Mat & image_lines, Mat & track_image) {
 
 	// 2.Detect Straight Lines in the Track
 	//extract_lines(image_lines, start_end_points, paper_img);
-	extract_lines(image_lines, paper_img);
+	extract_lines(image_lines, paper_img,s);
 	//namedWindow("image_lines scan_track()", WINDOW_NORMAL);
 	//imshow("image_lines scan_track()", image_lines);
 	//waitKey(0);
@@ -50,7 +51,7 @@ struct str {
 	}
 } comp;
 
-void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+void extract_lines(Mat & image_lines, Mat& image, Size s ,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	/**
 	* Extract Line out of the RGB image
 
@@ -70,12 +71,13 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	// Convert the image to gray - scale
 	Mat  image_gray;
 	cvtColor(image, image_gray, COLOR_RGB2GRAY);
+
 	// Thinning Image
 	Mat thinned = thin_image(image_gray);
 
 	// Dilate
 	Mat kernel, Dilate;
-	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+	kernel = getStructuringElement(MORPH_CROSS, s);
 	dilate(thinned, Dilate, kernel);
 
 	// Find the edges in the image using canny detector
@@ -100,8 +102,9 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 	}
 	Mat mask= cv::Mat::zeros(cv::Size(Dilate.cols, Dilate.rows), CV_8UC1);
 	drawContours(mask, contours, counter_index, 255);
-	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+	kernel = getStructuringElement(MORPH_CROSS, s);
 	dilate(mask, edges, kernel);
+
 	/*************************************************************Hough Lines********************************************************/
 	// Hough Lines
 	// Syntax:HoughLinesP(Edged image, Rho Resolution, Angle Resolution, threshold, min length of line, max distance between lines)

@@ -20,8 +20,8 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	* @param front_color: front color of the car RGB color i.e[0, 255, 0]
 	* @param back_color: back color of the car RGB color i.e[0, 255, 0]
 	*
-	* @param Mat&front_mask:  for drawing the car just for Debug not on Eslam and Zainab //Basma
-	* @param Mat&back_mask : for drawing the car just for Debug not on Eslam and Zainab //Basma
+	* @param Mat&front_mask:  for drawing the car just for Debug not on Eslam and Zainab //Debug
+	* @param Mat&back_mask : for drawing the car just for Debug not on Eslam and Zainab //Debug
 	*/
 
 	//1.Extract Track Paper From the Image
@@ -42,15 +42,15 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//2.Find car center
 	//Convert BGR to RGB
-	Mat image_rgb;
-	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+	Mat image_hsv;
+	cvtColor(paper_img, image_hsv, COLOR_BGR2HSV);
 
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
 	//Debug only //Basma
 	Mat front_mask, back_mask;
-	found = color_center(x_f, y_f, image_rgb, front_color, front_mask, "front");
+	found = color_center(x_f, y_f, image_hsv, front_color, front_mask, "front");
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -58,7 +58,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, back_mask, "back");
+	found = color_center(x_b, y_b, image_hsv, back_color, back_mask, "back");
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
@@ -78,13 +78,13 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	line(paper_img, Point(x_f, y_f), Point(x_b, y_b), Scalar(0, 255, 255), 10);
 	//namedWindow("Wrapped Paper  scan_track()", WINDOW_NORMAL);
 	//imshow("find_car()", image);
-	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase)+ "/results/car.jpeg", paper_img);
+	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/car.jpeg", paper_img);
 	//waitKey(0);
 
 	return true;
 }
 
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, Mat car_image_debug, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, Mat car_image_debug, int threshold,double perpend_factor,double front_factor) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -95,6 +95,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	* @lines_matrix : Binary Matrix with 1's = lines
 	* @Mat car_image_debug  :for drawing the car just for Debug not on Eslam and Zainab //Basma
 	* @threshold : min sum to consider Car on line[With the uncommented part to make Region for the Car]
+	* @perpend_factor : double factor that will multiplicate with the distance between centers of front and back to get the windo size in the direction perpendicular to the car 
+	* @front_factor : double factor that will multiplicate with the distance between centers of front and back to get the windo size in the direction of the car 
 	*/
 	//(1)Car Center
 	int size_i = lines_matrix.rows;
@@ -103,9 +105,11 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	int y_car = (y_car_front + y_car_back) / 2;
 
 	int distance_between_2_centers = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back);
-	int windo_size_x = distance_between_2_centers * 1.5;
-	/// look in fron of the car
-	int windo_size_y = distance_between_2_centers * 1;
+	// perpendicular to the car
+	int windo_size_x = distance_between_2_centers * perpend_factor;
+
+	/// look in fron of the car in the car direction
+	int windo_size_y = distance_between_2_centers * front_factor;
 
 	//(2)Unit vector from back to front
 	double change_x = x_car_front - x_car_back, change_y = y_car_front - y_car_back;//Basma
@@ -135,8 +139,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	change_y = 0.5 * unit_vector_y * (length);
 
 	//(4.1)Getting Search Window Center
-	int x_window_center = x_car_front ;
-	int y_window_center = y_car_front ;
+	int x_window_center = x_car_front;
+	int y_window_center = y_car_front;
 
 
 	int count = 0;
@@ -159,20 +163,20 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
 			//Debug only
-			image_test.at<uchar>(point_y, point_x)=(int)100;
+			image_test.at<uchar>(point_y, point_x) = (int)100;
 		}
 		for (int j = 1;j < windo_size_x / 2;j++) {
 			point_x = round(base_x - j * per_unit_vector_x);
 			point_y = round(base_y - j * per_unit_vector_y);
 			if (point_x < 0 || point_y < 0 || point_x >= lines_matrix.cols || point_y >= lines_matrix.rows)
 				continue;
-			auto scaler = (int)temp_matrix.at<uchar>(point_y,point_x);
+			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
 			//Debug only
 			image_test.at<uchar>(point_y, point_x) = (int)100;
 		}
 	}
-	on_line = count2 > 50;
+	on_line = count2 > threshold;
 
 
 	//Debug Rectangle to We search in +Car 
@@ -186,7 +190,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	//imshow("temp_matrix", temp_matrix);
 	//waitKey(0);
 	return;
-	
+
 }
 
 bool increase_decrease_speed(Mat& draw, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Vec4i line, double dist_threshold) {

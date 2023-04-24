@@ -1,5 +1,6 @@
 #include "utils.h"
-
+#include <chrono>
+using namespace std::chrono;
 //bool extract_paper(Mat& warped_image, Mat& transformation_matrix, Mat& img_bgr, bool draw) {
 bool extract_paper(Mat& warped_image, Mat& img_bgr, string name) {
 	/**
@@ -137,19 +138,27 @@ bool color_center(int& x, int& y, Mat image, Scalar color, string name) {
 	* @param found boolean to determine wether this color is found or not
 	* @param x,y Center of the Color
 	*
-	* @param image: RGB image with car on the track
+	* @param image: HSV image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
 	* @param name: String for the flag of saved image [For Debug Optional]
 	*
 	*/
-
+	auto start_total = high_resolution_clock::now();
 	//Get Color Mask
 	Mat mask, masked_image;
+	auto start = high_resolution_clock::now();
+
 	bool accepted = color_mask(mask, masked_image, image, color);
 
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by  color_mask: "
+		<< duration.count() << " microseconds" << endl;
 	//Apply Dialtion then Errosion on Mask to solve unconnected parts
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(5, 5));
+
 	morphologyEx(mask, mask, MORPH_CLOSE, kernel);
+	auto stop_total = high_resolution_clock::now();
 
 	if (!accepted)
 		return false;
@@ -157,6 +166,7 @@ bool color_center(int& x, int& y, Mat image, Scalar color, string name) {
 	//Find Mask Contours
 	vector<vector<Point>> contours;
 	vector<Vec4i> hierarchy;
+
 	findContours(mask, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
 
 	if (contours.size() <= 0) {
@@ -170,9 +180,24 @@ bool color_center(int& x, int& y, Mat image, Scalar color, string name) {
 	//Grab contours [Biggest]
 	vector<Point>biggestContour;
 	double max_area;
+
+
+
+
+	//start = high_resolution_clock::now();
+
 	get_biggest_rectangular_contour(biggestContour, max_area, contours);
 
-	//get image dimensions
+	/*stop = high_resolution_clock::now();
+	duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by  get_biggest_rectangular_contour: "
+		<< duration.count() << " microseconds" << endl;*/
+
+
+
+
+
+		//get image dimensions
 	int imgHeight = image.rows;
 	int imgWidth = image.cols;
 
@@ -184,24 +209,34 @@ bool color_center(int& x, int& y, Mat image, Scalar color, string name) {
 
 
 	//Approcimate to Rect
+	//start = high_resolution_clock::now();
+
 	Rect rect = boundingRect(biggestContour);
+
+	/*stop = high_resolution_clock::now();
+	duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by  boundingRect: "
+		<< duration.count() << " microseconds" << endl;*/
+
 
 	x = int(rect.x + rect.width / 2);
 	y = int(rect.y + rect.height / 2);
-
+	duration = duration_cast<microseconds>(stop_total - start_total);
+	cout << "Time taken by  color center inside: "
+		<< duration.count() << " microseconds" << endl;
 	return true;
 }
 
 
 
-bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color) {
+bool color_mask(Mat& mask, Mat& masked_image, Mat image_hsv, Scalar color) {
 	/**
 		* Get Center and Draw Rectangle Around Largest Contour of a given Color
 		*
 		* @param mask Binary Image with 1's are is are with color passed
 		* @param masked_img RGB Image with mask applied on it (image passed)
 		*
-		* @param image: RGB image
+		* @param image: HSV image
 		* @param color : RGB color i.e[0, 255, 0] to be masked
 		*
 		* @return bool if Error in Geeting Range of Color
@@ -210,23 +245,37 @@ bool color_mask(Mat& mask, Mat& masked_image, Mat image, Scalar color) {
 
 
 		//Convert RGB image to HSV
-	Mat image_hsv;
-	cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
+		//Mat image_hsv;
+		//auto start = high_resolution_clock::now();
+
+		//cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
+		//auto stop = high_resolution_clock::now();
+		//auto duration = duration_cast<microseconds>(stop - start);
+		//cout << "Time taken by  cvtColor: "
+			//<< duration.count() << " microseconds" << endl;
 
 
 
+
+
+	auto start = high_resolution_clock::now();
 	if (color == Scalar(255, 0, 0)) {
 
 		Mat1b mask1, mask2;
+		cv::inRange(image_hsv, Scalar(0, 70, 50), Scalar(3, 255, 255), mask1);
 		cv::inRange(image_hsv, Scalar(170, 70, 50), Scalar(180, 255, 255), mask2);
-		mask = mask2;
+
+		mask = mask1 + mask2;
 	}
 	else if (color == Scalar(0, 0, 255)) {
 		cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
 	}
-
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by  inRange: "
+		<< duration.count() << " microseconds" << endl;
 	//Check If This is Required
-	image.copyTo(masked_image, mask);
+	image_hsv.copyTo(masked_image, mask);
 
 	return true;
 }
