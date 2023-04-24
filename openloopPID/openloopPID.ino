@@ -25,7 +25,7 @@
 // #define speedL 10
 // #define IN1 7
 // #define IN2 6
-// #define IN3 9
+// #define IN3 9 
 // #define IN4 8
 // #define speedR 11
 
@@ -35,6 +35,8 @@
 #define IN3 9
 #define IN4 10
 #define speedR 6
+
+#define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
@@ -69,9 +71,56 @@ void loop()
   linefollow();
 }
 
+void brake() {
+ digitalWrite(IN1, HIGH); // make left motor A brake
+ digitalWrite(IN2, HIGH);
+ digitalWrite(IN3, HIGH); // make right motor B brake
+ digitalWrite(IN4, HIGH);
+}
+
+void setup_motors(int forward_a, int forward_b) {
+ if (forward_a == 1) {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+ } else {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+ }
+ if (forward_b == 1) {
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+ } else {
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+ }
+}
+
+void change_speed(int leftSpeed, int rightSpeed) {
+ analogWrite(speedR, rightSpeed); 
+ analogWrite(speedL, leftSpeed); 
+}
+
 void linefollow()
 {
-  int error = (analogRead(A0)+analogRead(A1)) - (analogRead(A4) + analogRead(A3));
+  int sensor1 = analogRead(A0);
+  int sensor2 = analogRead(A1);
+  int sensor3 = analogRead(A2);
+  int sensor4 = analogRead(A3);
+  int sensor5 = analogRead(A4);
+  
+  // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
+  // brake();
+  // if (error < 0) {
+  //  change_speed(turning_speed, turning_speed);
+  //  setup_motors(0, 1);
+  //  }
+  // if (error > 0) {
+  //  change_speed(turning_speed, turning_speed);
+  //  setup_motors(1, 0);
+  //   }
+  // } else {
+
+  int error = (sensor1+sensor2) - (sensor5 + sensor4);
   if(error > 900) {
     error = 900;
   }
@@ -102,4 +151,5 @@ void linefollow()
   if (rsp < 0)   rsp = 0;
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
+  // }
 }

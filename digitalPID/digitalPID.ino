@@ -15,8 +15,8 @@ int baseSpeed = 150;
 
 float line = 0;
 int line0, line1, line2, line3, line4, no_line, speed_a, speed_b;
-int threshold = (400 + 19) / 2;
-int l_loss = 80, r_loss = 100, turning_speed = 100;
+int threshold = 209;
+int l_loss = 100, r_loss = 100, turning_speed = 100;
 
 void setup()
 {
@@ -33,7 +33,7 @@ void setup()
   digitalWrite(IN4,LOW);
   analogWrite(speedL, baseSpeed);
   analogWrite(speedR, baseSpeed);
-  Serial.begin(9600);
+  // Serial.begin(9600);
 }
 
 
@@ -50,11 +50,12 @@ int read_eye(int eye) {
 
 void linefollow()
 {
-  line0 = read_eye(A0);
-  line1 = read_eye(A1);
-  line2 = read_eye(A2);
-  line3 = read_eye(A3);
-  line4 = read_eye(A4);
+  line0 = digitalRead(A0);
+  line1 = digitalRead(A1);
+  line2 = digitalRead(A2);
+  line3 = digitalRead(A3);
+  line4 = digitalRead(A4);
+  
   
   line = (4*line0) + (2*line1) + (-2*line3) + (-4*line4);
   line /= (line0 + line1 + line2 + line3 + line4);
@@ -71,8 +72,6 @@ void linefollow()
     rsp += (-1 * line * r_loss);
     // lsp += 20;
   }
-  Serial.println(line);
-  delay(1000);
 
   if (lsp > 255) lsp = 255;
   if (lsp < 0)   lsp = 0;
