@@ -1,7 +1,7 @@
 ﻿# include"utils.h"
 # include "ScanTrack.h"
 
-bool scan_track(Mat & image_lines, Mat & track_image) {
+bool scan_track(Mat & image_lines, Mat & track_image,Size s) {
 	/**
 	* Scan Track Without A Car to Detect Straight Lines locations
 
@@ -24,7 +24,7 @@ bool scan_track(Mat & image_lines, Mat & track_image) {
 	paper_img = track_image;
 
 	// 2.Detect Straight Lines in the Track
-	extract_lines(image_lines, paper_img);
+	extract_lines(image_lines, paper_img,s);
 	return true;
 }
 
@@ -37,7 +37,7 @@ struct str {
 	}
 } comp;
 
-void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
+void extract_lines(Mat & image_lines, Mat& image,Size s,int sliding, double rho, double  theta, int threshold, double minLineLength, double  maxLineGap, int thickness) {
 	/**
 	* Extract Line out of the RGB image
 
@@ -63,7 +63,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
 
 	// Dilate
 	Mat kernel, Dilate;
-	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+	kernel = getStructuringElement(MORPH_CROSS,s);
 	dilate(thinned, Dilate, kernel);
 
 	// Find the edges in the image using canny detector
@@ -88,7 +88,7 @@ void extract_lines(Mat & image_lines, Mat& image,int sliding, double rho, double
     	}
     	Mat mask= cv::Mat::zeros(cv::Size(Dilate.cols, Dilate.rows), CV_8UC1);
     	drawContours(mask, contours, counter_index, 255);
-    	kernel = getStructuringElement(MORPH_CROSS, Size(3, 3));
+    	kernel = getStructuringElement(MORPH_CROSS, s);
     	dilate(mask, edges, kernel);
 
 	/*************************************************************Hough Lines********************************************************/

@@ -137,7 +137,7 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 	* @param found boolean to determine wether this color is found or not
 	* @param x,y Center of the Color
 	*
-	* @param image: RGB image with car on the track
+	* @param image: [HSV] image with car on the track
 	* @param color : RGB color i.e[0, 255, 0]
 	* @param name: String for the flag of saved image [For Debug Optional]
 	*
@@ -194,14 +194,15 @@ bool color_center(int& x,int &y,Mat image, Scalar color,string name) {
 
 
 
-bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
+bool color_mask(Mat&mask,Mat&masked_image, Mat image_hsv, Scalar color) {
 /**
     * Get Center and Draw Rectangle Around Largest Contour of a given Color
     *
     * @param mask Binary Image with 1's are is are with color passed
     * @param masked_img RGB Image with mask applied on it (image passed)
     *
-    * @param image: RGB image
+    * @param image: rgb image (old) [removed]
+    * @param image_hsv: [HSV] image
     * @param color : RGB color i.e[0, 255, 0] to be masked
     *
     * @return bool if Error in Geeting Range of Color
@@ -210,8 +211,8 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
 
 
     //Convert RGB image to HSV
-    Mat image_hsv;
-    cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
+    //Mat image_hsv=image;
+    //cv::cvtColor(image, image_hsv, COLOR_RGB2HSV);
 
 
 
@@ -228,7 +229,7 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image, Scalar color) {
     }
 
     //Check If This is Required
-    image.copyTo(masked_image, mask);
+    image_hsv.copyTo(masked_image, mask);
 
     return true;
 }

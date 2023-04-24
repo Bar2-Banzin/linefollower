@@ -17,19 +17,6 @@ using namespace cv;
 
 static ArucoDetector* detector = nullptr;
 
-char* deblank(char* input)                                                  /* deblank accepts a char[] argument and returns a char[] */
-{
-    char *output=input;
-    for (int i = 0, j = 0; i<strlen(input); i++,j++)                        /* Evaluate each character in the input */
-    {
-        if (input[i]!=' ')                                                  /* If the character is not a space */
-            output[j]=input[i];                                             /* Copy that character to the output char[] */
-        else
-            j--;                                                            /* If it is a space then do not increment the output index (j), the next non-space will be entered at the current index */
-    }
-    return output;                                                          /* Return output char[]. Should have no spaces*/
-}
-
 void rotateMat(Mat &matImage, int rotation)
 {
 	if (rotation == 90) {
@@ -62,7 +49,7 @@ extern "C" {
         Mat frame;
         if (isYUV) {
            Mat myyuv(height + height / 2, width, CV_8UC1, bytes);
-           cvtColor(myyuv, frame, COLOR_YUV2BGRA_NV21);
+           cvtColor(myyuv, frame, COLOR_YUV2BGR_NV21);
         } else {
            frame = Mat(height, width, CV_8UC4, bytes);
         }
@@ -76,16 +63,12 @@ extern "C" {
         Mat car_image =  frame.clone();//imread(path2, 1); //reading from a path
         Mat image=frame.clone();
 
-        /*time_t now = time(0);
 
-        // convert now to string form
-        char* dt = ctime(&now);
-        string time=deblank(dt);*/
         int indx=detector->inc();
         string time=to_string(indx);
 
         //string time_now=time.erase(remove(time.begin(), time.end(), ' '), time.end());
-        imwrite("./data/data/com.example.opencv_app/cache/"+time+".jpg",image );
+       // imwrite("./data/data/com.example.opencv_app/cache/"+time+".jpg",image );
 
         bool car_found;
         int x_center, y_center, x_f, y_f, x_b, y_b;
@@ -105,7 +88,7 @@ extern "C" {
 
         bool on_line=0;
 
-        car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines,100,indx);
+        car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, 50 , 1.5 , 1.0);
         *inc_speed=on_line;
         return inc_speed;
 	}
@@ -128,7 +111,7 @@ extern "C" {
         //1.Read Track Image
 
         Mat image = marker.clone();
-        imwrite("./data/data/com.example.opencv_app/cache/eslam.jpg",image );
+        //imwrite("./data/data/com.example.opencv_app/cache/eslam.jpg",image );
 
 
         //2.Scanning Track Initially
@@ -136,7 +119,7 @@ extern "C" {
         Mat image_lines;
         int* extract=new int;
         *extract = 0;
-        bool wrapped=scan_track(image_lines, image);
+        bool wrapped=scan_track(image_lines, image,Size(3,3));
         if (!wrapped) {
             *extract = 5;
             return extract;
@@ -144,7 +127,7 @@ extern "C" {
 
         detector = new ArucoDetector();
         detector->set_image_lines(image_lines);
-        imwrite("./data/data/com.example.opencv_app/cache/image_lines.jpg",image_lines );
+        //imwrite("./data/data/com.example.opencv_app/cache/image_lines.jpg",image_lines );
 
 
         return extract;

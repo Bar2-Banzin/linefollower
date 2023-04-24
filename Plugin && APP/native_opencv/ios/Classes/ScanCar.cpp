@@ -32,16 +32,16 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//2.Find car centerimage
 	//Convert BGR to RGB
-	Mat image_rgb;
+	Mat image_hsv;
 	//cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
-	cvtColor(paper_img, image_rgb, COLOR_BGRA2RGB);
+	cvtColor(paper_img, image_hsv, COLOR_BGR2HSV);
 
 	//image_rgb=paper_img;
 
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color, "front");
+	found = color_center(x_f, y_f, image_hsv, front_color, "front");
 	if (!found) {
 		// Couldn't find front of the car
 		return false;
@@ -49,7 +49,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, "back");
+	found = color_center(x_b, y_b, image_hsv, back_color, "back");
 	if (!found) {
 		// find_car():Couldn't find back of the car
 		return false;
@@ -61,7 +61,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	return true;
 }
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold,int indx) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix,  int threshold,double perpend_factor,double front_factor) {
     /**
     * This function detrmines whether car is on a straight line or not
     *
@@ -80,8 +80,11 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
     int y_car = (y_car_front + y_car_back) / 2;
 
     int distance_between_2_centers = calculateDistance(x_car_front, y_car_front, x_car_back, y_car_back);
-    int windo_size_x = distance_between_2_centers * 1.5;
-    int windo_size_y = distance_between_2_centers * 1;
+    // perpendicular to the car
+    int windo_size_x = distance_between_2_centers * perpend_factor;
+
+    /// look in fron of the car in the car direction
+    int windo_size_y = distance_between_2_centers * front_factor;
 
     //(2)Unit vector from back to front
     double change_x = x_car_front - x_car_back, change_y = y_car_front - y_car_back;//Basma
@@ -151,13 +154,13 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 
         }
     }
-    on_line = count2 > 100;
+    on_line = count2 > threshold;
 
     //Car Center
-    cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
+    //cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
 
 
-   imwrite("./data/data/com.example.opencv_app/cache/"+to_string(indx)+"_car.jpg",image_test );
+   //imwrite("./data/data/com.example.opencv_app/cache/"+to_string(indx)+"_car.jpg",image_test );
 
     return;
 
