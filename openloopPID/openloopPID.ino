@@ -19,30 +19,12 @@
 //  Kp = 0.075;
 //  Kd = 0.37;
 //  Ki = 0.001;
-
-
-
-// #define speedL 10
-// #define IN1 7
-// #define IN2 6
-// #define IN3 9 
-// #define IN4 8
-// #define speedR 11
-//
-//#define speedL 6
-//#define IN1 7
-//#define IN2 8
-//#define IN3 9
-//#define IN4 10
-//#define speedR 5
-
-
-#define speedL 33
-#define IN1 14
-#define IN2 27
-#define IN3 26
-#define IN4 25
-#define speedR 12
+#define speedL 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 10
+#define speedR 5
 
 #define turning_speed 80
 
@@ -65,19 +47,11 @@ void setup()
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
   pinMode(speedR, OUTPUT);
-
-
-  // esp try
-  pinMode(39, INPUT);
-  pinMode(36, INPUT);
-  pinMode(34, INPUT);
-  pinMode(35, INPUT);
-  pinMode(32, INPUT);
   
-  digitalWrite(IN1,HIGH);
-  digitalWrite(IN2,LOW);
-  digitalWrite(IN3,HIGH);
-  digitalWrite(IN4,LOW);
+  digitalWrite(IN1,LOW);
+  digitalWrite(IN2,HIGH);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
   Serial.begin(9600);
 }
 
@@ -120,18 +94,11 @@ void change_speed(int leftSpeed, int rightSpeed) {
 void linefollow()
 {
 
-  // try esp
-  int sensor1 = analogRead(36);
-  int sensor2 = analogRead(39);
-  int sensor3 = analogRead(34);
-  int sensor4 = analogRead(35);
-  int sensor5 = analogRead(32);
-
-//  int sensor1 = analogRead(A0);
-//  int sensor2 = analogRead(A1);
-//  int sensor3 = analogRead(A2);
-//  int sensor4 = analogRead(A3);
-//  int sensor5 = analogRead(A4);
+  int sensor1 = analogRead(A0);
+  int sensor2 = analogRead(A1);
+  int sensor3 = analogRead(A2);
+  int sensor4 = analogRead(A3);
+  int sensor5 = analogRead(A4);
   
   // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
   // brake();
@@ -149,13 +116,13 @@ void linefollow()
   if(error > 900) {
     error = 900;
   }
-  else if(error<15&&error>-15){ 
-    if(Serial.available()){
-      data=Serial.read();
-      if(data == '1')  lfspeed = 200;
-      else lfspeed = 100;
-    }
-  }
+//  else if(error<15&&error>-15){ 
+//    if(Serial.available()){
+//      data=Serial.read();
+//      if(data == '1')  lfspeed = 200;
+//      else lfspeed = 100;
+//    }
+//  }
   static int I = 0;
   I += error;
   P = error;
