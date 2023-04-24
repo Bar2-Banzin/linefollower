@@ -2,10 +2,10 @@
 # include "ScanTrack.h"
 #include <opencv2/core/mat.hpp>
 #include <set>
+#include <chrono>
+using namespace std::chrono;
 
-
-bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color) {
-	/**
+bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color, int indx) {
 	/**
 	* This function is used to find car in the picture
 	*
@@ -20,7 +20,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	*/
 
 	//1.Extract Track Paper From the Image
-	Mat paper_img;
+	//Mat paper_img;
 	/*bool wrapped = extract_paper(paper_img, image, "car");
 
 	if (!wrapped) {
@@ -29,17 +29,29 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	}*/
 
 	//Uncomment to Disable extract_paper
-	paper_img = image;
+	//paper_img = image;
 
 	//2.Find car centerimage
 	//Convert BGR to RGB
-	Mat image_rgb;
-	cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+	//Mat image_rgb;
+	//cvtColor(paper_img, image_rgb, COLOR_BGR2RGB);
+	//cvtColor(paper_img, image_rgb, COLOR_BGRA2RGB);
+
+	Mat image_hsv;
+	cvtColor(image, image_hsv, COLOR_BGR2HSV);
+
+
+	//image_rgb=paper_img;
 
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
-	found = color_center(x_f, y_f, image_rgb, front_color, "front");
+	auto start = high_resolution_clock::now();
+	found = color_center(x_f, y_f, image_hsv, front_color, "front");
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by front color_center: "
+		<< duration.count() << " microseconds" << endl;
 	if (!found) {
 		// Couldn't find front of the car
 		return false;
@@ -47,7 +59,14 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
-	found = color_center(x_b, y_b, image_rgb, back_color, "back");
+	  start = high_resolution_clock::now();
+
+	found = color_center(x_b, y_b, image_hsv, back_color, "back");
+	  stop = high_resolution_clock::now();
+	  duration = duration_cast<microseconds>(stop - start);
+	cout << "Time taken by back color_center: "
+		<< duration.count() << " microseconds" << endl;
+
 	if (!found) {
 		// find_car():Couldn't find back of the car
 		return false;
@@ -59,7 +78,7 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	return true;
 }
-void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold) {
+void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double  x_car_back, double y_car_back, Mat& lines_matrix, int threshold, int indx) {
 	/**
 	* This function detrmines whether car is on a straight line or not
 	*
@@ -119,7 +138,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 	Mat temp_matrix = lines_matrix.clone();
 
 	//Debug Only
-	//Mat image_test = lines_matrix.clone();
+	Mat image_test = lines_matrix.clone();
 
 	for (int i = 0;i < windo_size_y;i++) {
 		double base_x = x_window_center + i * unit_vector_x;
@@ -133,6 +152,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
 
+			//Debug only
+			image_test.at<uchar>(point_y, point_x) = (int)100;
 
 		}
 		for (int j = 1;j < windo_size_x / 2;j++) {
@@ -142,10 +163,20 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 				continue;
 			auto scaler = (int)temp_matrix.at<uchar>(point_y, point_x);
 			count2 += ((int)scaler != 0) ? 1 : 0;
+			//Debug only
+			image_test.at<uchar>(point_y, point_x) = (int)100;
 
 		}
 	}
-	on_line = count2 > 50;
+	on_line = count2 > 100;
+
+	//Car Center
+	//cv::line(image_test, Point(x_car_front, y_car_front), Point(0, 0), Scalar(100, 100, 100), 10);
+
+	
+
+	//For Cache Saving
+	//imwrite("./data/data/com.example.opencv_app/cache/" + to_string(indx) + "_car.jpg", image_test);
 
 	return;
 
