@@ -16,7 +16,7 @@ int baseSpeed = 150;
 float line = 0;
 int line0, line1, line2, line3, line4, no_line, speed_a, speed_b;
 int threshold = (400 + 19) / 2;
-int l_loss = 115, r_loss = 115, turning_speed = 100;
+int l_loss = 80, r_loss = 100, turning_speed = 100;
 
 void setup()
 {
@@ -27,13 +27,13 @@ void setup()
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
   pinMode(speedR, OUTPUT);
-  digitalWrite(IN1,LOW);
-  digitalWrite(IN2,HIGH);
-  digitalWrite(IN3,LOW);
-  digitalWrite(IN4,HIGH);
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+  digitalWrite(IN3,HIGH);
+  digitalWrite(IN4,LOW);
   analogWrite(speedL, baseSpeed);
   analogWrite(speedR, baseSpeed);
-  // Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 
@@ -64,13 +64,15 @@ void linefollow()
   if(line < 0)
   {
     lsp += (line * l_loss);
-    rsp += 20;
+    // rsp += 20;
   }
   if(line > 0) 
   {
     rsp += (-1 * line * r_loss);
-    lsp += 20;
+    // lsp += 20;
   }
+  Serial.println(line);
+  delay(1000);
 
   if (lsp > 255) lsp = 255;
   if (lsp < 0)   lsp = 0;

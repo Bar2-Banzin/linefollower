@@ -5,12 +5,12 @@
 #define IN4 9
 #define speedR 6
 #define threshold (400 + 19) / 2
-#define baseSpeed 230
+#define baseSpeed 150
 //#define loss_r 10
 //#define loss_l 20
-#define loss_r 50
-#define loss_l 20
-#define Kd 0
+#define loss_r 115
+#define loss_l 120
+#define Kd 50
 #define turning_speed 100
 
 // speed 255 - kp 50 - turning 100 - two batteries
@@ -88,7 +88,7 @@ void loop() {
    setup_motors(1, 0);
     }
  } else {
-  error = ((sensor1)*-4 +(sensor2)*-2 +(sensor4)*2 +(sensor5)*4 );  // 0 1/2 1 2
+  error = ((sensor1*-4) +(sensor2*-2) +(sensor4*2) +(sensor5*4));  // 0 1/2 1 2
   error /= (sensor1 + sensor2 + sensor3 + sensor4 + sensor5);
   leftSpeed = baseSpeed;
   rightSpeed = baseSpeed;
