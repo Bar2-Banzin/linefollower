@@ -8,7 +8,7 @@
 
 //Speed 120 - BATTERIES: 3.95 3.85
 //kp =0.075 ---- 0.065
-//kd = 0.3 --- 0.28
+//kd = 0.3 --- 0.28   // 0.55
 
 // speed = 140
 // kp = 0.1
@@ -19,20 +19,20 @@
 //  Kp = 0.075;
 //  Kd = 0.37;
 //  Ki = 0.001;
-#define speedL 6
+#define speedL 5
 #define IN1 7
 #define IN2 8
 #define IN3 9
 #define IN4 10
-#define speedR 5
+#define speedR 6
 
 #define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 120;
+int lfspeed = 100;
 
-float Kp = 0.075;
+float Kp = 0.055;
 float Kd = 0.18;
 float Ki = 0;
 char data;
@@ -48,10 +48,10 @@ void setup()
   pinMode(IN4, OUTPUT);
   pinMode(speedR, OUTPUT);
   
-  digitalWrite(IN1,LOW);
-  digitalWrite(IN2,HIGH);
-  digitalWrite(IN3,LOW);
-  digitalWrite(IN4,HIGH);
+  digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+  digitalWrite(IN3,HIGH);
+  digitalWrite(IN4,LOW);
   Serial.begin(9600);
 }
 
