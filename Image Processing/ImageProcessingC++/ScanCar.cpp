@@ -43,14 +43,22 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 	//2.Find car center
 	//Convert BGR to RGB
 	Mat image_hsv;
+	auto start = high_resolution_clock::now();
 	cvtColor(paper_img, image_hsv, COLOR_BGR2HSV);
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	cout << "car_on_line(): HSV " << duration.count() << "MicroSec" << endl;
 
 	//detect front of the car
 	//image isn't modified here 😊
 	bool found;
 	//Debug only //Basma
 	Mat front_mask, back_mask;
+	start = high_resolution_clock::now();
 	found = color_center(x_f, y_f, image_hsv, front_color, front_mask, "front");
+	stop = high_resolution_clock::now();
+	duration = duration_cast<microseconds>(stop - start);
+	cout << "find_car() :color_center()Front: " << duration.count() << "MicroSec" << endl;
 	if (!found) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
@@ -58,7 +66,11 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//Detect back of the car
 	//image isn't modified here 😊
+	start = high_resolution_clock::now();
 	found = color_center(x_b, y_b, image_hsv, back_color, back_mask, "back");
+	stop = high_resolution_clock::now();
+	duration = duration_cast<microseconds>(stop - start);
+	cout << "find_car() :color_center()Back: " << duration.count() << "MicroSec" << endl;
 	if (!found) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;

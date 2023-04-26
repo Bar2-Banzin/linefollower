@@ -7,11 +7,6 @@
 #include "ScanCar.h";
 #include "utils.h";
 #include "common.h";
-#include <chrono>
-using namespace std::chrono;
-
-using namespace cv;
-using namespace std;
 
 int testcase;
 int minor_testcase;
@@ -19,11 +14,11 @@ int minor_testcase;
 int main(int argc, char** argv) {
 	cout << "Hello World from C++ :D" << endl;
 
-	//testcase = 2;
-	//minor_testcase = 13;
+	testcase = 2;
+	minor_testcase = 13;
 
-	testcase = atoi(argv[1]);
-	minor_testcase = atoi(argv[2]);
+	//testcase = atoi(argv[1]);
+	//minor_testcase = atoi(argv[2]);
 
 	
 	//cout << testcase << endl;
@@ -115,7 +110,14 @@ int main(int argc, char** argv) {
 		Scalar front_color(255, 0, 0);//red
 		Scalar back_color(0, 0, 255);//blue
 
+		auto start = high_resolution_clock::now();
 		car_found = find_car(x_center, y_center, x_f, y_f, x_b, y_b, car_image, front_color, back_color, car_image_debug);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		cout << "find_car(): " << duration.count() <<"MicroSec" << endl;
+
+		auto total = duration.count();
+
 		
 		if (!car_found) {
 			cout << "failed to find car 😟" << endl;
@@ -139,8 +141,15 @@ int main(int argc, char** argv) {
 		imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/car_on_line.jpeg", draw_car_online);
 		//waitKey(0);
 
-
+		start = high_resolution_clock::now();
 		car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug, 50 , 1.5 , 1.0);
+		stop = high_resolution_clock::now();
+		duration = duration_cast<microseconds>(stop - start);
+		cout << "car_on_line(): " << duration.count() <<"MicroSec"<<endl;
+		total += duration.count();
+		cout << "Total Time find_car()+car_on_line()" << total << endl;
+
+
 
 		if (!on_line) {
 			cout << "Car isn't on a straight line" << endl;

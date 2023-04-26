@@ -6,6 +6,8 @@
 #include <iostream>
 #include <opencv2/opencv.hpp> //Include OpenCV header file
 #include <algorithm>
+#include <chrono>
+using namespace std::chrono;
 
 using namespace cv;
 using namespace std;
