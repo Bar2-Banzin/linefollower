@@ -34,40 +34,32 @@ enum car_dir
   right
 };
 
-// void rotate_90(car_dir dir)
-// {
-//   uint8_t firstPin, secondPin;
-//   uint8_t first = 0, second = 0, prevF = 0, prevS = 0;
-//   switch(car_dir)
-//   {
-//     case left:
-//     firstPin = 17;
-//     secondPin = 16;
-//     break;
-//     case right:
-//     firstPin = 16;
-//     secondPin = 17;
-//     break;
-//     default:
-//     move_car(still);
-//     return;
-//   }
-
-//   move_car(dir);
-//   while(!(first == 0 && prevF == 1))
-//   {
-//     prevF = first;
-//     first = digitalRead(firstPin);
-//   }
+void rotate_90(car_dir dir)
+{
+  uin8_t maxSpeed = 150;
+  uint8_t pin;
+  switch(car_dir)
+  {
+    case left:
+    pin = A0;
+    break;
+    case right:
+    pin = A4;
+    break;
+    default:
+    move_car(still);
+    return;
+  }
+  analogWrite(speedR, maxSpeed);
+  analogWrite(speedL, maxSpeed);
+  move_car(car_dir);
+  while(digitalRead(pin) == 1);
+  analogWrite(speedR, maxSpeed/2);
+  analogWrite(speedL, maxSpeed/2);
+  while(digitalRead(A2) == 1);
+  move_car(still);
   
-//   while(!(second == 0 && prevS == 1))
-//   {
-//     prevS = second;
-//     second = digitalRead(secondPin);
-//   }
-
-//   move_car(still);
-// }
+}
 
 void move_motor(char pin1, char pin2, motor_dir dir)
 {
@@ -252,7 +244,7 @@ void Cases()
   // delay(50);
   // To go left 11000
   if ((s1 == 0) && (s2 == 0) ){
-    move_left();
+    rotate_90(left);
       // digitalWrite(13,HIGH);
   // _delay_ms(1000);
   }
@@ -265,9 +257,9 @@ void Cases()
    s4 = digitalRead(A3);
    s5 = digitalRead(A4); 
      if ((s1 == 1) && (s2 == 1) && (s4 == 1) && (s5 == 1) && (s3 == 1)){
-       move_right();
+       rotate_90(right);
     } else{
-       move_forward();
+       move_car(forward);
     }
   
   }  else if((s1 == 1) && (s2 == 1) && (s4 == 1) && (s5 == 1) && (s3 == 1)){
