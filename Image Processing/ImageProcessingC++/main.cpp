@@ -14,11 +14,11 @@ int minor_testcase;
 int main(int argc, char** argv) {
 	cout << "Hello World from C++ :D" << endl;
 
-	testcase = 2;
-	minor_testcase = 13;
+	//testcase = 3;
+	//minor_testcase = 450;
 
-	//testcase = atoi(argv[1]);
-	//minor_testcase = atoi(argv[2]);
+	testcase = atoi(argv[1]);
+	minor_testcase = atoi(argv[2]);
 
 	
 	//cout << testcase << endl;
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
 		//waitKey(0);
 
 		start = high_resolution_clock::now();
-		car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug, 50 , 1.5 , 1.0);
+		car_on_line(on_line, x_f, y_f, x_b, y_b, image_lines, car_image_debug, 100 , 1.5 , 1.0);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
 		cout << "car_on_line(): " << duration.count() <<"MicroSec"<<endl;

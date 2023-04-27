@@ -296,7 +296,8 @@ bool color_mask(Mat&mask,Mat&masked_image, Mat image_hsv, Scalar color) {
 
 	}
 	else if (color==Scalar(0,0,255)) {
-		cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
+		//cv::inRange(image_hsv, Scalar(100, 147, 0), Scalar(144, 255, 255), mask);
+		cv::inRange(image_hsv, Scalar(20, 100, 100), Scalar(30, 255, 255), mask);
 	}
 
 

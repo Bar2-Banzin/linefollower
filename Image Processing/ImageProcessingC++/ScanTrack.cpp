@@ -148,8 +148,8 @@ void extract_lines(Mat & image_lines, Mat& image, Size s ,int sliding, double rh
 		double change_x = x2 - x1, change_y = y2 - y1;
 		double length = sqrt(pow(change_x, 2) + pow(change_y, 2));//length
 		change_x /= length; change_y /= length;
-		change_x *= 0.20*length;///////////Basma
-		change_y *= 0.20* length;///////////Basma
+		change_x *= 0.30*length;///////////Basma
+		change_y *= 0.30* length;///////////Basma
 		x1 += change_x;
 		y1 += change_y;
 

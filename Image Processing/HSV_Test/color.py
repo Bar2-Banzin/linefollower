@@ -28,17 +28,17 @@ cv2.createTrackbar("U - V", "Trackbars", 255, 255, nothing)
 while True:
     
     # Start reading the webcam feed frame by frame.
-    ret, frame = cap.read()
+    # ret, frame = cap.read()
 
-    if not ret:
-        break
-    # color='car'
-    # image = cv2.imread('./'+color+'.jpeg' , 1)
-    # frame=image
+    # if not ret:
+    #     break
+    color='yellow'
+    image = cv2.imread('./'+color+'.jpeg' , 1)
+    frame=image
 
 
     # Flip the frame horizontally (Not required)
-    frame = cv2.flip( frame, 1 ) 
+    # frame = cv2.flip( frame, 1 ) 
     
     # Convert the BGR image to HSV image.
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -90,5 +90,5 @@ while True:
         break
     
 # Release the camera & destroy the windows.    
-cap.release()
+# cap.release()
 cv2.destroyAllWindows()
