@@ -161,7 +161,8 @@ Mat thin_image(Mat image) {
 }
 
 
-bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string name) {
+
+void color_center(bool& found,int& x,int &y,Mat image, Scalar color, Mat& colormask,string name) {
 	/**
 	* Get Center and Draw Rectangle Around Largest Contour of a given Color
 	* 
@@ -191,8 +192,10 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 	//waitKey(0);
 
 
-	if (!accepted)
-		return false;
+	if (!accepted) {
+		found = false;
+		return;
+	}
 
 	//Find Mask Contours
 	vector<vector<Point>> contours;
@@ -203,7 +206,8 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 		cout << "color_center(): Couldn't find contours of color_range passed" << endl;
 		x = -1;
 		y = -1;
-		return false;
+		found = false;
+		return;
 	}
 
 	/*drawContours(image, contours, -1, Scalar(255, 255, 0), 10);
@@ -226,7 +230,8 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 	if (max_area < 0.001 * imgHeight * imgWidth)
 	{
 		cout << "color_center():Largest Contour is Very small :(" << endl;
-		return false;
+		found = false;
+		return;
 	}
 
 	
@@ -252,7 +257,8 @@ bool color_center(int& x,int &y,Mat image, Scalar color, Mat& colormask,string n
 	//Debug Basma
 	colormask = mask;
 
-	return true;
+	found = true;
+	return;
 }
 
 

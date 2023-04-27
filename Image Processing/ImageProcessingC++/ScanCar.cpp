@@ -5,6 +5,24 @@
 #include"common.h";
 
 #include "ScanTrack.h";
+
+
+
+
+//void color_center_2(int x,int y ) {
+//	cout << x <<y<< endl << "herre" << endl;
+//
+//	//found = true;
+//	return;
+//}
+
+//void color_center_2(bool& found, int& x, int& y, Mat image, Scalar color, Mat& colormask, string name)
+//{
+//	found = color_center(x, y, image, color, colormask, name);
+//		return;
+//}
+
+
 //Basma :Not sure of Data Type of front_color- back_color check
 //bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Mat& transofmation_matrix, Scalar front_color, Scalar back_color) {
 bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y_b, Mat& image, Scalar front_color, Scalar back_color, Mat& car_image_debug) {
@@ -51,30 +69,28 @@ bool find_car(int& x_center, int& y_center, int& x_f, int& y_f, int& x_b, int& y
 
 	//detect front of the car
 	//image isn't modified here 😊
-	bool found;
+	bool found_front, found_back;
 	//Debug only //Basma
 	Mat front_mask, back_mask;
-	start = high_resolution_clock::now();
-	found = color_center(x_f, y_f, image_hsv, front_color, front_mask, "front");
-	stop = high_resolution_clock::now();
-	duration = duration_cast<microseconds>(stop - start);
-	cout << "find_car() :color_center()Front: " << duration.count() << "MicroSec" << endl;
-	if (!found) {
+	std::thread threadObj1(color_center, std::ref(found_front), std::ref(x_f), std::ref(y_f), image_hsv, front_color, std::ref(front_mask), "front");
+	std::thread threadObj2(color_center, std::ref(found_back), std::ref(x_b), std::ref(y_b), image_hsv, back_color, std::ref(back_mask), "back");
+	threadObj1.join();
+	threadObj2.join();
+
+	if (!found_front) {
 		cout << "find_car():Couldn't find front of the car" << endl;
 		return false;
 	}
 
-	//Detect back of the car
-	//image isn't modified here 😊
-	start = high_resolution_clock::now();
-	found = color_center(x_b, y_b, image_hsv, back_color, back_mask, "back");
-	stop = high_resolution_clock::now();
-	duration = duration_cast<microseconds>(stop - start);
-	cout << "find_car() :color_center()Back: " << duration.count() << "MicroSec" << endl;
-	if (!found) {
+	if (!found_back) {
 		cout << "find_car():Couldn't find back of the car" << endl;
 		return false;
 	}
+
+
+	//WithoutThread
+	//color_center(found_front,x_f, y_f, image_hsv, front_color, front_mask, "front");
+	//color_center(found_back,x_b, y_b, image_hsv, back_color, back_mask, "back");
 
 	//car center
 	x_center = (x_f + x_b) / 2;
