@@ -188,7 +188,7 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 			image_test.at<uchar>(point_y, point_x) = (int)100;
 		}
 	}
-	on_line = count2 > threshold;
+	on_line = count2 > threshold*distance_between_2_centers;
 
 
 	//Debug Rectangle to We search in +Car 
@@ -199,8 +199,8 @@ void car_on_line(bool& on_line, double x_car_front, double  y_car_front, double 
 
 
 	imwrite("./assets/TestCases/TestCase" + std::to_string(testcase) + "/" + std::to_string(minor_testcase) + "/results/car on_line()from front of car.jpeg", image_test);
-	//imshow("temp_matrix", temp_matrix);
-	//waitKey(0);
+	/*imshow("temp_matrix", image_test);
+	waitKey(0);*/
 	return;
 
 }
