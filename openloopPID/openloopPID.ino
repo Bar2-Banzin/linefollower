@@ -26,7 +26,7 @@
 #define IN4 10
 #define speedR 6
 
-#define turning_speed 80
+//#define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
@@ -116,13 +116,13 @@ void linefollow()
   if(error > 900) {
     error = 900;
   }
-//  else if(error<15&&error>-15){ 
-//    if(Serial.available()){
-//      data=Serial.read();
-//      if(data == '1')  lfspeed = 200;
-//      else lfspeed = 100;
-//    }
-//  }
+  else if(error<15&&error>-15){ 
+    if(Serial.available()){
+      data=Serial.read();
+      if(data == '1')  lfspeed = 200;
+      else lfspeed = 100;
+    }
+  }
   static int I = 0;
   I += error;
   P = error;
