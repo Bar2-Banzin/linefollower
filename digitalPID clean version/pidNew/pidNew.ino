@@ -5,7 +5,7 @@
 #define IN4 9
 #define speedR 6
 #define threshold (400 + 19) / 2
-#define baseSpeed 150
+#define baseSpeed 180
 //#define loss_r 10
 //#define loss_l 20
 #define loss_r 115
@@ -72,12 +72,12 @@ void loop() {
 
  void linefollow(){
    int sensor1, sensor2, sensor3, sensor4, sensor5,D;
- sensor1 = readSensor(A4);
- sensor2 = readSensor(A3);
- sensor3 = readSensor(A2);
- sensor4 = readSensor(A1);
- sensor5 = readSensor(A0);
- if (sensor1 == 1 and sensor2 == 1 and sensor3 == 1 and sensor4 == 1 and sensor5 == 1) {
+ sensor1 = readSensor(A2);
+ sensor2 = readSensor(A1);
+ sensor3 = readSensor(A0);
+ //sensor4 = readSensor(A1);
+ //sensor5 = readSensor(A0);
+ if (sensor1 == 0 and sensor2 == 0 and sensor3 == 0 ){//and sensor4 == 1 and sensor5 == 1) {
   brake();
   if (error < 0) {
    change_speed(turning_speed, turning_speed);
@@ -88,8 +88,8 @@ void loop() {
    setup_motors(1, 0);
     }
  } else {
-  error = ((sensor1*-4) +(sensor2*-2) +(sensor4*2) +(sensor5*4));  // 0 1/2 1 2
-  error /= (sensor1 + sensor2 + sensor3 + sensor4 + sensor5);
+  error = ((sensor1*-2) +(sensor3*2)); //+(sensor4*2) +(sensor5*4));  // 0 1/2 1 2
+  error /= (sensor1 + sensor2 + sensor3 );//+ sensor4 + sensor5);
   leftSpeed = baseSpeed;
   rightSpeed = baseSpeed;
   D=error-previousError;
