@@ -2,7 +2,12 @@
  Sample Line Following Code for the Robojunkies LF-2 robot
 */
 
-// Speed 100
+// Speed 100 , 150
+// kp =0.055
+// kd=0.2 --- 0.18  ---  0.15
+
+
+// Speed 100 , 15
 // kp =0.055
 // kd=0.2 --- 0.18  ---  0.15
 
@@ -14,26 +19,37 @@
 // kp = 0.1
 // kd = 0
 
+///////////////////////// *********************************************** ////////////////////////////////
+// Speed 180
+// kp =0.073
+// kd=0.18 
 
-// speed =120  - BATTERIES: total 7.2
-//  Kp = 0.075;
-//  Kd = 0.37;
-//  Ki = 0.001;
+// Speed 100 , 150
+// kp =0.055
+// kd= 0.18
+
+
+// Speed 200
+// kp =0.093
+// kd=0.2
+
+
+
 #define speedL 5
 #define IN1 7
 #define IN2 8
-#define IN3 9
-#define IN4 10
+#define IN3 10
+#define IN4 9
 #define speedR 6
 
 //#define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 100;
+int lfspeed = 200;
 
-float Kp = 0.055;
-float Kd = 0.18;
+float Kp = 0.094;
+float Kd = 0.21;
 float Ki = 0;
 char data;
 
@@ -60,6 +76,8 @@ void loop()
 {
   
   linefollow();
+//  analogWrite(speedR, 200); 
+//  analogWrite(speedL, 200); 
 }
 
 void brake() {
