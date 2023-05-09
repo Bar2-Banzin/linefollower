@@ -34,6 +34,20 @@
 // kd=0.2
 
 
+///////////////////////// **********************3 batteries 11.3v************************* ////////////////////////////////
+
+// Speed 100 
+// kp =0.055
+// kd= 0.18
+
+// Speed 120 
+// kp =0.075
+// kd= 0.18
+
+// Speed 150 
+// kp =0.13
+// kd= 0.215
+
 
 #define speedL 5
 #define IN1 7
@@ -46,10 +60,10 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 200;
+int lfspeed = 180;
 
-float Kp = 0.094;
-float Kd = 0.21;
+float Kp = 0.18;
+float Kd = 0.22;
 float Ki = 0;
 char data;
 
