@@ -62,8 +62,8 @@ int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
 int lfspeed = 180;
 
-float Kp = 0.18;
-float Kd = 0.22;
+float Kp = 0.19;
+float Kd = 0.225;
 float Ki = 0;
 char data;
 
