@@ -41,13 +41,34 @@
 // kd= 0.18
 
 // Speed 120 
-// kp =0.075
+// kp = 0.075
 // kd= 0.18
 
 // Speed 150 
 // kp =0.13
 // kd= 0.215
 
+///////////////////////// **********************3 batteries 11.5v************************* ////////////////////////////////
+
+// Speed 150 
+// kp =0.085
+// kd= 0.18
+
+// Speed 120 
+// kp = 0.075
+// kd= 0.18
+
+
+///////////////////////// **********************3 batteries 11.3v************************* ////////////////////////////////
+
+
+// Speed 100 
+// kp =0.06
+// kd= 0.18
+
+// Speed 120 
+// kp = 0.085
+// kd= 0.18
 
 #define speedL 5
 #define IN1 7
@@ -60,10 +81,10 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;
-int lfspeed = 180;
+int lfspeed = 120;
 
-float Kp = 0.19;
-float Kd = 0.225;
+float Kp = 0.075;
+float Kd = 0.18;
 float Ki = 0;
 char data;
 
@@ -82,7 +103,7 @@ void setup()
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-  Serial.begin(9600);
+//  Serial.begin(9600);
 }
 
 
@@ -131,6 +152,15 @@ void linefollow()
   int sensor3 = analogRead(A2);
   int sensor4 = analogRead(A3);
   int sensor5 = analogRead(A4);
+//  Serial.print(sensor1);
+//  Serial.print(" ");
+//  Serial.print(sensor2);
+//  Serial.print(" ");
+//  Serial.print(sensor3);
+//  Serial.print(" ");
+//  Serial.print(sensor4);
+//  Serial.print(" ");
+//  Serial.println(sensor5);
   
   // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
   // brake();
@@ -151,10 +181,11 @@ void linefollow()
   else if(error<15&&error>-15){ 
     if(Serial.available()){
       data=Serial.read();
-      if(data == '1')  lfspeed = 200;
-      else lfspeed = 100;
+      if(data == '1')  lfspeed = 120;
+      else lfspeed = 150;
     }
   }
+//  Serial.println(error);
   static int I = 0;
   I += error;
   P = error;
@@ -173,5 +204,6 @@ void linefollow()
   if (rsp < 0)   rsp = 0;
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
+  
   // }
 }
