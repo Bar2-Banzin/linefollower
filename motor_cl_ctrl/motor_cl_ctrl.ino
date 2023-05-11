@@ -57,7 +57,7 @@ void setup()
   INT0_Init();
   INT1_Init(); 
   timer2_init(); 
-//  Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 
@@ -129,13 +129,14 @@ void loop()
 //   analogWrite(speedR, desiredRPM);
 //  Serial.println(desiredRPM);
   getMotorSpeeds();
-  int actualPWM_r = motor_ctrl_r(speedR, desiredRPM, actual_speeds[1], 0.5, 0.01, 0.5);
-  int actualPWM_l = motor_ctrl_l(speedL, desiredRPM, actual_speeds[0], 0.5, 0.02 , 0.5);
+//  int actualPWM_r = motor_ctrl_r(speedR, desiredRPM, actual_speeds[1], 0.5, 0.01, 0.5);
+//  int actualPWM_l = motor_ctrl_l(speedL, desiredRPM, actual_speeds[0], 0.5, 0.02 , 0.5);
 //  Serial.print(desiredRPM);
 //  Serial.print(",");
-// Serial.print(actual_speeds[0]);
-//  Serial.print(",");
-//  Serial.println(actual_speeds[1]);
+ Serial.print(actual_speeds[0]);
+// Serial.println(actual_speeds[1]);
+  Serial.print(",");
+  Serial.println(actual_speeds[1]);
 //  Serial.print(",");
 //  Serial.println(actualPWM_r);
 //  Serial.print(",");
@@ -157,7 +158,7 @@ void getMotorSpeeds()
   //   start_time_l = current_time;
     
   // }
-
+ 
   if(timer_iterations >= 20)
   {
     timer_iterations = 0;
