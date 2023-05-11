@@ -70,6 +70,20 @@
 // kp = 0.085
 // kd= 0.18
 
+///////////////////////// **********************3 batteries 11.1v************************* ////////////////////////////////
+
+
+// Speed 100 
+// kp =0.07
+// kd= 0.18
+
+///////////////////////// **********************3 batteries 11.8v************************* ////////////////////////////////
+
+
+// Speed 100 
+// kp =0.055
+// kd= 0.18
+
 #define speedL 5
 #define IN1 7
 #define IN2 8
@@ -103,7 +117,7 @@ void setup()
   digitalWrite(IN2,LOW);
   digitalWrite(IN3,HIGH);
   digitalWrite(IN4,LOW);
-//  Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 
@@ -152,6 +166,9 @@ void linefollow()
   int sensor3 = analogRead(A2);
   int sensor4 = analogRead(A3);
   int sensor5 = analogRead(A4);
+//  if(sensor1 >= 200 && sensor2 >= 200 && sensor3 >= 200 && sensor4 >= 200 && sensor5 >= 200){
+//    brake();
+//  }
 //  Serial.print(sensor1);
 //  Serial.print(" ");
 //  Serial.print(sensor2);
@@ -181,8 +198,8 @@ void linefollow()
   else if(error<15&&error>-15){ 
     if(Serial.available()){
       data=Serial.read();
-      if(data == '1')  lfspeed = 120;
-      else lfspeed = 150;
+      if(data == '1')lfspeed = 150;
+      else lfspeed = 100;
     }
   }
 //  Serial.println(error);
