@@ -146,7 +146,7 @@ int lsp, rsp;
 int lfspeed = 90;
 
 float Kp = 0.073; // 0.075
-float Kd = 0.3; // 0.39
+float Kd = 0.32; // 0.39
 float Ki = 0;
 char data;
 
