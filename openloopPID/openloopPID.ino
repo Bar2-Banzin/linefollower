@@ -84,21 +84,69 @@
 // kp =0.055
 // kd= 0.18
 
+
+///////////////////////// ********************** SELKA ************************* ////////////////////////////////
+
+
+// Speed 100 
+// kp =0.075
+// kd= 0.18
+
+// Speed 120 
+// kp =0.095
+// kd= 0.18
+
+
+//int lfspeed = 150;
+//
+//float Kp = 0.15;
+//float Kd = 0.25;
+
+
+///////////////////////// ********************** 2 Batteries ==> men el driver 7.8 ************************* //////////////////////////////// 
+
+
+// Speed 200 
+// kp = 0.11
+// kd = 0.195
+
+// Speed 180 
+// kp = 0.095
+// kd = 0.18
+
+
+// Speed 150 
+// kp = 0.065
+// kd = 0.18
+
+// Speed 220 
+// kp = 0.14
+// kd = 0.195
+
+
+///////////////////////// ********************** 3 Batteries ==> men el driver 11.78 ************************* //////////////////////////////// 
+
+//int lfspeed = 90;
+//
+//float Kp = 0.075;
+//float Kd = 0.3;
+
+
 #define speedL 5
 #define IN1 7
 #define IN2 8
 #define IN3 10
-#define IN4 9
+#define IN4 9 
 #define speedR 6
 
 //#define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
-int lsp, rsp;
-int lfspeed = 120;
+int lsp, rsp;              
+int lfspeed = 90;
 
-float Kp = 0.075;
-float Kd = 0.18;
+float Kp = 0.073; // 0.075
+float Kd = 0.3; // 0.39
 float Ki = 0;
 char data;
 
@@ -192,23 +240,28 @@ void linefollow()
   // } else {
 
   int error = (sensor1+sensor2) - (sensor5 + sensor4);
+  if(error < 0){
+    sensor3 *= -1;
+  }
+  error += sensor3;
   if(error > 900) {
     error = 900;
   }
   else if(error<15&&error>-15){ 
     if(Serial.available()){
       data=Serial.read();
-      if(data == '1')lfspeed = 150;
-      else lfspeed = 100;
+      if(data == '1')lfspeed = 255;
+      else lfspeed = 220;
     }
   }
+  
 //  Serial.println(error);
   static int I = 0;
   I += error;
   P = error;
   D = error - previousError;
 
-//  PIDvalue = (Kp * P) + (Kd * D);
+
   PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
   previousError = error;
 
@@ -221,6 +274,8 @@ void linefollow()
   if (rsp < 0)   rsp = 0;
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
-  
-  // }
+//  while(analogRead(A0) > 200 && analogRead(A1) > 200 && analogRead(A2) > 200 && analogRead(A3) > 200 && analogRead(A4) > 200){
+//    analogWrite(speedL, lsp);
+//    analogWrite(speedR, rsp);
+//  }
 }
