@@ -123,13 +123,40 @@
 // kp = 0.14
 // kd = 0.195
 
-
 ///////////////////////// ********************** 3 Batteries ==> men el driver 11.78 ************************* //////////////////////////////// 
 
 //int lfspeed = 90;
 //
 //float Kp = 0.075;
 //float Kd = 0.3;
+///////////////////
+//int lfspeed = 100;
+//float Kp = 0.0585;
+//float Kd = 0.185; 
+////////////////////////////
+//int lfspeed = 80;
+//float Kp = 0.057; 
+//float Kd = 0.19; 
+
+//int lfspeed = 100;
+//float Kp = 0.0593; 
+//float Kd = 0.22;
+//lfspeed = 80; // in loop
+//delay(25);
+
+//int lfspeed = 120;
+//float Kp = 0.0598; 
+//float Kd = 0.22;
+//lfspeed = 100; // in loop
+//delay(25);
+
+
+////// run me4 48ala ////////////////
+//int lfspeed = 110;
+//
+//float Kp = 0.059; 
+//float Kd = 0.27;
+//float Ki = 0;
 
 
 #define speedL 5
@@ -145,8 +172,8 @@ int P, D, previousError, PIDvalue, error;
 int lsp, rsp;              
 int lfspeed = 80;
 
-float Kp = 0.057; // 0.075
-float Kd = 0.19; // 0.39
+float Kp = 0.057; 
+float Kd = 0.19;
 float Ki = 0;
 char data;
 
@@ -172,7 +199,6 @@ void setup()
 
 void loop()
 {
-  
   linefollow();
 }
 
@@ -184,8 +210,25 @@ void linefollow()
   int sensor3 = analogRead(A2);
   int sensor4 = analogRead(A3);
   int sensor5 = analogRead(A4);
-  while(sensor1 >= 200 && sensor2 >= 200 && sensor3 >= 200 && sensor4 >= 200 && sensor5 >= 200);
+  while(analogRead(A0) >= 200 && analogRead(A1) >= 200 && analogRead(A2) >= 200 && analogRead(A3) >= 200 && analogRead(A4) >= 200) {
+    int turn_speed = 80;
+    error = previousError;
+    P = error;
+    D = error - previousError;
   
+    PIDvalue = (Kp * P) + (Kd * D);
+    previousError = error;
+  
+    lsp = turn_speed + PIDvalue;
+    rsp = turn_speed - PIDvalue;
+  
+    if (lsp > 255) lsp = 255;
+    if (lsp < 0)   lsp = 0;
+    if (rsp > 255) rsp = 255;
+    if (rsp < 0)   rsp = 0;
+    analogWrite(speedL, lsp);
+    analogWrite(speedR, rsp);
+  }
   // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
   // brake();
   // if (error < 0) {
@@ -209,8 +252,8 @@ void linefollow()
   else if(error<15&&error>-15){ 
     if(Serial.available()){
       data=Serial.read();
-      if(data == '1')lfspeed = 255;
-      else lfspeed = 220;
+      if(data == 'F')lfspeed = 120;
+      else lfspeed = 80;
     }
   }
   
@@ -233,6 +276,7 @@ void linefollow()
   if (rsp < 0)   rsp = 0;
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
+  delay(25);
 }
 
 
