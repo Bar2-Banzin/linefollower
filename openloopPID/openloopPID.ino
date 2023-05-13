@@ -133,10 +133,12 @@
 //int lfspeed = 100;
 //float Kp = 0.0585;
 //float Kd = 0.185; 
+
+
 ////////////////////////////
 //int lfspeed = 80;
-//float Kp = 0.057; 
-//float Kd = 0.19; 
+//float Kp = 0.0575; 
+//float Kd = 0.2; 
 
 //int lfspeed = 100;
 //float Kp = 0.0593; 
@@ -172,8 +174,8 @@ int P, D, previousError, PIDvalue, error;
 int lsp, rsp;              
 int lfspeed = 80;
 
-float Kp = 0.057; 
-float Kd = 0.19;
+float Kp = 0.0575; 
+float Kd = 0.2;
 float Ki = 0;
 char data;
 
@@ -252,7 +254,7 @@ void linefollow()
   else if(error<15&&error>-15){ 
     if(Serial.available()){
       data=Serial.read();
-      if(data == 'F')lfspeed = 120;
+      if(data == '1')lfspeed = 120;
       else lfspeed = 80;
     }
   }
