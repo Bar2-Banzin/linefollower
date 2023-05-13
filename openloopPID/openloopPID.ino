@@ -160,6 +160,36 @@
 //float Kd = 0.27;
 //float Ki = 0;
 
+////////////////////////////////////////////////////////////integration with maazzeeedriver was 8.11 /////////////////////////////////////////////////////
+//int lfspeed = 80;
+//float Kp = 0.0575; 
+//float Kd = 0.2; 
+//tuen_speed = 80;
+
+
+//int lfspeed = 100;
+//float Kp = 0.059; 
+//float Kd = 0.2;
+//tuen_speed = 90;
+
+//int lfspeed = 120;
+//tune_speed=110;
+//float Kp = 0.0605; 
+//float Kd = 0.2;
+//float Ki = 0;
+
+//int lfspeed = 150;
+//tune_speed = 130;
+//float Kp = 0.0625; 
+//float Kd = 0.2;
+//float Ki = 0;
+
+
+////////////////////////////////////////////////////////////integration with maazzeeedriver was 4.01 4.01 4.1 /////////////////////////////////////////////////////
+//int lfspeed = 100;
+//float Kp = 0.059; 
+//float Kd = 0.2;
+//tuen_speed = 90;
 
 #define speedL 5
 #define IN1 7
@@ -172,10 +202,9 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;              
-int lfspeed = 80;
-
-float Kp = 0.0575; 
-float Kd = 0.2;
+int lfspeed = 100;
+float Kp = 0.0593; 
+float Kd = 0.22;
 float Ki = 0;
 char data;
 
@@ -255,7 +284,7 @@ void linefollow()
     if(Serial.available()){
       data=Serial.read();
       if(data == '1')lfspeed = 120;
-      else lfspeed = 80;
+      else lfspeed = 100;
     }
   }
   
