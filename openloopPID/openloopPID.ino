@@ -143,12 +143,13 @@
 
 int P, D, previousError, PIDvalue, error;
 int lsp, rsp;              
-int lfspeed = 90;
+int lfspeed = 80;
 
-float Kp = 0.073; // 0.075
-float Kd = 0.32; // 0.39
+float Kp = 0.057; // 0.075
+float Kd = 0.19; // 0.39
 float Ki = 0;
 char data;
+
 
 void setup()
 {
@@ -173,37 +174,6 @@ void loop()
 {
   
   linefollow();
-//  analogWrite(speedR, 200); 
-//  analogWrite(speedL, 200); 
-}
-
-void brake() {
- digitalWrite(IN1, HIGH); // make left motor A brake
- digitalWrite(IN2, HIGH);
- digitalWrite(IN3, HIGH); // make right motor B brake
- digitalWrite(IN4, HIGH);
-}
-
-void setup_motors(int forward_a, int forward_b) {
- if (forward_a == 1) {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
- } else {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
- }
- if (forward_b == 1) {
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
- } else {
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, LOW);
- }
-}
-
-void change_speed(int leftSpeed, int rightSpeed) {
- analogWrite(speedR, rightSpeed); 
- analogWrite(speedL, leftSpeed); 
 }
 
 void linefollow()
@@ -214,18 +184,7 @@ void linefollow()
   int sensor3 = analogRead(A2);
   int sensor4 = analogRead(A3);
   int sensor5 = analogRead(A4);
-//  if(sensor1 >= 200 && sensor2 >= 200 && sensor3 >= 200 && sensor4 >= 200 && sensor5 >= 200){
-//    brake();
-//  }
-//  Serial.print(sensor1);
-//  Serial.print(" ");
-//  Serial.print(sensor2);
-//  Serial.print(" ");
-//  Serial.print(sensor3);
-//  Serial.print(" ");
-//  Serial.print(sensor4);
-//  Serial.print(" ");
-//  Serial.println(sensor5);
+  while(sensor1 >= 200 && sensor2 >= 200 && sensor3 >= 200 && sensor4 >= 200 && sensor5 >= 200);
   
   // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
   // brake();
@@ -239,7 +198,7 @@ void linefollow()
   //   }
   // } else {
 
-  int error = (sensor1+sensor2) - (sensor5 + sensor4);
+  error = (sensor1+sensor2) - (sensor5 + sensor4);
   if(error < 0){
     sensor3 *= -1;
   }
@@ -274,8 +233,38 @@ void linefollow()
   if (rsp < 0)   rsp = 0;
   analogWrite(speedL, lsp);
   analogWrite(speedR, rsp);
-//  while(analogRead(A0) > 200 && analogRead(A1) > 200 && analogRead(A2) > 200 && analogRead(A3) > 200 && analogRead(A4) > 200){
-//    analogWrite(speedL, lsp);
-//    analogWrite(speedR, rsp);
-//  }
 }
+
+
+
+
+
+
+//void brake() {
+// digitalWrite(IN1, HIGH); // make left motor A brake
+// digitalWrite(IN2, HIGH);
+// digitalWrite(IN3, HIGH); // make right motor B brake
+// digitalWrite(IN4, HIGH);
+//}
+
+//void setup_motors(int forward_a, int forward_b) {
+// if (forward_a == 1) {
+//  digitalWrite(IN1, LOW);
+//  digitalWrite(IN2, HIGH);
+// } else {
+//  digitalWrite(IN1, LOW);
+//  digitalWrite(IN2, LOW);
+// }
+// if (forward_b == 1) {
+//  digitalWrite(IN3, HIGH);
+//  digitalWrite(IN4, LOW);
+// } else {
+//  digitalWrite(IN3, LOW);
+//  digitalWrite(IN4, LOW);
+// }
+//}
+
+//void change_speed(int leftSpeed, int rightSpeed) {
+// analogWrite(speedR, rightSpeed); 
+// analogWrite(speedL, leftSpeed); 
+//}
