@@ -146,19 +146,7 @@
 //lfspeed = 80; // in loop
 //delay(25);
 
-//int lfspeed = 120;
-//float Kp = 0.0598; 
-//float Kd = 0.22;
-//lfspeed = 100; // in loop
-//delay(25);
 
-
-////// run me4 48ala ////////////////
-//int lfspeed = 110;
-//
-//float Kp = 0.059; 
-//float Kd = 0.27;
-//float Ki = 0;
 
 ////////////////////////////////////////////////////////////integration with maazzeeedriver was 8.11 /////////////////////////////////////////////////////
 //int lfspeed = 80;
@@ -191,6 +179,38 @@
 //float Kd = 0.2;
 //tuen_speed = 90;
 
+
+
+// tsleem day 
+//int lfspeed = 120, 180;
+//float Kp = 0.067; 
+//float Kd = 0.2;
+//int turn_speed = 100;
+
+//int lfspeed = 150;
+//float Kp = 0.082; 
+//float Kd = 0.2;
+
+
+
+
+
+
+
+
+// mine
+
+//int lfspeed = 120; // no delay with bluetooth bas tunning
+//float Kp = 0.06; 
+//float Kd = 0.23;
+//lfspeed = 100; // in loop
+
+//int lfspeed = 140;  // no bluetooth
+//float Kp = 0.064; 
+//float Kd = 0.23;
+//delay(25);
+
+
 #define speedL 5
 #define IN1 7
 #define IN2 8
@@ -201,10 +221,10 @@
 //#define turning_speed 80
 
 int P, D, previousError, PIDvalue, error;
-int lsp, rsp;              
-int lfspeed = 100;
-float Kp = 0.0593; 
-float Kd = 0.22;
+int lsp, rsp;      
+int lfspeed = 140;
+float Kp = 0.083; 
+float Kd = 0.23;
 float Ki = 0;
 char data;
 
@@ -242,7 +262,7 @@ void linefollow()
   int sensor4 = analogRead(A3);
   int sensor5 = analogRead(A4);
   while(analogRead(A0) >= 200 && analogRead(A1) >= 200 && analogRead(A2) >= 200 && analogRead(A3) >= 200 && analogRead(A4) >= 200) {
-    int turn_speed = 80;
+    int turn_speed = 120;
     error = previousError;
     P = error;
     D = error - previousError;
@@ -260,6 +280,7 @@ void linefollow()
     analogWrite(speedL, lsp);
     analogWrite(speedR, rsp);
   }
+//    Serial.flush();
   // if (sensor1 >= 500 and sensor2 >= 500 and sensor3 >= 500 and sensor4 >= 500 and sensor5 >= 500) {
   // brake();
   // if (error < 0) {
@@ -280,18 +301,18 @@ void linefollow()
   if(error > 900) {
     error = 900;
   }
-  else if(error<15&&error>-15){ 
-    if(Serial.available()){
-      data=Serial.read();
-      if(data == '1')lfspeed = 120;
-      else lfspeed = 100;
-    }
-  }
+//  else if(error<15&&error>-15){ 
+//    if(Serial.available()){
+//      data=Serial.read();
+//      if(data == '1') lfspeed = 150;
+//      else lfspeed = 120;
+//    }
+//  }
   
 //  Serial.println(error);
   static int I = 0;
   I += error;
-  P = error;
+  P = error; 
   D = error - previousError;
 
 
