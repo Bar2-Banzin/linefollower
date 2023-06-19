@@ -40,16 +40,14 @@
 <li><a href="https://docs.arduino.cc/">Arduino</a></li>
 <li><a href="https://docs.flutter.dev/">Flutter</a></li>
 <li><a href="https://devdocs.io/cpp/">C++</a></li>
-
 </ul>
 <li>
  The Project have 2 parts
-    
-   
 </li>
 <ul>
 <li> <a href ="#app"> 📱 App</a></li>
  <li>  <a href ="#car"> 🚗 Car</a></li>
+</ul>
 </ul>
 <hr style="background-color: #4b4c60"></hr>
 <a id = "Components"></a>
