@@ -19,7 +19,6 @@
 - <a href ="#parts"> ⚙️  Parts</a>
     - <a href ="#app"> 📱 App</a>
     - <a href ="#car"> 🚗 Car</a>
-- <a href ="#Circuit">💡 Circuit</a>
 - <a href ="#Integration">🤖 Integration</a>
 - <a href ="#Contributors"> ✨ Contributors</a>
 - <a href ="#License"> 🔒 License</a> 
