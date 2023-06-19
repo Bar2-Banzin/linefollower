@@ -137,8 +137,14 @@
 <a id = "car"></a>
 
 ### <img align="center"  width =70px src="https://media0.giphy.com/media/7hAr7m8m7k3uumlu4G/giphy.gif?cid=ecf05e47z16ab3t2pi15z2vh1bt01uqsai1f4uszvbzvn56t&ep=v1_stickers_search&rid=giphy.gif&ct=s"> Car
-<hr style="background-color: #4b4c60"></hr>
-
+<ul>
+<li>Azza receive output from app if found 1 drive with the fastest speed if 0 drive with original speed</li>
+<li> Azza is able to tackle the line following problem using an array of sensors </li>
+<li>Azza can accomplish this by utilizing a combination of closed-loop controllers such as PID and a variety of conditions</li>
+</ul>
+<div align ="center">
+<video src="">
+</div>
 
 <hr style="background-color: #4b4c60"></hr>
 
@@ -146,6 +152,9 @@
 
 ## <img align="center"  width =80px  height =80px src="https://media1.giphy.com/media/lr7lYUc00nr3hWsoVa/giphy.gif?cid=ecf05e47f99e9tbsstbe3u9mzphxjrp27jxozshi64cok467&rid=giphy.gif&ct=s"> Integration 
 
+<div align ="center">
+<video width="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/059fb126-3185-423f-9aa3-358dc8893e0f">
+</div>
 
 <hr style="background-color: #4b4c60"></hr>
 
