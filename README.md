@@ -91,14 +91,15 @@
 </ul></td>
 </tr>
 <tr>
-<td><img height="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
+<td><img height="450px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
 <td><ul><li>Connect to the bluetooth </li>
 <li>Most of time it will HC-05 </li>
 </ul></td>
 </tr>
 <tr>
-<td><img height="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/33830037-a74e-4399-b260-ef3d547ad0b9"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/33830037-a74e-4399-b260-ef3d547ad0b9"></td>
 <td><ul><li>Take picture to the track when it is empty  </li>
+<li>You can zoom in or zoom out</li>
 <li>Press on camera when you want to take picture</li>
 </ul></td>
 </tr>
