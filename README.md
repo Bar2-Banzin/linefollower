@@ -86,7 +86,12 @@
 <li>App should be fixed while running </li>
 <li>App built using flutter and use Use Dart FFI to connect to image processing code </li>
 <li>Image processing code is built using C++  </li>
+<li>The paper read & yellow help us to know front and back od the car. Front of the car is red. back of the car is yellow.</li>
 <li>Path of App </li>
+<br>
+<details> <summary>Click to expand...</summary>
+
+
 <table>
 <thead>
 <th>Screen</th>
@@ -124,6 +129,9 @@
 </ul></td>
 </tr>
 </table>
+
+</details>
+
 
 > **Note**: Mobile should be fixed while running program 
 
