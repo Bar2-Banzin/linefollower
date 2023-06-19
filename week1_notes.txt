@@ -1,4 +1,0 @@
-- We need to add a power button to the car.
-- We need to test and enhance its accuracy.
-  (Might add some delays or stuff)
-- The previous work requires only "TWO" of us.
