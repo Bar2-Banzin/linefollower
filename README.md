@@ -4,7 +4,7 @@
 
    <img width=450px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02b9db9-7244-4801-aca3-8438c15cfea7" alt="logo">
 
-  ### Worse than losing is not fighting to win. 🏔️
+  ### Our god save Azza. 🏎️
 
 </div>
 
@@ -27,7 +27,21 @@
 
 <a id = "about"></a>
 
-## <img align="center"  width =50px  height =50px src="https://c.tenor.com/BU6EP0XgvzEAAAAj/cat-cute.gif"> Overview 
+## <img align="center"  width =50px  height =50px src="https://c.tenor.com/BU6EP0XgvzEAAAAj/cat-cute.gif"> Overview
+<ul>
+<li>Azza is line follower robot and it's target to finish track as soon as possible</li>
+<li>There is App help Azza to find straight roads to run with the heighth speed. App communicate with Azza by bluetooth </li>
+<li>Azza can accomplish this by utilising a combination of closed-loop controllers such as PID and a variety of conditions</li>
+
+
+<li>🎉 This project ranked 1st place among 7 teams. </li>
+<li>This project built using. </li>
+<ul>
+<li><a href="https://docs.arduino.cc/">Arduino</a></li>
+<li><a href="https://docs.flutter.dev/">Flutter</a></li>
+<li><a href="https://devdocs.io/cpp/">C++</a></li>
+</ul>
+</ul>
 
 <hr style="background-color: #4b4c60"></hr>
 <a id = "Components"></a>
@@ -57,6 +71,27 @@
 <a id = "app"></a>
 
 ### <img align="center"  width =60px src="https://media1.giphy.com/media/SQTSmiJl0uKoZNdv1T/giphy.gif?cid=ecf05e478njktzbodwy6urk6p15ealjalm4augxqvtm6gj0h&ep=v1_stickers_search&rid=giphy.gif&ct=s"> APP
+
+
+<ul>
+<li>App find straight road to help Azza when drive with the heighth speed</li>
+<li>App should be fixed while running </li>
+<li>App built using flutter and use Use Dart FFI to connect to image processing code </li>
+<li>Image processing code is built using C++  </li>
+
+
+<li>Result of image processing</li>
+<table>
+<thead>
+<th>Input</th>
+<th>Output</th>
+</thead>
+<tr>
+<td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/68bf318b-9b0c-4d00-9fc5-50baabf919bd"></td>
+<td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/382865b4-479b-4288-8b8e-7f366063a5aa"></td>
+</tr>
+</table>
+</ul>
 
 <hr style="background-color: #4b4c60"></hr>
 <a id = "car"></a>
