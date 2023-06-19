@@ -143,7 +143,7 @@
 <li>Azza can accomplish this by utilizing a combination of closed-loop controllers such as PID and a variety of conditions</li>
 </ul>
 <div align ="center">
-<video src="">
+<video  width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/2de10440-16b9-4813-922a-1e11eedd8fcc">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
@@ -153,7 +153,7 @@
 ## <img align="center"  width =80px  height =80px src="https://media1.giphy.com/media/lr7lYUc00nr3hWsoVa/giphy.gif?cid=ecf05e47f99e9tbsstbe3u9mzphxjrp27jxozshi64cok467&rid=giphy.gif&ct=s"> Integration 
 
 <div align ="center">
-<video width="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/059fb126-3185-423f-9aa3-358dc8893e0f">
+<video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/059fb126-3185-423f-9aa3-358dc8893e0f">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
