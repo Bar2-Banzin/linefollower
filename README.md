@@ -2,7 +2,7 @@
 
 <div align="center">
 
-   <img width=600px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02b9db9-7244-4801-aca3-8438c15cfea7" alt="logo">
+   <img width=450px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02b9db9-7244-4801-aca3-8438c15cfea7" alt="logo">
 
   ### Worse than losing is not fighting to win. 🏔️
 
