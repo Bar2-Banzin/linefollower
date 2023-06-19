@@ -74,13 +74,49 @@
 
 
 <ul>
-<li>App find straight road to help Azza when drive with the heighth speed</li>
+<li>Apps find straight road to help Azza when drive with the heighth speed</li>
 <li>App should be fixed while running </li>
 <li>App built using flutter and use Use Dart FFI to connect to image processing code </li>
 <li>Image processing code is built using C++  </li>
-
-
+<li>Path of App </li>
+<table>
+<thead>
+<th>Screen</th>
+<th>Description</th>
+</thead>
+<tr>
+<td><img height="200px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/078fd3e3-7e23-49f8-a307-15c4ee8138af"></td>
+<td><ul><li>Start Screen</li>
+<li>Press start button to use app </li>
+</ul></td>
+</tr>
+<tr>
+<td><img height="200px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
+<td><ul><li>Connect to the bluetooth </li>
+<li>Most of time it will HC-05 </li>
+</ul></td>
+</tr>
+<tr>
+<td><img height="200px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
+<td><ul><li>Take picture to the track when it is empty  </li>
+<li>Press on camera when you want to take picture</li>
+</ul></td>
+</tr>
+<tr>
+<td><img height="200px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4d96041f-13ae-457f-af31-028ec4a99b1a"></td>
+<td><ul><li>You can zoom in or zoom out</li>
+<li>When press on camera start streaming and detect car on straight road or not </li>
+<li>Output:</li>
+<ul>
+<li>0 => not in straight road</li>
+<li>1 => in straight road</li>
+<li>5 => can't find car</li>
+</ul>
+</ul></td>
+</tr>
+</table>
 <li>Result of image processing</li>
+<br>
 <table>
 <thead>
 <th>Input</th>
