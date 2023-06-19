@@ -16,7 +16,7 @@
 
 - <a href ="#about"> 📙 Overview</a>
 - <a href ="#Components"> :money_with_wings: Components & cost</a>
-- <a href ="#Machines"> ⚙️  Parts</a>
+- <a href ="#parts"> ⚙️  Parts</a>
     - <a href ="#app"> 📱 App</a>
     - <a href ="#car"> 🚗 Car</a>
 - <a href ="#Circuit">💡 Circuit</a>
@@ -40,9 +40,17 @@
 <li><a href="https://docs.arduino.cc/">Arduino</a></li>
 <li><a href="https://docs.flutter.dev/">Flutter</a></li>
 <li><a href="https://devdocs.io/cpp/">C++</a></li>
-</ul>
-</ul>
 
+</ul>
+<li>
+ The Project have 2 parts
+    
+   
+</li>
+<ul>
+<li> <a href ="#app"> 📱 App</a></li>
+ <li>  <a href ="#car"> 🚗 Car</a></li>
+</ul>
 <hr style="background-color: #4b4c60"></hr>
 <a id = "Components"></a>
 
@@ -64,9 +72,9 @@
 
 <hr style="background-color: #4b4c60"></hr>
 
-<a id = "Machines"></a>
+<a id = "parts"></a>
 
-## <img align="center"  width =70px  height =70px src="https://media4.giphy.com/media/7ktwhqlnFaDAJ8AzIw/giphy.gif?cid=ecf05e47p68znkbblq8sysehj7ahivaaceyfjly28ch0y4m7&rid=giphy.gif&ct=s"> Machines 
+## <img align="center"  width =70px  height =70px src="https://media4.giphy.com/media/7ktwhqlnFaDAJ8AzIw/giphy.gif?cid=ecf05e47p68znkbblq8sysehj7ahivaaceyfjly28ch0y4m7&rid=giphy.gif&ct=s"> Parts 
 
 <a id = "app"></a>
 
@@ -143,7 +151,8 @@
 <li>Azza can accomplish this by utilizing a combination of closed-loop controllers such as PID and a variety of conditions</li>
 </ul>
 <div align ="center">
-<video  width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/2de10440-16b9-4813-922a-1e11eedd8fcc">
+<video  width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/85fb124f-ba64-4f36-a43a-103a99c853f9
+">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
@@ -153,7 +162,8 @@
 ## <img align="center"  width =80px  height =80px src="https://media1.giphy.com/media/lr7lYUc00nr3hWsoVa/giphy.gif?cid=ecf05e47f99e9tbsstbe3u9mzphxjrp27jxozshi64cok467&rid=giphy.gif&ct=s"> Integration 
 
 <div align ="center">
-<video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/059fb126-3185-423f-9aa3-358dc8893e0f">
+<video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/2eaf5c64-732a-4eb2-8150-f153404ad527
+">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
