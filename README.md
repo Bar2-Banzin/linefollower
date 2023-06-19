@@ -85,13 +85,13 @@
 <th>Description</th>
 </thead>
 <tr>
-<td><img height="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/078fd3e3-7e23-49f8-a307-15c4ee8138af"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/078fd3e3-7e23-49f8-a307-15c4ee8138af"></td>
 <td><ul><li>Start Screen</li>
 <li>Press start button to use app </li>
 </ul></td>
 </tr>
 <tr>
-<td><img height="450px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
 <td><ul><li>Connect to the bluetooth </li>
 <li>Most of time it will HC-05 </li>
 </ul></td>
@@ -104,7 +104,7 @@
 </ul></td>
 </tr>
 <tr>
-<td><img height="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4d96041f-13ae-457f-af31-028ec4a99b1a"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4d96041f-13ae-457f-af31-028ec4a99b1a"></td>
 <td><ul><li>You can zoom in or zoom out</li>
 <li>When press on camera start streaming and detect car on straight road or not </li>
 <li>Output:</li>
