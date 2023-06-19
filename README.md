@@ -87,7 +87,7 @@
 <th>Output</th>
 </thead>
 <tr>
-<td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/68bf318b-9b0c-4d00-9fc5-50baabf919bd"></td>
+<td width="50%"><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/68bf318b-9b0c-4d00-9fc5-50baabf919bd"></td>
 <td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/382865b4-479b-4288-8b8e-7f366063a5aa"></td>
 </tr>
 </table>
