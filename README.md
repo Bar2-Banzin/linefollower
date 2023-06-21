@@ -86,9 +86,6 @@
 <li>A red & yellow paper help us to know front and back od the car. Front of the car is red. Back of the car is yellow.</li>
 <li>Path of App </li>
 <br>
-<details> <summary>Click to expand...</summary>
-
-
 <table>
 <thead>
 <th>Screen</th>
@@ -127,7 +124,6 @@
 </tr>
 </table>
 
-</details>
 
 
 > **Note**: Mobile should be fixed while running program 
