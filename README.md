@@ -2,7 +2,7 @@
 
 <div align="center">
 
-   <img width=450px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02b9db9-7244-4801-aca3-8438c15cfea7" alt="logo">
+   <img width=450px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/0cc255df-21d9-463a-be87-6945817ff2a5" alt="logo">
 
   ### God save Azza. 🏎️
 
@@ -95,26 +95,26 @@
 <th>Description</th>
 </thead>
 <tr>
-<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/078fd3e3-7e23-49f8-a307-15c4ee8138af"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/37328444-a9c4-4be9-88f6-2b8c5022c0c6"></td>
 <td><ul><li>Start Screen</li>
 <li>Press start button to use app </li>
 </ul></td>
 </tr>
 <tr>
-<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4306b20e-2698-4e22-b5e2-ab6f4424e597"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/99c76bc0-47ef-4cc3-b282-d5d9ff3b13e5"></td>
 <td><ul><li>Connect to the bluetooth </li>
 <li>Most of time it will HC-05 </li>
 </ul></td>
 </tr>
 <tr>
-<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/33830037-a74e-4399-b260-ef3d547ad0b9"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/568247a6-c5d7-4d90-baa9-d52ca39e3b93"></td>
 <td><ul><li>Take picture to the track when it is empty  </li>
 <li>You can zoom in or zoom out</li>
 <li>Press on camera when you want to take picture</li>
 </ul></td>
 </tr>
 <tr>
-<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/4d96041f-13ae-457f-af31-028ec4a99b1a"></td>
+<td><img height="400px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/0660fc50-d9bb-487d-882b-43ccca614e08"></td>
 <td><ul><li>You can zoom in or zoom out</li>
 <li>When press on camera start streaming and detect car on straight road or not </li>
 <li>Output:</li>
@@ -140,8 +140,8 @@
 <th>Output</th>
 </thead>
 <tr>
-<td width="50%"><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/68bf318b-9b0c-4d00-9fc5-50baabf919bd"></td>
-<td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/382865b4-479b-4288-8b8e-7f366063a5aa"></td>
+<td width="50%"><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/6d917e1c-f362-44ae-a1b7-ec417c82741e"></td>
+<td><img src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02276af-8b1e-4439-b7a7-1c4c78338df1"></td>
 </tr>
 </table>
 </ul>
@@ -156,8 +156,7 @@
 <li>Azza can accomplish this by utilizing a combination of closed-loop controllers such as PID and a variety of conditions</li>
 </ul>
 <div align ="center">
-<video  width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/85fb124f-ba64-4f36-a43a-103a99c853f9
-">
+<video  width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/b71331c5-189a-4f39-86bb-f209fcff77cb">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
@@ -167,8 +166,7 @@
 ## <img align="center"  width =80px  height =80px src="https://media1.giphy.com/media/lr7lYUc00nr3hWsoVa/giphy.gif?cid=ecf05e47f99e9tbsstbe3u9mzphxjrp27jxozshi64cok467&rid=giphy.gif&ct=s"> Integration 
 
 <div align ="center">
-<video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/2eaf5c64-732a-4eb2-8150-f153404ad527
-">
+<video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/0e0dd67e-f8e9-46fc-9794-ab4788cc34c9">
 </div>
 
 <hr style="background-color: #4b4c60"></hr>
