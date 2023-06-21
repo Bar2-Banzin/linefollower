@@ -4,7 +4,7 @@
 
    <img width=450px  src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/a02b9db9-7244-4801-aca3-8438c15cfea7" alt="logo">
 
-  ### Our god save Azza. 🏎️
+  ### God save Azza. 🏎️
 
 </div>
 
@@ -28,13 +28,13 @@
 
 ## <img align="center"  width =50px  height =50px src="https://c.tenor.com/BU6EP0XgvzEAAAAj/cat-cute.gif"> Overview
 <ul>
-<li>Azza is line follower robot and it's target to finish track as soon as possible</li>
-<li>There is App help Azza to find straight roads to run with the heighth speed. App communicate with Azza by bluetooth </li>
+<li>Azza is a line follower robot and it's target is to finish track as fast as possible</li>
+<li>There is a mobile App that helps Azza to find straight lines to run with the max speed. The app communicates with Azza by bluetooth </li>
 <li>Azza can accomplish this by utilising a combination of closed-loop controllers such as PID and a variety of conditions</li>
 
 
 <li>🎉 This project ranked 1st place among 7 teams. </li>
-<li>This project built using. </li>
+<li>This project is built using. </li>
 <ul>
 <li><a href="https://docs.arduino.cc/">Arduino</a></li>
 <li><a href="https://docs.flutter.dev/">Flutter</a></li>
@@ -56,7 +56,7 @@
 | Name| Number | Market Cost per Part                                                                                                         |
 | --------------  | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | Arduino Uno    | 1      | 356 EGP                                               |
-| 1298 motor driver | 1      | 60 EGP               |
+| l298 motor driver | 1      | 60 EGP               |
 | DC Motor | 2      | 35 EGP
 | Car chassis | 1 | 65 EGP
 | Train sensor | 1  | 130 EGP
@@ -79,11 +79,11 @@
 
 
 <ul>
-<li>Apps find straight road to help Azza when drive with the heighth speed</li>
+<li>App finds straight lines to help Azza drive with the highest speed</li>
 <li>App should be fixed while running </li>
-<li>App built using flutter and use Use Dart FFI to connect to image processing code </li>
+<li>App is built using flutter and uses Dart FFI to connect to image processing code </li>
 <li>Image processing code is built using C++  </li>
-<li>The paper read & yellow help us to know front and back od the car. Front of the car is red. back of the car is yellow.</li>
+<li>A red & yellow paper help us to know front and back od the car. Front of the car is red. Back of the car is yellow.</li>
 <li>Path of App </li>
 <br>
 <details> <summary>Click to expand...</summary>
