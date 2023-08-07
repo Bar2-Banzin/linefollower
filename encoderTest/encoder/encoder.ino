@@ -1,11 +1,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#define speedL 10
+#define speedL 5
 #define IN1 7
-#define IN2 6
+#define IN2 8
 #define IN3 9
-#define IN4 8
-#define speedR 11
+#define IN4 10
+#define speedR 6
 #define pot A5
 
 #define base_speed_RPM 220
@@ -16,6 +16,7 @@
 
 int rpm_speeds[2] = {0, 0};
 int actual_speeds[2] = {0, 0};
+int out_l, out_r;
 
 //Encoder variables
 int right_pulses = 0;
@@ -41,6 +42,8 @@ int seconds = 0;
 
 void setup()
 {
+  Serial.begin(9600);
+ 
   DDRC &= ~(0x3F);
   pinMode(speedL, OUTPUT);
   pinMode(speedR, OUTPUT);
@@ -52,21 +55,47 @@ void setup()
   digitalWrite(IN2,HIGH);
   analogWrite(speedL, 0);
   analogWrite(speedR, 0);
-  digitalWrite(IN3,HIGH);
-  digitalWrite(IN4,LOW);
+  digitalWrite(IN3,LOW);
+  digitalWrite(IN4,HIGH);
   INT0_Init();
   INT1_Init(); 
   timer2_init(); 
-  Serial.begin(9600);
 }
 
 
 
-int motor_ctrl_r(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
+int motor_ctrl_r(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0) // ento me4 3ayzeen el functions de
 {
-  static int I = 0;
-  static int previousError = 0;
-  static int prev_set_point = 0;
+  static long long I = 0;
+  static long long previousError = 0;
+  int  error = setPoint-actualSpeed; 
+  
+  int P = error;
+  I += error;
+  int D = error - previousError;
+
+  int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
+  
+  previousError = error;
+  out_r = PIDvalue;
+  
+  if (out_r > 255) {
+    out_r = 255;
+  }
+  if (out_r < 0) {
+    out_r = 0;
+  }
+//  if(out_r >= 10)
+  analogWrite(pin, out_r);
+
+  return out_r; 
+}
+
+
+int motor_ctrl_l (uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0) // ento me4 3ayzeen el functions de
+{
+  static long long I = 0;
+  static long long previousError = 0;
   int error = setPoint-actualSpeed; 
   
   int P = error;
@@ -76,89 +105,45 @@ int motor_ctrl_r(uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float
   int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
   
   previousError = error;
-  prev_set_point = setPoint;
-  int out = PIDvalue;
+  out_l = PIDvalue;
   
-  if (out > 255) {
-    out = 255;
+  if (out_l > 255) {
+    out_l = 255;
   }
-  if (out < 0) {
-    out = 0;
+  if (out_l < 0) {
+    out_l = 0;
   }
-  if(out >= 10)
-  analogWrite(pin, out);
-  return out; 
-}
-
-
-int motor_ctrl_l (uint8_t pin, int setPoint, int actualSpeed, float Kp = 0, float Ki = 0, float Kd = 0)
-{
-  static int I = 0;
-  static int previousError = 0;
-  static int prev_set_point = 0;
-  int error = setPoint-actualSpeed; 
-  
-  int P = error;
-  I += error;
-  int D = error - previousError;
-
-  int PIDvalue = (Kp * P) + (Ki * I) + (Kd * D);
-  
-  previousError = error;
-  prev_set_point = setPoint;
-  int out = PIDvalue;
-  
-  if (out > 255) {
-    out = 255;
-  }
-  if (out < 0) {
-    out = 0;
-  }
-  if(out >= 10)
-  analogWrite(pin, out);
-  return out; 
+//  if(out_l >= 10)
+  analogWrite(pin, out_l);
+  return out_l;
 }
 
 void loop()
 {
-  //some code
-//  uint16_t desiredRPM = simulate_setpoint(pot);
-  uint16_t desiredRPM = 180;
-//   uint16_t lol = map(analogRead(pot), 0, 1023, 0, 255);
-//   analogWrite(speedL, desiredRPM);
-//   analogWrite(speedR, desiredRPM);
-//  Serial.println(desiredRPM);
+  int desiredRPM = 400;
+  //analogWrite(speedR, desiredRPM);
+  //analogWrite(speedL, desiredRPM);
   getMotorSpeeds();
-//  int actualPWM_r = motor_ctrl_r(speedR, desiredRPM, actual_speeds[1], 0.5, 0.01, 0.5);
-//  int actualPWM_l = motor_ctrl_l(speedL, desiredRPM, actual_speeds[0], 0.5, 0.02 , 0.5);
+
+  int actualPWM_l = motor_ctrl_l(speedL, desiredRPM, actual_speeds[0], 0.035, 0.001, 0.025); // ento me4 3ayzeen el functions 
+  int actualPWM_r = motor_ctrl_r(speedR, desiredRPM, actual_speeds[1], 0.035, 0.001, 0.025); // deeeeee el feed back sp ignore it for now de
+//  Serial.print(actual_speeds[0]);
+//  Serial.print(",");
+
+//  Serial.print(actualPWM_l);
+//  Serial.print(",");
+//  Serial.print(actualPWM_r);
+//  Serial.print(",");
 //  Serial.print(desiredRPM);
 //  Serial.print(",");
- Serial.print(actual_speeds[0]);
-// Serial.println(actual_speeds[1]);
+  Serial.print(actual_speeds[1]);
   Serial.print(",");
-  Serial.println(actual_speeds[1]);
-//  Serial.print(",");
-//  Serial.println(actualPWM_r);
-//  Serial.print(",");
-//  Serial.println(actualPWM_l);
-//   Serial.print(lol);
-//   Serial.print(", ");
-//   Serial.print(actual_speeds[0]);
-//   Serial.print(", ");
-//   Serial.println(actual_speeds[1]);
+  Serial.println(actual_speeds[0]);
 }
 
 
 void getMotorSpeeds()
 { 
-  // current_time = millis();
-
-  // if(current_time - start_time_l >= count)
-  // {
-  //   start_time_l = current_time;
-    
-  // }
- 
   if(timer_iterations >= 20)
   {
     timer_iterations = 0;
@@ -170,15 +155,6 @@ void getMotorSpeeds()
     actual_speeds[0] = rpm_left;
     actual_speeds[1] = rpm_right;
   }
-
-  // long rpm_right = ((right_pulses - right_pulses_prev) * encoder_resolution) /(float)(current_time - start_time_r);
-
-  // if((right_pulses - right_pulses_prev) >= count){
-  //   right_pulses_prev = right_pulses;
-  //   start_time_r = millis();
-  // }
-
-  // actual_speeds[1] = rpm_right;
 }
 
 ISR(TIMER2_OVF_vect){
@@ -186,11 +162,11 @@ ISR(TIMER2_OVF_vect){
 }
 
 ISR(INT0_vect) {
-  left_pulses += 1;
+  left_pulses++;
 }
 
 ISR(INT1_vect) {
-  right_pulses += 1;
+  right_pulses++;
 }
 
 void INT0_Init (void) {
@@ -221,11 +197,4 @@ void timer2_init(){
   TIMSK2 |= (1<<TOIE2);
   TCNT2 = 132;
   SET_BIT(SREG,7);
-}
-
-uint16_t simulate_setpoint(uint8_t pin)
-{
-  uint16_t reading = analogRead(pin);
-  reading = map(reading, 0, 1023, 0, 300);
-  return reading;
 }
