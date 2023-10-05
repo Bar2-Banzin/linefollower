@@ -1,4 +1,4 @@
-# <img align=center  height=50px src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTU2ZTZjZGE1MmQ1ZWNiMjM1Yzc0NTEyODQ4NjVlODRiMTkyODcyMyZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PXM/xcw3xOLyHmfrQleoi7/giphy.gif"> Line Follower
+# 🏎️ Line Follower
 
 <div align="center">
 
@@ -12,7 +12,7 @@
     <br> 
 </p>
 
-## <img align= center width=50px height=50px src="https://user-images.githubusercontent.com/71986226/178468913-84c3151c-e8d1-4420-a9e9-b2434e9c2f75.gif"> Table of Contents
+## 📝 Table of Contents
 
 - <a href ="#about"> 📙 Overview</a>
 - <a href ="#components"> :money_with_wings: Components & cost</a>
@@ -26,7 +26,7 @@
 
 <a id = "about"></a>
 
-## <img align="center"  width =50px  height =50px src="https://c.tenor.com/BU6EP0XgvzEAAAAj/cat-cute.gif"> Overview
+## 📙 Overview
 <ul>
 <li>Azza is a line follower robot and it's target is to finish track as fast as possible</li>
 <li>There is a mobile App that helps Azza to find straight lines to run with the max speed. The app communicates with Azza by bluetooth </li>
@@ -51,7 +51,7 @@
 <hr style="background-color: #4b4c60"></hr>
 <a id = "Components"></a>
 
-##  <img align="center"  width =70px  height =70px src="https://media1.giphy.com/media/HWhlNhHNN7zGwMfGV4/giphy.gif?cid=ecf05e47351ain7blea4l6t9oeffyqj013pkodl298lred3w&rid=giphy.gif&ct=s"> Components & cost
+## 💸 Components & cost
 
 | Name| Number | Market Cost per Part                                                                                                         |
 | --------------  | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -71,11 +71,11 @@
 
 <a id = "parts"></a>
 
-## <img align="center"  width =70px  height =70px src="https://media4.giphy.com/media/7ktwhqlnFaDAJ8AzIw/giphy.gif?cid=ecf05e47p68znkbblq8sysehj7ahivaaceyfjly28ch0y4m7&rid=giphy.gif&ct=s"> Parts 
+## 🤖 Parts 
 
 <a id = "app"></a>
 
-### <img align="center"  width =60px src="https://media1.giphy.com/media/SQTSmiJl0uKoZNdv1T/giphy.gif?cid=ecf05e478njktzbodwy6urk6p15ealjalm4augxqvtm6gj0h&ep=v1_stickers_search&rid=giphy.gif&ct=s"> APP
+### 📱 APP
 
 
 <ul>
@@ -145,7 +145,7 @@
 <hr style="background-color: #4b4c60"></hr>
 <a id = "car"></a>
 
-### <img align="center"  width =70px src="https://media0.giphy.com/media/7hAr7m8m7k3uumlu4G/giphy.gif?cid=ecf05e47z16ab3t2pi15z2vh1bt01uqsai1f4uszvbzvn56t&ep=v1_stickers_search&rid=giphy.gif&ct=s"> Car
+### 🚙 Car
 <ul>
 <li>Azza receive output from app if found 1 drive with the fastest speed if 0 drive with original speed</li>
 <li> Azza is able to tackle the line following problem using an array of sensors </li>
@@ -159,7 +159,7 @@
 
 <a id = "Integration"></a>
 
-## <img align="center"  width =80px  height =80px src="https://media1.giphy.com/media/lr7lYUc00nr3hWsoVa/giphy.gif?cid=ecf05e47f99e9tbsstbe3u9mzphxjrp27jxozshi64cok467&rid=giphy.gif&ct=s"> Integration 
+## 🧠 Integration 
 
 <div align ="center">
 <video width="350px" src="https://github.com/Bar2-Banzin/linefollower/assets/71986226/0e0dd67e-f8e9-46fc-9794-ab4788cc34c9">
@@ -169,7 +169,7 @@
 
 <a id ="Contributors"></a>
 
-## <img  align="center" width= 70px height =55px src="https://media0.giphy.com/media/Xy702eMOiGGPzk4Zkd/giphy.gif?cid=ecf05e475vmf48k83bvzye3w2m2xl03iyem3tkuw2krpkb7k&rid=giphy.gif&ct=s"> Contributors 
+## 👑 Contributors 
 <table align="center">
   <thead >
          <th style="text-align: center;"> Project Manager</th>
